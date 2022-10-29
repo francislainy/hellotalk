@@ -1,9 +1,8 @@
 package com.example.hellotalk.model.user;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+
+import java.util.UUID;
 
 @Data
 @Builder
@@ -11,5 +10,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class User {
     
+    private UUID id;
     private String name;
 }

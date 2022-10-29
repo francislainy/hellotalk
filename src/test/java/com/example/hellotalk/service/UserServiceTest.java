@@ -4,33 +4,44 @@ import com.example.hellotalk.entity.user.UserEntity;
 import com.example.hellotalk.model.user.User;
 import com.example.hellotalk.repository.UserRepository;
 import com.example.hellotalk.service.impl.user.UserServiceImpl;
-import com.example.hellotalk.service.user.UserService;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 import java.util.UUID;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
-@SpringBootTest
+@ExtendWith(MockitoExtension.class)
 class UserServiceTest {
 
-    @MockBean
+    @Mock
     UserRepository userRepository;
 
-    @Test
-    void testUserHasName() {
+    @InjectMocks
+    UserServiceImpl userService;
 
-        UserService userService = new UserServiceImpl();
+    @Test
+    void testGetActor() {
+
+        UUID userId = UUID.fromString("1bfff94a-b70e-4b39-bd2a-be1c0f898589");
+
+        UserEntity userEntity = UserEntity.builder().id(userId).name("anyName").build();
+        when(userRepository.findById(any())).thenReturn(Optional.of(userEntity));
+
         User user = userService.getUser(UUID.randomUUID());
 
-        when(userRepository.findById(any())).thenReturn(Optional.of(UserEntity.builder().name("anyName").build()));
+        assertAll(
+                () -> assertEquals(userId, user.getId()),
+                () -> assertEquals("anyName", user.getName())
+        );
 
-        assertEquals("anyName", user.getName());
     }
 
 }

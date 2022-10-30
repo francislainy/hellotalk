@@ -1,6 +1,5 @@
 package com.example.hellotalk.entity.user;
 
-//import jakarta.persistence.*;
 import lombok.*;
 
 import javax.persistence.*;
@@ -21,4 +20,7 @@ public class UserEntity {
 
     @Column(name = "name")
     private String name;
+
+    @Column(name = "selfIntroduction")
+    private String selfIntroduction;
 }

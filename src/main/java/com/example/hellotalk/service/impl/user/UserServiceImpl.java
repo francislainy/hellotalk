@@ -27,6 +27,7 @@ public class UserServiceImpl implements UserService {
             return User.builder()
                     .id(userEntity.getId())
                     .name(userEntity.getName())
+                    .selfIntroduction(userEntity.getSelfIntroduction())
                     .build();
         } else {
             return null;

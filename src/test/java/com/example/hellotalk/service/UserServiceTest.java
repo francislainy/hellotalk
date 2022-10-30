@@ -32,16 +32,16 @@ class UserServiceTest {
 
         UUID userId = UUID.fromString("1bfff94a-b70e-4b39-bd2a-be1c0f898589");
 
-        UserEntity userEntity = UserEntity.builder().id(userId).name("anyName").build();
+        UserEntity userEntity = UserEntity.builder().id(userId).name("anyName").selfIntroduction("anySelfIntroduction").build();
         when(userRepository.findById(any())).thenReturn(Optional.of(userEntity));
 
         User user = userService.getUser(UUID.randomUUID());
 
         assertAll(
                 () -> assertEquals(userId, user.getId()),
-                () -> assertEquals("anyName", user.getName())
+                () -> assertEquals("anyName", user.getName()),
+                () -> assertEquals("anySelfIntroduction", user.getSelfIntroduction())
         );
-
     }
 
 }

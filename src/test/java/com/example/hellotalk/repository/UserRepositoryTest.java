@@ -16,14 +16,17 @@ class UserRepositoryTest extends PostgresContainer { // Can use both this class 
 
     @Test
     void saveUser() {
-        UserEntity userEntity = UserEntity.builder().name("anyName").build();
+        UserEntity userEntity = UserEntity.builder().name("anyName").selfIntroduction("anySelfIntroduction").build();
         userEntity = userRepository.save(userEntity);
 
         UserEntity finalUserEntity = userEntity;
         assertAll(
                 () -> assertTrue(userRepository.findAll().size() > 0),
                 () -> assertNotNull(userRepository.findById(finalUserEntity.getId())),
-                () -> assertEquals("anyName", userRepository.findById(finalUserEntity.getId()).get().getName())
+                () -> assertEquals("anyName", userRepository.findById(finalUserEntity.getId()).get().getName()),
+                () -> assertEquals("anySelfIntroduction", userRepository.findById(finalUserEntity.getId()).get().getSelfIntroduction())
         );
+        
+        
     }
 }

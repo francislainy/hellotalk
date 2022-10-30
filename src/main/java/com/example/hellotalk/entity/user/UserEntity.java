@@ -1,9 +1,12 @@
 package com.example.hellotalk.entity.user;
 
-import lombok.*;
+import com.example.hellotalk.model.user.Hometown;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.Set;
 import java.util.UUID;
 
 @Entity

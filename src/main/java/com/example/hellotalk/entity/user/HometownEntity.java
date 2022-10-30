@@ -1,5 +1,6 @@
 package com.example.hellotalk.entity.user;
 
+import com.example.hellotalk.model.user.Hometown;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -30,4 +31,11 @@ public class HometownEntity {
 
     @OneToMany(mappedBy = "hometownEntity", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = false)
     private Set<UserEntity> userEntitySet;
+
+    public static HometownEntity buildHometownEntity(Hometown hometown) {
+        return HometownEntity.builder()
+                .city(hometown.getCity())
+                .country(hometown.getCountry())
+                .build();
+    }
 }

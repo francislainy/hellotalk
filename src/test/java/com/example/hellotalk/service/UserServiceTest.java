@@ -1,6 +1,5 @@
 package com.example.hellotalk.service;
 
-import com.example.hellotalk.entity.user.HometownEntity;
 import com.example.hellotalk.entity.user.UserEntity;
 import com.example.hellotalk.model.user.Hometown;
 import com.example.hellotalk.model.user.User;
@@ -15,6 +14,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.Optional;
 import java.util.UUID;
 
+import static com.example.hellotalk.entity.user.HometownEntity.buildHometownEntity;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
@@ -39,10 +39,7 @@ class UserServiceTest {
                 .id(userId)
                 .name("anyName")
                 .selfIntroduction("anySelfIntroduction")
-                .hometownEntity(HometownEntity.builder()
-                        .city(hometown.getCity())
-                        .country(hometown.getCountry())
-                        .build())
+                .hometownEntity(buildHometownEntity(hometown))
                 .build();
         when(userRepository.findById(any())).thenReturn(Optional.of(userEntity));
 

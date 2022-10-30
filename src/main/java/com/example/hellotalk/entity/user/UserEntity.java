@@ -3,6 +3,7 @@ package com.example.hellotalk.entity.user;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -23,4 +24,8 @@ public class UserEntity {
 
     @Column(name = "selfIntroduction")
     private String selfIntroduction;
+
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
+    @JoinColumn(name = "hometown_id", referencedColumnName = "id")
+    private HometownEntity hometownEntity;
 }

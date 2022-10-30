@@ -1,6 +1,7 @@
 package com.example.hellotalk.service.impl.user;
 
 import com.example.hellotalk.entity.user.UserEntity;
+import com.example.hellotalk.model.user.Hometown;
 import com.example.hellotalk.model.user.User;
 import com.example.hellotalk.repository.UserRepository;
 import com.example.hellotalk.service.user.UserService;
@@ -28,6 +29,10 @@ public class UserServiceImpl implements UserService {
                     .id(userEntity.getId())
                     .name(userEntity.getName())
                     .selfIntroduction(userEntity.getSelfIntroduction())
+                    .hometown(Hometown.builder()
+                            .city(userEntity.getHometownEntity().getCity())
+                            .country(userEntity.getHometownEntity().getCountry())
+                            .build())
                     .build();
         } else {
             return null;

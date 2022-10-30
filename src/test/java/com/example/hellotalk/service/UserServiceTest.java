@@ -1,6 +1,8 @@
 package com.example.hellotalk.service;
 
+import com.example.hellotalk.entity.user.HometownEntity;
 import com.example.hellotalk.entity.user.UserEntity;
+import com.example.hellotalk.model.user.Hometown;
 import com.example.hellotalk.model.user.User;
 import com.example.hellotalk.repository.UserRepository;
 import com.example.hellotalk.service.impl.user.UserServiceImpl;
@@ -28,19 +30,29 @@ class UserServiceTest {
     UserServiceImpl userService;
 
     @Test
-    void testGetActor() {
+    void testGetUser() {
 
         UUID userId = UUID.fromString("1bfff94a-b70e-4b39-bd2a-be1c0f898589");
+        Hometown hometown = Hometown.builder().city("anyCity").country("anyCountry").build();
 
-        UserEntity userEntity = UserEntity.builder().id(userId).name("anyName").selfIntroduction("anySelfIntroduction").build();
+        UserEntity userEntity = UserEntity.builder()
+                .id(userId)
+                .name("anyName")
+                .selfIntroduction("anySelfIntroduction")
+                .hometownEntity(HometownEntity.builder()
+                        .city(hometown.getCity())
+                        .country(hometown.getCountry())
+                        .build())
+                .build();
         when(userRepository.findById(any())).thenReturn(Optional.of(userEntity));
 
         User user = userService.getUser(UUID.randomUUID());
-
         assertAll(
                 () -> assertEquals(userId, user.getId()),
                 () -> assertEquals("anyName", user.getName()),
-                () -> assertEquals("anySelfIntroduction", user.getSelfIntroduction())
+                () -> assertEquals("anySelfIntroduction", user.getSelfIntroduction()),
+                () -> assertEquals("anyCity", user.getHometown().getCity()),
+                () -> assertEquals("anyCountry", user.getHometown().getCountry())
         );
     }
 

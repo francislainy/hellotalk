@@ -1,6 +1,5 @@
 package com.example.hellotalk.entity.user;
 
-import com.example.hellotalk.model.user.Hometown;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -27,6 +26,9 @@ public class UserEntity {
 
     @Column(name = "selfIntroduction")
     private String selfIntroduction;
+
+    @Column(name = "occupation")
+    private String occupation;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
     @JoinColumn(name = "hometown_id", referencedColumnName = "id")

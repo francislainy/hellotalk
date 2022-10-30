@@ -17,11 +17,16 @@ class UserRepositoryTest extends PostgresContainer { // We can use both this cla
     @Autowired HometownRepository hometownRepository;
 
     @Test
-    void saveUser() {
+    void getUser() {
 
         HometownEntity hometownEntity = HometownEntity.builder().city("anyCity").country("anyCountry").build();
         hometownRepository.save(hometownEntity);
-        UserEntity userEntity = UserEntity.builder().name("anyName").selfIntroduction("anySelfIntroduction").hometownEntity(hometownEntity).build();
+        UserEntity userEntity = UserEntity.builder()
+                .name("anyName")
+                .selfIntroduction("anySelfIntroduction")
+                .occupation("anyOccupatio ")
+                .hometownEntity(hometownEntity)
+                .build();
         userEntity = userRepository.save(userEntity);
 
         userEntity = userRepository.findById(userEntity.getId()).orElse(null);
@@ -34,7 +39,8 @@ class UserRepositoryTest extends PostgresContainer { // We can use both this cla
                 () -> assertEquals("anyName", finalUserEntity.getName()),
                 () -> assertEquals("anySelfIntroduction", finalUserEntity.getSelfIntroduction()),
                 () -> assertEquals("anyCity", finalUserEntity.getHometownEntity().getCity()),
-                () -> assertEquals("anyCountry", finalUserEntity.getHometownEntity().getCountry())
+                () -> assertEquals("anyCountry", finalUserEntity.getHometownEntity().getCountry()),
+                () -> assertEquals("anyOccupation", finalUserEntity.getOccupation())
         );
     }
 }

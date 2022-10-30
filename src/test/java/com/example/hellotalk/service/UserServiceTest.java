@@ -38,6 +38,7 @@ class UserServiceTest {
         UserEntity userEntity = UserEntity.builder()
                 .id(userId)
                 .name("anyName")
+                .occupation("anyOccupation")
                 .selfIntroduction("anySelfIntroduction")
                 .hometownEntity(buildHometownEntity(hometown))
                 .build();
@@ -48,6 +49,7 @@ class UserServiceTest {
                 () -> assertEquals(userId, user.getId()),
                 () -> assertEquals("anyName", user.getName()),
                 () -> assertEquals("anySelfIntroduction", user.getSelfIntroduction()),
+                () -> assertEquals("anyOccupation", user.getOccupation()),
                 () -> assertEquals("anyCity", user.getHometown().getCity()),
                 () -> assertEquals("anyCountry", user.getHometown().getCountry())
         );

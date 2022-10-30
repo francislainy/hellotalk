@@ -29,6 +29,7 @@ public class UserServiceImpl implements UserService {
                     .id(userEntity.getId())
                     .name(userEntity.getName())
                     .selfIntroduction(userEntity.getSelfIntroduction())
+                    .occupation(userEntity.getOccupation())
                     .hometown(Hometown.builder()
                             .city(userEntity.getHometownEntity().getCity())
                             .country(userEntity.getHometownEntity().getCountry())

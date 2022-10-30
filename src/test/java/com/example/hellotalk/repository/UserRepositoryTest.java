@@ -24,7 +24,7 @@ class UserRepositoryTest extends PostgresContainer { // We can use both this cla
         UserEntity userEntity = UserEntity.builder()
                 .name("anyName")
                 .selfIntroduction("anySelfIntroduction")
-                .occupation("anyOccupatio ")
+                .occupation("anyOccupation")
                 .hometownEntity(hometownEntity)
                 .build();
         userEntity = userRepository.save(userEntity);

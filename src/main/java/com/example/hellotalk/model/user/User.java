@@ -2,6 +2,7 @@ package com.example.hellotalk.model.user;
 
 import lombok.*;
 
+import java.util.Set;
 import java.util.UUID;
 
 @Data
@@ -16,4 +17,5 @@ public class User {
     private String occupation;
     
     private Hometown hometown;
+    private Set<HobbyAndInterest> hobbyAndInterests;
 }

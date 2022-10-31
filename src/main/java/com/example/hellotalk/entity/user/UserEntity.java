@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -29,6 +30,13 @@ public class UserEntity {
 
     @Column(name = "occupation")
     private String occupation;
+    
+    @ManyToMany
+    @JoinTable(
+            name = "users_hobbies",
+            joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "hobby_and_interest_id", referencedColumnName = "id"))
+    private Set<HobbyAndInterestEntity> hobbyAndInterestEntities;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
     @JoinColumn(name = "hometown_id", referencedColumnName = "id")

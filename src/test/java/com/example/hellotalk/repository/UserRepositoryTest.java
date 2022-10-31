@@ -59,7 +59,6 @@ class UserRepositoryTest extends PostgresContainer { // We can use both this cla
                 () -> assertEquals("anyCity", finalUserEntity.getHometownEntity().getCity()),
                 () -> assertEquals("anyCountry", finalUserEntity.getHometownEntity().getCountry()),
                 () -> assertEquals("anyOccupation", finalUserEntity.getOccupation()),
-                () -> assertTrue(finalUserEntity.getHobbyAndInterestEntities().size() > 0),
                 () -> assertTrue(finalUserEntity.getHobbyAndInterestEntities().size() > 0)
         );
 

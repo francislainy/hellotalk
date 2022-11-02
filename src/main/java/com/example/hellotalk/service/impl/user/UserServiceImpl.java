@@ -38,6 +38,7 @@ public class UserServiceImpl implements UserService {
             return User.builder()
                     .id(userEntity.getId())
                     .name(userEntity.getName())
+                    .dob(userEntity.getDob())
                     .selfIntroduction(userEntity.getSelfIntroduction())
                     .occupation(userEntity.getOccupation())
                     .placesToVisit(userEntity.getPlacesToVisit())

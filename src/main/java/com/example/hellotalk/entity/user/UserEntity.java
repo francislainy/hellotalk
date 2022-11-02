@@ -24,6 +24,9 @@ public class UserEntity {
 
     @Column(name = "name")
     private String name;
+    
+    @Column(name = "dob")
+    private String dob;
 
     @Column(name = "selfIntroduction")
     private String selfIntroduction;

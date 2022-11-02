@@ -37,6 +37,7 @@ class UserRepositoryTest extends PostgresContainer { // We can use both this cla
 
         UserEntity userEntity = UserEntity.builder()
                 .name("anyName")
+                .dob("anyDob")
                 .selfIntroduction("anySelfIntroduction")
                 .occupation("anyOccupation")
                 .placesToVisit("anyPlacesToVisit")
@@ -56,6 +57,7 @@ class UserRepositoryTest extends PostgresContainer { // We can use both this cla
         UserEntity finalUserEntity = userEntity;
         assertAll(
                 () -> assertEquals("anyName", finalUserEntity.getName()),
+                () -> assertEquals("anyDob", finalUserEntity.getDob()),
                 () -> assertEquals("anySelfIntroduction", finalUserEntity.getSelfIntroduction()),
                 () -> assertEquals("anyCity", finalUserEntity.getHometownEntity().getCity()),
                 () -> assertEquals("anyCountry", finalUserEntity.getHometownEntity().getCountry()),

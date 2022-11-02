@@ -29,7 +29,10 @@ public class UserEntity {
     private String selfIntroduction;
 
     @Column(name = "occupation")
-    private String occupation;
+    private String occupation; 
+    
+    @Column(name = "places_to_visit")
+    private String placesToVisit;
     
     @ManyToMany
     @JoinTable(

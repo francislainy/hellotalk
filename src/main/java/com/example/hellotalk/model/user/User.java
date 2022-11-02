@@ -15,6 +15,7 @@ public class User {
     private String name;
     private String selfIntroduction;
     private String occupation;
+    private String placesToVisit;
     
     private Hometown hometown;
     private Set<HobbyAndInterest> hobbyAndInterests;

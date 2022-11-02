@@ -28,7 +28,13 @@ public class UserEntity {
     @Column(name = "dob")
     private String dob;
 
-    @Column(name = "selfIntroduction")
+    @Column(name = "native_language")
+    private String nativeLanguage;
+
+    @Column(name = "target_language")
+    private String targetLanguage;
+    
+    @Column(name = "self_introduction")
     private String selfIntroduction;
 
     @Column(name = "occupation")

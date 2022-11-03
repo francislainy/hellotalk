@@ -39,7 +39,9 @@ class UserRepositoryTest extends PostgresContainer { // We can use both this cla
                 .name("anyName")
                 .dob("anyDob")
                 .gender("anyGender")
+                .creationDate("anyCreationDate")
                 .handle("anyHandle")
+                .status("anyStatus")
                 .nativeLanguage("anyNativeLanguage")
                 .targetLanguage("anyTargetLanguage")
                 .selfIntroduction("anySelfIntroduction")
@@ -64,6 +66,8 @@ class UserRepositoryTest extends PostgresContainer { // We can use both this cla
                 () -> assertEquals("anyDob", finalUserEntity.getDob()),
                 () -> assertEquals("anyGender", finalUserEntity.getGender()),
                 () -> assertEquals("anyHandle", finalUserEntity.getHandle()),
+                () -> assertEquals("anyStatus", finalUserEntity.getStatus()),
+                () -> assertEquals("anyCreationDate", finalUserEntity.getCreationDate()),
                 () -> assertEquals("anyNativeLanguage", finalUserEntity.getNativeLanguage()),
                 () -> assertEquals("anyTargetLanguage", finalUserEntity.getTargetLanguage()),
                 () -> assertEquals("anySelfIntroduction", finalUserEntity.getSelfIntroduction()),

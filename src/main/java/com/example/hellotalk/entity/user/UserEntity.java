@@ -31,8 +31,14 @@ public class UserEntity {
     @Column(name = "gender")
     private String gender;
 
+    @Column(name = "creation_date")
+    private String creationDate;
+
     @Column(name = "handle")
     private String handle;
+
+    @Column(name = "status")
+    private String status;
 
     @Column(name = "native_language")
     private String nativeLanguage;

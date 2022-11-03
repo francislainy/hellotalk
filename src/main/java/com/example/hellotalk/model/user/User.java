@@ -15,6 +15,8 @@ public class User {
     private String name;
     private String dob;
     private String gender;
+    private String creationDate;
+    private String status;
     private String handle;
     private String nativeLanguage;
     private String targetLanguage;

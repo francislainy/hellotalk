@@ -47,7 +47,9 @@ class UserServiceTest {
                 .name("anyName")
                 .dob("anyDob")
                 .gender("anyGender")
+                .creationDate("anyCreationDate")
                 .handle("anyHandle")
+                .status("anyStatus")
                 .nativeLanguage("anyNativeLanguage")
                 .targetLanguage("anyTargetLanguage")
                 .occupation("anyOccupation")
@@ -64,6 +66,8 @@ class UserServiceTest {
                 () -> assertEquals("anyName", user.getName()),
                 () -> assertEquals("anyDob", user.getDob()),
                 () -> assertEquals("anyGender", user.getGender()),
+                () -> assertEquals("anyCreationDate", user.getCreationDate()),
+                () -> assertEquals("anyStatus", user.getStatus()),
                 () -> assertEquals("anyHandle", user.getHandle()),
                 () -> assertEquals("anyDob", user.getDob()),
                 () -> assertEquals("anyNativeLanguage", user.getNativeLanguage()),

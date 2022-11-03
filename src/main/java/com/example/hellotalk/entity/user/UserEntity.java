@@ -28,6 +28,12 @@ public class UserEntity {
     @Column(name = "dob")
     private String dob;
 
+    @Column(name = "gender")
+    private String gender;
+
+    @Column(name = "handle")
+    private String handle;
+
     @Column(name = "native_language")
     private String nativeLanguage;
 

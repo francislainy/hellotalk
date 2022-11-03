@@ -45,9 +45,11 @@ class UserServiceTest {
         UserEntity userEntity = UserEntity.builder()
                 .id(userId)
                 .name("anyName")
+                .dob("anyDob")
+                .gender("anyGender")
+                .handle("anyHandle")
                 .nativeLanguage("anyNativeLanguage")
                 .targetLanguage("anyTargetLanguage")
-                .dob("anyDob")
                 .occupation("anyOccupation")
                 .selfIntroduction("anySelfIntroduction")
                 .placesToVisit("anyPlacesToVisit")
@@ -60,6 +62,9 @@ class UserServiceTest {
         assertAll(
                 () -> assertEquals(userId, user.getId()),
                 () -> assertEquals("anyName", user.getName()),
+                () -> assertEquals("anyDob", user.getDob()),
+                () -> assertEquals("anyGender", user.getGender()),
+                () -> assertEquals("anyHandle", user.getHandle()),
                 () -> assertEquals("anyDob", user.getDob()),
                 () -> assertEquals("anyNativeLanguage", user.getNativeLanguage()),
                 () -> assertEquals("anyTargetLanguage", user.getTargetLanguage()),

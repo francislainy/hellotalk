@@ -14,6 +14,8 @@ public class User {
     private UUID id;
     private String name;
     private String dob;
+    private String gender;
+    private String handle;
     private String nativeLanguage;
     private String targetLanguage;
     private String selfIntroduction;

@@ -19,8 +19,7 @@ import java.util.Set;
 import java.util.UUID;
 
 import static com.example.hellotalk.entity.user.HometownEntity.buildHometownEntity;
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -63,6 +62,56 @@ class UserServiceTest {
         User user = userService.getUser(UUID.randomUUID());
         assertAll(
                 () -> assertEquals(userId, user.getId()),
+                () -> assertEquals("anyName", user.getName()),
+                () -> assertEquals("anyDob", user.getDob()),
+                () -> assertEquals("anyGender", user.getGender()),
+                () -> assertEquals("anyCreationDate", user.getCreationDate()),
+                () -> assertEquals("anyStatus", user.getStatus()),
+                () -> assertEquals("anyHandle", user.getHandle()),
+                () -> assertEquals("anyDob", user.getDob()),
+                () -> assertEquals("anyNativeLanguage", user.getNativeLanguage()),
+                () -> assertEquals("anyTargetLanguage", user.getTargetLanguage()),
+                () -> assertEquals("anySelfIntroduction", user.getSelfIntroduction()),
+                () -> assertEquals("anyOccupation", user.getOccupation()),
+                () -> assertEquals("anyCity", user.getHometown().getCity()),
+                () -> assertEquals("anyCountry", user.getHometown().getCountry()),
+                () -> assertEquals("anyPlacesToVisit", user.getPlacesToVisit())
+        );
+
+        user.getHobbyAndInterests().forEach(h -> assertEquals("anyInterest", h.getTitle()));
+    }
+
+    @Test
+    void testCreateUser() {
+
+        UUID userId = UUID.fromString("1bfff94a-b70e-4b39-bd2a-be1c0f898589");
+        Hometown hometown = Hometown.builder().city("anyCity").country("anyCountry").build();
+        HobbyAndInterestEntity hobbyAndInterestEntity = HobbyAndInterestEntity.builder().title("anyInterest").build();
+        Set<HobbyAndInterestEntity> hobbyAndInterestEntities = new HashSet<>();
+        hobbyAndInterestEntities.add(hobbyAndInterestEntity);
+
+        UserEntity userEntity = UserEntity.builder()
+                .id(userId)
+                .name("anyName")
+                .dob("anyDob")
+                .gender("anyGender")
+                .creationDate("anyCreationDate")
+                .handle("anyHandle")
+                .status("anyStatus")
+                .nativeLanguage("anyNativeLanguage")
+                .targetLanguage("anyTargetLanguage")
+                .occupation("anyOccupation")
+                .selfIntroduction("anySelfIntroduction")
+                .placesToVisit("anyPlacesToVisit")
+                .hometownEntity(buildHometownEntity(hometown))
+                .hobbyAndInterestEntities(hobbyAndInterestEntities)
+                .build();
+        when(userRepository.save(any())).thenReturn(userEntity);
+
+        User user = userService.createUser(User.buildUserFromEntity(userEntity));
+
+        assertAll(
+                () -> assertNotNull(user.getId()),
                 () -> assertEquals("anyName", user.getName()),
                 () -> assertEquals("anyDob", user.getDob()),
                 () -> assertEquals("anyGender", user.getGender()),

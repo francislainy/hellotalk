@@ -14,6 +14,8 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import static com.example.hellotalk.entity.user.UserEntity.buildUserEntityFromModel;
+
 @Service
 public class UserServiceImpl implements UserService {
 
@@ -58,5 +60,12 @@ public class UserServiceImpl implements UserService {
             return null;
         }
 
+    }
+
+    @Override public User createUser(User user) {
+
+        UserEntity userEntity = userRepository.save(buildUserEntityFromModel(user));
+        user.setId(userEntity.getId());
+        return user;
     }
 }

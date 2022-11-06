@@ -22,9 +22,9 @@ public class UserServiceImpl implements UserService {
     @Autowired UserRepository userRepository;
 
     @Override
-    public User getUser(UUID uuid) {
+    public User getUser(UUID userId) {
 
-        Optional<UserEntity> userEntityOptional = userRepository.findById(uuid);
+        Optional<UserEntity> userEntityOptional = userRepository.findById(userId);
 
         if (userEntityOptional.isPresent()) {
 
@@ -67,5 +67,18 @@ public class UserServiceImpl implements UserService {
         UserEntity userEntity = userRepository.save(buildUserEntityFromModel(user));
         user.setId(userEntity.getId());
         return user;
+    }
+
+    @Override public User updateUser(UUID userId, User user) {
+
+        if (userRepository.findById(userId).isPresent()) {
+            UserEntity userEntity = UserEntity.buildUserEntityFromModel(user);
+            userEntity.setId(userId);
+
+            userEntity = userRepository.save(userEntity);
+            return User.buildUserFromEntity(userEntity);
+        } else {
+            return null;
+        }
     }
 }

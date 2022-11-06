@@ -41,6 +41,7 @@ public class User {
                 .build()));
 
         return User.builder()
+                .id(userEntity.getId())
                 .name(userEntity.getName())
                 .dob(userEntity.getDob())
                 .gender(userEntity.getGender())

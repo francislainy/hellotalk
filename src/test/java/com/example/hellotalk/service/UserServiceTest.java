@@ -2,6 +2,7 @@ package com.example.hellotalk.service;
 
 import com.example.hellotalk.entity.user.HobbyAndInterestEntity;
 import com.example.hellotalk.entity.user.UserEntity;
+import com.example.hellotalk.exception.UserDoesNotExistExistException;
 import com.example.hellotalk.model.user.Hometown;
 import com.example.hellotalk.model.user.User;
 import com.example.hellotalk.repository.UserRepository;
@@ -176,7 +177,7 @@ class UserServiceTest {
                 .hometownEntity(buildHometownEntity(updatedHometown))
                 .hobbyAndInterestEntities(hobbyAndInterestEntitiesUpdated)
                 .build();
-        
+
         when(userRepository.findById(any())).thenReturn(Optional.of(userEntity));
         when(userRepository.save(any())).thenReturn(userEntityUpdated);
 
@@ -201,5 +202,39 @@ class UserServiceTest {
         );
 
         user.getHobbyAndInterests().forEach(h -> assertEquals("anyUpdatedInterest", h.getTitle()));
+    }
+
+    @Test
+    void testUpdateUserDetails_ThrowsExceptionWhenUserIsNotFound() {
+
+        UUID userId = UUID.fromString("1bfff94a-b70e-4b39-bd2a-be1c0f898589");
+        Hometown hometown = Hometown.builder().city("anyCity").country("anyCountry").build();
+        HobbyAndInterestEntity hobbyAndInterestEntity = HobbyAndInterestEntity.builder().title("anyInterest").build();
+        Set<HobbyAndInterestEntity> hobbyAndInterestEntities = new HashSet<>();
+        hobbyAndInterestEntities.add(hobbyAndInterestEntity);
+
+        UserEntity userEntity = UserEntity.builder()
+                .id(userId)
+                .name("anyName")
+                .dob("anyDob")
+                .gender("anyGender")
+                .selfIntroduction("anySelfIntroduction")
+                .creationDate("anyCreationDate")
+                .handle("anyHandle")
+                .status("anyStatus")
+                .nativeLanguage("anyNativeLanguage")
+                .targetLanguage("anyTargetLanguage")
+                .occupation("anyOccupation")
+                .placesToVisit("anyPlacesToVisit")
+                .hometownEntity(buildHometownEntity(hometown))
+                .hobbyAndInterestEntities(hobbyAndInterestEntities)
+                .build();
+
+        User user = User.buildUserFromEntity(userEntity);
+
+        UserDoesNotExistExistException exception =
+                assertThrows(UserDoesNotExistExistException.class, () -> userService.updateUser(userId, user));
+        
+        assertEquals("No user found with this id", exception.getMessage());
     }
 }

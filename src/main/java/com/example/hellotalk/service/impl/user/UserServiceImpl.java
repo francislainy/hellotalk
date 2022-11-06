@@ -1,6 +1,7 @@
 package com.example.hellotalk.service.impl.user;
 
 import com.example.hellotalk.entity.user.UserEntity;
+import com.example.hellotalk.exception.UserDoesNotExistExistException;
 import com.example.hellotalk.model.user.HobbyAndInterest;
 import com.example.hellotalk.model.user.Hometown;
 import com.example.hellotalk.model.user.User;
@@ -78,7 +79,7 @@ public class UserServiceImpl implements UserService {
             userEntity = userRepository.save(userEntity);
             return User.buildUserFromEntity(userEntity);
         } else {
-            return null;
+            throw new UserDoesNotExistExistException("No user found with this id");
         }
     }
 }

@@ -17,8 +17,7 @@ import java.util.UUID;
 import static com.example.hellotalk.util.Utils.jsonStringFromObject;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -64,6 +63,31 @@ class UserControllerTest {
         when(userService.createUser(any())).thenReturn(userWithId);
 
         mockMvc.perform(post("/api/v1/ht/user").content(json).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().is2xxSuccessful())
+                .andExpect(content().json(jsonWithId));
+    }
+
+    @Test
+    void testUpdateUser() throws Exception {
+
+        UUID userId = UUID.fromString("1bfff94a-b70e-4b39-bd2a-be1c0f898589");
+
+        User user = User.builder()
+                .name("anyName")
+                .build();
+
+        String json = jsonStringFromObject(user);
+        ObjectMapper objectMapper = new ObjectMapper();
+        User userWithId = objectMapper.readValue(json, User.class);
+        userWithId.setId(userId);
+
+        String jsonWithId = jsonStringFromObject(userWithId);
+
+        when(userService.updateUser(any(), any())).thenReturn(userWithId);
+
+        mockMvc.perform(put("/api/v1/ht/user/{userId}", userId)
+                        .content(json)
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(content().json(jsonWithId));
     }

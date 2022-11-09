@@ -1,5 +1,6 @@
 package com.example.hellotalk.controller;
 
+import com.example.hellotalk.exception.UserDoesNotExistExistException;
 import com.example.hellotalk.model.user.User;
 import com.example.hellotalk.service.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +28,12 @@ public class UserController {
 
     @PutMapping({"/{userId}", "/{userId}/"})
     public ResponseEntity<Object> updateUser(@PathVariable UUID userId, @RequestBody User user) {
-        return new ResponseEntity<>(userService.updateUser(userId, user), HttpStatus.OK);
+        
+        try {
+            return new ResponseEntity<>(userService.updateUser(userId, user), HttpStatus.OK);
+        } catch (UserDoesNotExistExistException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NO_CONTENT);
+        }
     }
 
 }

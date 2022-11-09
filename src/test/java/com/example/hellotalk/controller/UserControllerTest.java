@@ -1,5 +1,6 @@
 package com.example.hellotalk.controller;
 
+import com.example.hellotalk.exception.UserDoesNotExistExistException;
 import com.example.hellotalk.model.user.User;
 import com.example.hellotalk.service.user.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -13,6 +14,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.UUID;
+import java.util.regex.Matcher;
 
 import static com.example.hellotalk.util.Utils.jsonStringFromObject;
 import static org.mockito.ArgumentMatchers.any;
@@ -90,5 +92,25 @@ class UserControllerTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(content().json(jsonWithId));
+    }
+
+    @Test
+    void testUpdateUser_ThrowsExceptionWhenUserDoesNotExist() throws Exception {
+
+        UUID userId = UUID.fromString("1bfff94a-b70e-4b39-bd2a-be1c0f898589");
+
+        User user = User.builder()
+                .name("anyName")
+                .build();
+
+        String json = jsonStringFromObject(user);
+        
+        when(userService.updateUser(any(), any())).thenThrow(new UserDoesNotExistExistException("No user found with this id"));
+
+        mockMvc.perform(put("/api/v1/ht/user/{userId}", userId)
+                        .content(json)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().is(204))
+                .andExpect(content().string("No user found with this id"));
     }
 }

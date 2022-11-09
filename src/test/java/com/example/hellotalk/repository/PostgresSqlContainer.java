@@ -9,8 +9,6 @@ import org.testcontainers.containers.PostgreSQLContainer;
  * The type Postgresql container.
  * Please refer : https://www.testcontainers.org/
  */
-@RunWith(SpringRunner.class)
-@SpringBootTest
 public class PostgresSqlContainer extends PostgreSQLContainer<PostgresSqlContainer>{
 
     private static final String IMAGE_VERSION = "postgres:13.5";

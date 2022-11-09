@@ -14,7 +14,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.UUID;
-import java.util.regex.Matcher;
 
 import static com.example.hellotalk.util.Utils.jsonStringFromObject;
 import static org.mockito.ArgumentMatchers.any;

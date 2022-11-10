@@ -9,6 +9,8 @@ public interface UserService {
     User getUser(UUID userId);
 
     User createUser(User user);
-    
+
     User updateUser(UUID userId, User user);
+
+    void deleteUser(UUID userId) throws Exception;
 }

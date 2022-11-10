@@ -234,7 +234,49 @@ class UserServiceTest {
 
         UserDoesNotExistExistException exception =
                 assertThrows(UserDoesNotExistExistException.class, () -> userService.updateUser(userId, user));
+
+        assertEquals("No user found with this id", exception.getMessage());
+    }
+
+    @Test
+    void testDeleteUser() {
+
+        UUID userId = UUID.fromString("1bfff94a-b70e-4b39-bd2a-be1c0f898589");
+        Hometown hometown = Hometown.builder().city("anyCity").country("anyCountry").build();
+        HobbyAndInterestEntity hobbyAndInterestEntity = HobbyAndInterestEntity.builder().title("anyInterest").build();
+        Set<HobbyAndInterestEntity> hobbyAndInterestEntities = new HashSet<>();
+        hobbyAndInterestEntities.add(hobbyAndInterestEntity);
+
+        UserEntity userEntity = UserEntity.builder()
+                .id(userId)
+                .name("anyName")
+                .dob("anyDob")
+                .gender("anyGender")
+                .selfIntroduction("anySelfIntroduction")
+                .creationDate("anyCreationDate")
+                .handle("anyHandle")
+                .status("anyStatus")
+                .nativeLanguage("anyNativeLanguage")
+                .targetLanguage("anyTargetLanguage")
+                .occupation("anyOccupation")
+                .placesToVisit("anyPlacesToVisit")
+                .hometownEntity(buildHometownEntity(hometown))
+                .hobbyAndInterestEntities(hobbyAndInterestEntities)
+                .build();
+
+        when(userRepository.findById(any())).thenReturn(Optional.of(userEntity)); //todo: test for when exception is thrown - 09/11/2022
         
+        assertDoesNotThrow(() -> userService.deleteUser(userId));
+    }
+    
+    @Test
+    void testDeleteUser_ThrowsExceptionUserNotFound() {
+
+        UUID userId = UUID.fromString("1bfff94a-b70e-4b39-bd2a-be1c0f898589");
+
+        UserDoesNotExistExistException exception =
+                assertThrows(UserDoesNotExistExistException.class, () -> userService.deleteUser(userId));
+
         assertEquals("No user found with this id", exception.getMessage());
     }
 }

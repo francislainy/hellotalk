@@ -82,4 +82,15 @@ public class UserServiceImpl implements UserService {
             throw new UserDoesNotExistExistException("No user found with this id");
         }
     }
+
+    @Override public void deleteUser(UUID userId){
+
+        Optional<UserEntity> optionalUserEntity = userRepository.findById(userId);
+
+        if (optionalUserEntity.isPresent()) {
+            userRepository.deleteById(userId);
+        } else {
+            throw new UserDoesNotExistExistException("No user found with this id");
+        }
+    }
 }

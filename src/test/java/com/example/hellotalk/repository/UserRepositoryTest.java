@@ -51,14 +51,13 @@ class UserRepositoryTest extends PostgresContainer { // We can use both this cla
                 .hobbyAndInterestEntities(hobbyAndInterestEntities)
                 .build();
         userEntity = userRepository.save(userEntity);
-        
+
         Set<UserEntity> userEntitySet = new HashSet<>();
         hobbyAndInterestEntity.setUserEntities(userEntitySet);
 
-        userEntity = userRepository.findById(userEntity.getId()).orElse(null);
         assertTrue(userRepository.findAll().size() > 0);
+        userEntity = userRepository.findById(userEntity.getId()).orElse(null);
         assertNotNull(userEntity);
-        assertNotNull(userRepository.findById(userEntity.getId()));
 
         UserEntity finalUserEntity = userEntity;
         assertAll(
@@ -139,5 +138,48 @@ class UserRepositoryTest extends PostgresContainer { // We can use both this cla
         );
 
         finalUserEntity.getHobbyAndInterestEntities().forEach(h -> assertEquals("anyInterest", h.getTitle()));
+    }
+
+    @Test
+    void deleteUser() {
+
+        HometownEntity hometownEntity = HometownEntity.builder().city("anyCity").country("anyCountry").build();
+
+        hometownRepository.save(hometownEntity);
+
+        HobbyAndInterestEntity hobbyAndInterestEntity = HobbyAndInterestEntity.builder()
+                .title("anyInterest")
+                .build();
+        hobbyAndInterestEntity = hobbyAndInterestRepository.save(hobbyAndInterestEntity);
+        Set<HobbyAndInterestEntity> hobbyAndInterestEntities = new HashSet<>();
+        hobbyAndInterestEntities.add(hobbyAndInterestEntity);
+
+        UserEntity userEntity = UserEntity.builder()
+                .name("anyName")
+                .dob("anyDob")
+                .gender("anyGender")
+                .creationDate("anyCreationDate")
+                .handle("anyHandle")
+                .status("anyStatus")
+                .nativeLanguage("anyNativeLanguage")
+                .targetLanguage("anyTargetLanguage")
+                .selfIntroduction("anySelfIntroduction")
+                .occupation("anyOccupation")
+                .placesToVisit("anyPlacesToVisit")
+                .hometownEntity(hometownEntity)
+                .hobbyAndInterestEntities(hobbyAndInterestEntities)
+                .build();
+        userEntity = userRepository.save(userEntity);
+
+        Set<UserEntity> userEntitySet = new HashSet<>();
+        hobbyAndInterestEntity.setUserEntities(userEntitySet);
+
+        assertTrue(userRepository.findAll().size() > 0);
+        userEntity = userRepository.findById(userEntity.getId()).orElse(null);
+        assertNotNull(userEntity);
+
+        userRepository.delete(userEntity);
+
+        assertTrue(userRepository.findById(userEntity.getId()).isEmpty());
     }
 }

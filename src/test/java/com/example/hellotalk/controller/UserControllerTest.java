@@ -17,6 +17,7 @@ import java.util.UUID;
 
 import static com.example.hellotalk.util.Utils.jsonStringFromObject;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -103,7 +104,7 @@ class UserControllerTest {
                 .build();
 
         String json = jsonStringFromObject(user);
-        
+
         when(userService.updateUser(any(), any())).thenThrow(new UserDoesNotExistExistException("No user found with this id"));
 
         mockMvc.perform(put("/api/v1/ht/user/{userId}", userId)
@@ -112,4 +113,33 @@ class UserControllerTest {
                 .andExpect(status().is(204))
                 .andExpect(content().string("No user found with this id"));
     }
+
+    @Test
+    void testDeleteUser() throws Exception {
+
+        UUID userId = UUID.fromString("1bfff94a-b70e-4b39-bd2a-be1c0f898589");
+
+        User user = User.builder()
+                .id(userId)
+                .name("anyName")
+                .build();
+
+        when(userService.getUser(any())).thenReturn(user);
+
+        mockMvc.perform(delete("/api/v1/ht/user/{userId}", userId).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().is2xxSuccessful());
+    }
+
+    @Test
+    void testDeleteUser_ThrowsExceptionWhenUserNotFound() throws Exception {
+
+        UUID userId = UUID.fromString("1bfff94a-b70e-4b39-bd2a-be1c0f898589");
+     
+        doThrow(new UserDoesNotExistExistException("No user found with this id")).when(userService).deleteUser(any());
+
+        mockMvc.perform(delete("/api/v1/ht/user/{userId}", userId).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().is2xxSuccessful())
+                .andExpect(content().string("No user found with this id"));
+    }
+
 }

@@ -1,12 +1,12 @@
 package com.example.hellotalk.util;
 
-import com.example.hellotalk.model.user.User;
+import com.example.hellotalk.exception.JacksonConversionException;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class Utils {
-
+    
     public static String jsonStringFromObject(Object jsonObject) {
         if (jsonObject == null) {
             return "";
@@ -18,23 +18,24 @@ public class Utils {
         try {
             jsonStr = mapper.writeValueAsString(jsonObject);
         } catch (JsonProcessingException e) {
-            throw new RuntimeException(e.getMessage()); // NOSONAR
+            throw new JacksonConversionException(e.getMessage());
         }
         return jsonStr;
     }
 
-    public static User objectFromJsonString(String json) {
+    public static <T> T objectFromJsonString(String json, Class<T> c) {
 
         ObjectMapper objectMapper = new ObjectMapper();
         try {
-            return objectMapper.readValue(json, User.class); // todo: make it generic
+            return objectMapper.readValue(json, objectMapper.getTypeFactory().constructType(c));
         } catch (JsonProcessingException e) {
-            throw new RuntimeException(e.getMessage());
+            throw new JacksonConversionException(e.getMessage());
         }
     }
-
-    public static Object convertToNewObject(User user) { //todo: make it generic
-        String json = jsonStringFromObject(user);
-        return Utils.objectFromJsonString(json);
+    
+    public static <T> T convertToNewObject(Object o, Class<T> c) {
+        String json = jsonStringFromObject(o);
+        return objectFromJsonString(json, c);
     }
+    
 }

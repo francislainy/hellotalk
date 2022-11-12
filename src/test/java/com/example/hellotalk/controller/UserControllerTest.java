@@ -3,7 +3,6 @@ package com.example.hellotalk.controller;
 import com.example.hellotalk.exception.UserDoesNotExistExistException;
 import com.example.hellotalk.model.user.User;
 import com.example.hellotalk.service.user.UserService;
-import com.example.hellotalk.util.Utils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -16,7 +15,8 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.UUID;
 
-import static com.example.hellotalk.util.Utils.*;
+import static com.example.hellotalk.util.Utils.convertToNewObject;
+import static com.example.hellotalk.util.Utils.jsonStringFromObject;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;

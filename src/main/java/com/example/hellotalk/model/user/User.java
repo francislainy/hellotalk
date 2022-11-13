@@ -32,6 +32,8 @@ public class User {
 
     private Hometown hometown;
     private Set<HobbyAndInterest> hobbyAndInterests;
+    private Set<User> followedBy;
+    private Set<User> followerOf;
 
     public static User buildUserFromEntity(UserEntity userEntity) {
 
@@ -40,6 +42,14 @@ public class User {
                 .id(h.getId())
                 .title(h.getTitle())
                 .build()));
+
+        User followedBy = User.builder().id(UUID.randomUUID()).build();
+        Set<User> followerBys = new HashSet<>();
+        followerBys.add(followedBy);
+
+        User followerOf = User.builder().id(UUID.randomUUID()).build();
+        Set<User> followingOfs = new HashSet<>();
+        followingOfs.add(followerOf);
 
         return User.builder()
                 .id(userEntity.getId())
@@ -57,6 +67,8 @@ public class User {
                 .placesToVisit(userEntity.getPlacesToVisit())
                 .hometown(Hometown.builder().city(userEntity.getHometownEntity().getCity()).country(userEntity.getHometownEntity().getCountry()).build())
                 .hobbyAndInterests(hobbyAndInterests)
+                .followedBy(followerBys)
+                .followerOf(followingOfs)
                 .build();
     }
 }

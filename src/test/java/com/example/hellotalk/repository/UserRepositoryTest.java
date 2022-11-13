@@ -48,6 +48,8 @@ class UserRepositoryTest {
                 () -> assertEquals("anyCountry", finalUserEntity.getHometownEntity().getCountry()),
                 () -> assertEquals("anyOccupation", finalUserEntity.getOccupation()),
                 () -> assertEquals("anyPlacesToVisit", finalUserEntity.getPlacesToVisit()),
+                () -> assertTrue(finalUserEntity.getFollowedBy().size() > 0),
+                () -> assertTrue(finalUserEntity.getFollowerOf().size() > 0),
                 () -> assertTrue(finalUserEntity.getHobbyAndInterestEntities().size() > 0)
         );
 
@@ -92,6 +94,10 @@ class UserRepositoryTest {
         userEntity.setPlacesToVisit("anyUpdatedPlacesToVisit");
         userEntity.setHometownEntity(hometownEntity);
         userEntity.setHobbyAndInterestEntities(hobbyAndInterestEntities);
+        //                .friends(followerEntities)
+        //                .friendOfs(followingEntities)
+        //                .build();
+
         userEntity = userRepository.save(userEntity);
         UUID updatedUserId = userEntity.getId();
 
@@ -118,8 +124,8 @@ class UserRepositoryTest {
                 () -> assertEquals("anyUpdatedCountry", finalUserEntity.getHometownEntity().getCountry()),
                 () -> assertEquals("anyUpdatedOccupation", finalUserEntity.getOccupation()),
                 () -> assertEquals("anyUpdatedPlacesToVisit", finalUserEntity.getPlacesToVisit()),
-                () -> assertTrue(finalUserEntity.getFriends().size() > 0),
-                () -> assertTrue(finalUserEntity.getFriendOfs().size() > 0),
+                () -> assertTrue(finalUserEntity.getFollowedBy().size() > 0),
+                () -> assertTrue(finalUserEntity.getFollowedBy().size() > 0),
                 () -> assertTrue(finalUserEntity.getHobbyAndInterestEntities().size() > 0)
         );
 
@@ -143,7 +149,16 @@ class UserRepositoryTest {
 
     // Helpers
     @NotNull private UserEntity saveUserEntity() {
-        HometownEntity hometownEntity = HometownEntity.builder().city("anyCity").country("anyCountry").build();
+
+        UserEntity followerEntity = UserEntity.builder().id(UUID.randomUUID()).build();
+        followerEntity = userRepository.save(followerEntity);
+        Set<UserEntity> followerEntities = new HashSet<>();
+        followerEntities.add(followerEntity);
+
+        UserEntity friendEntity = UserEntity.builder().id(UUID.randomUUID()).build();
+        friendEntity = userRepository.save(friendEntity);
+        Set<UserEntity> followingEntities = new HashSet<>();
+        followingEntities.add(friendEntity);
 
         HometownEntity hometownEntity = HometownEntity.builder().city("anyCity").country("anyCountry").build();
         hometownRepository.save(hometownEntity);
@@ -170,6 +185,8 @@ class UserRepositoryTest {
                 .placesToVisit("anyPlacesToVisit")
                 .hometownEntity(hometownEntity)
                 .hobbyAndInterestEntities(hobbyAndInterestEntities)
+                .followerOf(followerEntities)
+                .followedBy(followingEntities)
                 .build();
         userEntity = userRepository.save(userEntity);
 

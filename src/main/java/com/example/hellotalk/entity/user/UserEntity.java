@@ -67,6 +67,20 @@ public class UserEntity {
             inverseJoinColumns = @JoinColumn(name = "hobby_and_interest_id", referencedColumnName = "id"))
     private Set<HobbyAndInterestEntity> hobbyAndInterestEntities;
 
+    @ManyToMany
+    @JoinTable(
+            name = "users_followers",
+            joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "follower_id", referencedColumnName = "id"))
+    private Set<UserEntity> followedBy;
+
+    @ManyToMany
+    @JoinTable(
+            name = "users_followers",
+            joinColumns = @JoinColumn(name = "follower_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"))
+    private Set<UserEntity> followerOf;
+
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
     @JoinColumn(name = "hometown_id", referencedColumnName = "id")
     private HometownEntity hometownEntity;
@@ -77,6 +91,18 @@ public class UserEntity {
         user.getHobbyAndInterests().forEach(h -> hobbyAndInterestEntities.add(HobbyAndInterestEntity.builder()
                 .id(h.getId())
                 .title(h.getTitle())
+                .build()));
+
+        Set<UserEntity> followedBys = new HashSet<>();
+        user.getFollowedBy().forEach(h -> followedBys.add(UserEntity.builder()
+                .id(h.getId())
+                .name(h.getName())
+                .build()));
+
+        Set<UserEntity> followerOfs = new HashSet<>();
+        user.getFollowerOf().forEach(h -> followerOfs.add(UserEntity.builder()
+                .id(h.getId())
+                .name(h.getName())
                 .build()));
 
         return UserEntity.builder()
@@ -93,6 +119,8 @@ public class UserEntity {
                 .targetLanguage(user.getTargetLanguage())
                 .placesToVisit(user.getPlacesToVisit())
                 .hobbyAndInterestEntities(hobbyAndInterestEntities)
+                .followedBy(followedBys)
+                .followerOf(followerOfs)
                 .build();
     }
 }

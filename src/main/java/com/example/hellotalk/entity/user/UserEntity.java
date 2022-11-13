@@ -55,8 +55,8 @@ public class UserEntity {
     private String occupation;
 
     @Column(name = "places_to_visit")
-    private String placesToVisit; 
-    
+    private String placesToVisit;
+
     @Column(name = "subscription_type")
     private String subscriptionType;
 

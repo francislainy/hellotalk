@@ -11,6 +11,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -23,7 +24,7 @@ class UserRepositoryTest {
     @Autowired HobbyAndInterestRepository hobbyAndInterestRepository;
 
     @Test
-    void getUser() {
+    void testGetUser() {
 
         UserEntity userEntity = saveUserEntity();
 
@@ -46,47 +47,88 @@ class UserRepositoryTest {
                 () -> assertEquals("anyCity", finalUserEntity.getHometownEntity().getCity()),
                 () -> assertEquals("anyCountry", finalUserEntity.getHometownEntity().getCountry()),
                 () -> assertEquals("anyOccupation", finalUserEntity.getOccupation()),
-                () -> assertTrue(finalUserEntity.getHobbyAndInterestEntities().size() > 0),
-                () -> assertEquals("anyPlacesToVisit", finalUserEntity.getPlacesToVisit())
+                () -> assertEquals("anyPlacesToVisit", finalUserEntity.getPlacesToVisit()),
+                () -> assertTrue(finalUserEntity.getHobbyAndInterestEntities().size() > 0)
         );
 
         finalUserEntity.getHobbyAndInterestEntities().forEach(h -> assertEquals("anyInterest", h.getTitle()));
     }
 
     @Test
-    void editUser() { //todo
+    void testEditUser() {
 
         UserEntity userEntity = saveUserEntity();
+        UUID originalUserId = userEntity.getId();
 
-        userEntity = userRepository.findById(userEntity.getId()).orElse(null);
         assertTrue(userRepository.findAll().size() > 0);
+        userEntity = userRepository.findById(userEntity.getId()).orElse(null);
         assertNotNull(userEntity);
-        assertNotNull(userRepository.findById(userEntity.getId()));
+
+        HometownEntity hometownEntity = userEntity.getHometownEntity();
+        hometownEntity.setCity("anyUpdatedCity");
+        hometownEntity.setCountry("anyUpdatedCountry");
+        hometownEntity = hometownRepository.save(hometownEntity);
+
+        final HobbyAndInterestEntity[] hobbyAndInterestEntityOriginal = new HobbyAndInterestEntity[1];
+        userEntity.getHobbyAndInterestEntities().forEach(h -> hobbyAndInterestEntityOriginal[0] = h);
+
+        HobbyAndInterestEntity hobbyAndInterestEntity = hobbyAndInterestEntityOriginal[0];
+        hobbyAndInterestEntity.setTitle("anyUpdatedInterest");
+        hobbyAndInterestEntity = hobbyAndInterestRepository.save(hobbyAndInterestEntity);
+        Set<HobbyAndInterestEntity> hobbyAndInterestEntities = new HashSet<>();
+        hobbyAndInterestEntities.add(hobbyAndInterestEntity);
+
+        userEntity.setName("anyUpdatedName");
+        userEntity.setDob("anyUpdatedDob");
+        userEntity.setGender("anyUpdatedGender");
+        userEntity.setSubscriptionType("anyUpdatedSubscriptionType");
+        userEntity.setCreationDate("anyUpdatedCreationDate");
+        userEntity.setHandle("anyUpdatedHandle");
+        userEntity.setStatus("anyUpdatedStatus");
+        userEntity.setNativeLanguage("anyUpdatedNativeLanguage");
+        userEntity.setTargetLanguage("anyUpdatedTargetLanguage");
+        userEntity.setSelfIntroduction("anyUpdatedSelfIntroduction");
+        userEntity.setOccupation("anyUpdatedOccupation");
+        userEntity.setPlacesToVisit("anyUpdatedPlacesToVisit");
+        userEntity.setHometownEntity(hometownEntity);
+        userEntity.setHobbyAndInterestEntities(hobbyAndInterestEntities);
+        userEntity = userRepository.save(userEntity);
+        UUID updatedUserId = userEntity.getId();
+
+        final HobbyAndInterestEntity[] hobbyAndInterestEntityUpdated = new HobbyAndInterestEntity[1];
+        userEntity.getHobbyAndInterestEntities().forEach(h -> hobbyAndInterestEntityUpdated[0] = h);
 
         UserEntity finalUserEntity = userEntity;
+        HometownEntity finalHometownEntity = hometownEntity;
         assertAll(
-                () -> assertEquals("anyName", finalUserEntity.getName()),
-                () -> assertEquals("anyDob", finalUserEntity.getDob()),
-                () -> assertEquals("anyGender", finalUserEntity.getGender()),
-                () -> assertEquals("anySubscriptionType", finalUserEntity.getSubscriptionType()),
-                () -> assertEquals("anyHandle", finalUserEntity.getHandle()),
-                () -> assertEquals("anyStatus", finalUserEntity.getStatus()),
-                () -> assertEquals("anyCreationDate", finalUserEntity.getCreationDate()),
-                () -> assertEquals("anyNativeLanguage", finalUserEntity.getNativeLanguage()),
-                () -> assertEquals("anyTargetLanguage", finalUserEntity.getTargetLanguage()),
-                () -> assertEquals("anySelfIntroduction", finalUserEntity.getSelfIntroduction()),
-                () -> assertEquals("anyCity", finalUserEntity.getHometownEntity().getCity()),
-                () -> assertEquals("anyCountry", finalUserEntity.getHometownEntity().getCountry()),
-                () -> assertEquals("anyOccupation", finalUserEntity.getOccupation()),
-                () -> assertTrue(finalUserEntity.getHobbyAndInterestEntities().size() > 0),
-                () -> assertEquals("anyPlacesToVisit", finalUserEntity.getPlacesToVisit())
+                () -> assertEquals("anyUpdatedName", finalUserEntity.getName()),
+                () -> assertEquals(originalUserId, updatedUserId),
+                () -> assertEquals("anyUpdatedDob", finalUserEntity.getDob()),
+                () -> assertEquals("anyUpdatedGender", finalUserEntity.getGender()),
+                () -> assertEquals("anyUpdatedSubscriptionType", finalUserEntity.getSubscriptionType()),
+                () -> assertEquals("anyUpdatedHandle", finalUserEntity.getHandle()),
+                () -> assertEquals("anyUpdatedStatus", finalUserEntity.getStatus()),
+                () -> assertEquals("anyUpdatedCreationDate", finalUserEntity.getCreationDate()),
+                () -> assertEquals("anyUpdatedNativeLanguage", finalUserEntity.getNativeLanguage()),
+                () -> assertEquals("anyUpdatedTargetLanguage", finalUserEntity.getTargetLanguage()),
+                () -> assertEquals("anyUpdatedSelfIntroduction", finalUserEntity.getSelfIntroduction()),
+                () -> assertEquals(finalHometownEntity.getId(), finalUserEntity.getHometownEntity().getId()),
+                () -> assertEquals("anyUpdatedCity", finalUserEntity.getHometownEntity().getCity()),
+                () -> assertEquals("anyUpdatedCountry", finalUserEntity.getHometownEntity().getCountry()),
+                () -> assertEquals("anyUpdatedCountry", finalUserEntity.getHometownEntity().getCountry()),
+                () -> assertEquals("anyUpdatedOccupation", finalUserEntity.getOccupation()),
+                () -> assertEquals("anyUpdatedPlacesToVisit", finalUserEntity.getPlacesToVisit()),
+                () -> assertTrue(finalUserEntity.getFriends().size() > 0),
+                () -> assertTrue(finalUserEntity.getFriendOfs().size() > 0),
+                () -> assertTrue(finalUserEntity.getHobbyAndInterestEntities().size() > 0)
         );
 
-        finalUserEntity.getHobbyAndInterestEntities().forEach(h -> assertEquals("anyInterest", h.getTitle()));
+        finalUserEntity.getHobbyAndInterestEntities().forEach(h -> assertEquals("anyUpdatedInterest", h.getTitle()));
+        finalUserEntity.getHobbyAndInterestEntities().forEach(h -> assertEquals(hobbyAndInterestEntityOriginal[0].getId(), hobbyAndInterestEntityUpdated[0].getId()));
     }
 
     @Test
-    void deleteUser() {
+    void testDeleteUser() {
 
         UserEntity userEntity = saveUserEntity();
 
@@ -103,6 +145,7 @@ class UserRepositoryTest {
     @NotNull private UserEntity saveUserEntity() {
         HometownEntity hometownEntity = HometownEntity.builder().city("anyCity").country("anyCountry").build();
 
+        HometownEntity hometownEntity = HometownEntity.builder().city("anyCity").country("anyCountry").build();
         hometownRepository.save(hometownEntity);
 
         HobbyAndInterestEntity hobbyAndInterestEntity = HobbyAndInterestEntity.builder()
@@ -116,6 +159,7 @@ class UserRepositoryTest {
                 .name("anyName")
                 .dob("anyDob")
                 .gender("anyGender")
+                .subscriptionType("anySubscriptionType")
                 .creationDate("anyCreationDate")
                 .handle("anyHandle")
                 .status("anyStatus")
@@ -126,7 +170,6 @@ class UserRepositoryTest {
                 .placesToVisit("anyPlacesToVisit")
                 .hometownEntity(hometownEntity)
                 .hobbyAndInterestEntities(hobbyAndInterestEntities)
-                .subscriptionType("anySubscriptionType")
                 .build();
         userEntity = userRepository.save(userEntity);
 

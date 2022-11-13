@@ -44,6 +44,7 @@ public class UserServiceImpl implements UserService {
                     .dob(userEntity.getDob())
                     .status(userEntity.getStatus())
                     .gender(userEntity.getGender())
+                    .subscriptionType(userEntity.getSubscriptionType())
                     .creationDate(userEntity.getCreationDate())
                     .handle(userEntity.getHandle())
                     .nativeLanguage(userEntity.getNativeLanguage())

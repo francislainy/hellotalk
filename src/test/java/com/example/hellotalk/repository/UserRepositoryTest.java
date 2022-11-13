@@ -36,6 +36,7 @@ class UserRepositoryTest {
                 () -> assertEquals("anyName", finalUserEntity.getName()),
                 () -> assertEquals("anyDob", finalUserEntity.getDob()),
                 () -> assertEquals("anyGender", finalUserEntity.getGender()),
+                () -> assertEquals("anySubscriptionType", finalUserEntity.getSubscriptionType()),
                 () -> assertEquals("anyHandle", finalUserEntity.getHandle()),
                 () -> assertEquals("anyStatus", finalUserEntity.getStatus()),
                 () -> assertEquals("anyCreationDate", finalUserEntity.getCreationDate()),
@@ -67,6 +68,7 @@ class UserRepositoryTest {
                 () -> assertEquals("anyName", finalUserEntity.getName()),
                 () -> assertEquals("anyDob", finalUserEntity.getDob()),
                 () -> assertEquals("anyGender", finalUserEntity.getGender()),
+                () -> assertEquals("anySubscriptionType", finalUserEntity.getSubscriptionType()),
                 () -> assertEquals("anyHandle", finalUserEntity.getHandle()),
                 () -> assertEquals("anyStatus", finalUserEntity.getStatus()),
                 () -> assertEquals("anyCreationDate", finalUserEntity.getCreationDate()),
@@ -124,6 +126,7 @@ class UserRepositoryTest {
                 .placesToVisit("anyPlacesToVisit")
                 .hometownEntity(hometownEntity)
                 .hobbyAndInterestEntities(hobbyAndInterestEntities)
+                .subscriptionType("anySubscriptionType")
                 .build();
         userEntity = userRepository.save(userEntity);
 

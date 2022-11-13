@@ -58,6 +58,7 @@ class UserServiceTest {
                 .occupation("anyOccupation")
                 .selfIntroduction("anySelfIntroduction")
                 .placesToVisit("anyPlacesToVisit")
+                .subscriptionType("anySubscriptionType")
                 .hometownEntity(buildHometownEntity(hometown))
                 .hobbyAndInterestEntities(hobbyAndInterestEntities)
                 .build();
@@ -74,6 +75,7 @@ class UserServiceTest {
                 () -> assertEquals("anyName", user.getName()),
                 () -> assertEquals("anyDob", user.getDob()),
                 () -> assertEquals("anyGender", user.getGender()),
+                () -> assertEquals("anySubscriptionType", user.getSubscriptionType()),
                 () -> assertEquals("anyCreationDate", user.getCreationDate()),
                 () -> assertEquals("anyStatus", user.getStatus()),
                 () -> assertEquals("anyHandle", user.getHandle()),
@@ -101,6 +103,7 @@ class UserServiceTest {
                 () -> assertEquals("anyName", user.getName()),
                 () -> assertEquals("anyDob", user.getDob()),
                 () -> assertEquals("anyGender", user.getGender()),
+                () -> assertEquals("anySubscriptionType", user.getSubscriptionType()),
                 () -> assertEquals("anyCreationDate", user.getCreationDate()),
                 () -> assertEquals("anyStatus", user.getStatus()),
                 () -> assertEquals("anyHandle", user.getHandle()),
@@ -129,6 +132,7 @@ class UserServiceTest {
                 .name("anyUpdatedName")
                 .dob("anyUpdatedDob")
                 .gender("anyUpdatedGender")
+                .subscriptionType("anyUpdatedSubscriptionType")
                 .selfIntroduction("anyUpdatedSelfIntroduction")
                 .creationDate("anyUpdatedCreationDate")
                 .handle("anyUpdatedHandle")
@@ -153,6 +157,7 @@ class UserServiceTest {
                 () -> assertEquals("anyUpdatedName", finalUser.getName()),
                 () -> assertEquals("anyUpdatedDob", finalUser.getDob()),
                 () -> assertEquals("anyUpdatedGender", finalUser.getGender()),
+                () -> assertEquals("anyUpdatedSubscriptionType", finalUser.getSubscriptionType()),
                 () -> assertEquals("anyUpdatedSelfIntroduction", finalUser.getSelfIntroduction()),
                 () -> assertEquals("anyUpdatedCreationDate", finalUser.getCreationDate()),
                 () -> assertEquals("anyUpdatedHandle", finalUser.getHandle()),

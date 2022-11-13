@@ -28,6 +28,7 @@ public class User {
     private String targetLanguage;
     private String occupation;
     private String placesToVisit;
+    private String subscriptionType;
 
     private Hometown hometown;
     private Set<HobbyAndInterest> hobbyAndInterests;
@@ -45,6 +46,7 @@ public class User {
                 .name(userEntity.getName())
                 .dob(userEntity.getDob())
                 .gender(userEntity.getGender())
+                .subscriptionType(userEntity.getSubscriptionType())
                 .creationDate(userEntity.getCreationDate())
                 .handle(userEntity.getHandle())
                 .status(userEntity.getStatus())

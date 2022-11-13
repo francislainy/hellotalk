@@ -55,7 +55,10 @@ public class UserEntity {
     private String occupation;
 
     @Column(name = "places_to_visit")
-    private String placesToVisit;
+    private String placesToVisit; 
+    
+    @Column(name = "subscription_type")
+    private String subscriptionType;
 
     @ManyToMany
     @JoinTable(
@@ -80,6 +83,7 @@ public class UserEntity {
                 .name(user.getName())
                 .dob(user.getDob())
                 .gender(user.getGender())
+                .subscriptionType(user.getSubscriptionType())
                 .selfIntroduction(user.getSelfIntroduction())
                 .creationDate(user.getCreationDate())
                 .status(user.getStatus())

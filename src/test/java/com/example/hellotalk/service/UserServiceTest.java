@@ -7,7 +7,9 @@ import com.example.hellotalk.model.user.Hometown;
 import com.example.hellotalk.model.user.User;
 import com.example.hellotalk.repository.UserRepository;
 import com.example.hellotalk.service.impl.user.UserServiceImpl;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -24,6 +26,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class UserServiceTest {
 
     @Mock
@@ -32,16 +35,17 @@ class UserServiceTest {
     @InjectMocks
     UserServiceImpl userService;
 
-    @Test
-    void testGetUser() {
+    private UserEntity userEntity;
+    private final UUID userId = UUID.fromString("1bfff94a-b70e-4b39-bd2a-be1c0f898589");
 
-        UUID userId = UUID.fromString("1bfff94a-b70e-4b39-bd2a-be1c0f898589");
+    @BeforeEach
+    void setUp() {
+
         Hometown hometown = Hometown.builder().city("anyCity").country("anyCountry").build();
         HobbyAndInterestEntity hobbyAndInterestEntity = HobbyAndInterestEntity.builder().title("anyInterest").build();
         Set<HobbyAndInterestEntity> hobbyAndInterestEntities = new HashSet<>();
         hobbyAndInterestEntities.add(hobbyAndInterestEntity);
-
-        UserEntity userEntity = UserEntity.builder()
+        userEntity = UserEntity.builder()
                 .id(userId)
                 .name("anyName")
                 .dob("anyDob")
@@ -57,6 +61,11 @@ class UserServiceTest {
                 .hometownEntity(buildHometownEntity(hometown))
                 .hobbyAndInterestEntities(hobbyAndInterestEntities)
                 .build();
+    }
+
+    @Test
+    void testGetUser() {
+
         when(userRepository.findById(any())).thenReturn(Optional.of(userEntity));
 
         User user = userService.getUser(UUID.randomUUID());
@@ -84,32 +93,9 @@ class UserServiceTest {
     @Test
     void testCreateUser() {
 
-        UUID userId = UUID.fromString("1bfff94a-b70e-4b39-bd2a-be1c0f898589");
-        Hometown hometown = Hometown.builder().city("anyCity").country("anyCountry").build();
-        HobbyAndInterestEntity hobbyAndInterestEntity = HobbyAndInterestEntity.builder().title("anyInterest").build();
-        Set<HobbyAndInterestEntity> hobbyAndInterestEntities = new HashSet<>();
-        hobbyAndInterestEntities.add(hobbyAndInterestEntity);
-
-        UserEntity userEntity = UserEntity.builder()
-                .id(userId)
-                .name("anyName")
-                .dob("anyDob")
-                .gender("anyGender")
-                .creationDate("anyCreationDate")
-                .handle("anyHandle")
-                .status("anyStatus")
-                .nativeLanguage("anyNativeLanguage")
-                .targetLanguage("anyTargetLanguage")
-                .occupation("anyOccupation")
-                .selfIntroduction("anySelfIntroduction")
-                .placesToVisit("anyPlacesToVisit")
-                .hometownEntity(buildHometownEntity(hometown))
-                .hobbyAndInterestEntities(hobbyAndInterestEntities)
-                .build();
         when(userRepository.save(any())).thenReturn(userEntity);
 
         User user = userService.createUser(User.buildUserFromEntity(userEntity));
-
         assertAll(
                 () -> assertNotNull(user.getId()),
                 () -> assertEquals("anyName", user.getName()),
@@ -133,29 +119,6 @@ class UserServiceTest {
 
     @Test
     void testUpdateUserDetails() {
-
-        UUID userId = UUID.fromString("1bfff94a-b70e-4b39-bd2a-be1c0f898589");
-        Hometown hometown = Hometown.builder().city("anyCity").country("anyCountry").build();
-        HobbyAndInterestEntity hobbyAndInterestEntity = HobbyAndInterestEntity.builder().title("anyInterest").build();
-        Set<HobbyAndInterestEntity> hobbyAndInterestEntities = new HashSet<>();
-        hobbyAndInterestEntities.add(hobbyAndInterestEntity);
-
-        UserEntity userEntity = UserEntity.builder()
-                .id(userId)
-                .name("anyName")
-                .dob("anyDob")
-                .gender("anyGender")
-                .selfIntroduction("anySelfIntroduction")
-                .creationDate("anyCreationDate")
-                .handle("anyHandle")
-                .status("anyStatus")
-                .nativeLanguage("anyNativeLanguage")
-                .targetLanguage("anyTargetLanguage")
-                .occupation("anyOccupation")
-                .placesToVisit("anyPlacesToVisit")
-                .hometownEntity(buildHometownEntity(hometown))
-                .hobbyAndInterestEntities(hobbyAndInterestEntities)
-                .build();
 
         HobbyAndInterestEntity hobbyAndInterestEntityUpdated = HobbyAndInterestEntity.builder().title("anyUpdatedInterest").build();
         Set<HobbyAndInterestEntity> hobbyAndInterestEntitiesUpdated = new HashSet<>();
@@ -207,31 +170,7 @@ class UserServiceTest {
     @Test
     void testUpdateUserDetails_ThrowsExceptionWhenUserIsNotFound() {
 
-        UUID userId = UUID.fromString("1bfff94a-b70e-4b39-bd2a-be1c0f898589");
-        Hometown hometown = Hometown.builder().city("anyCity").country("anyCountry").build();
-        HobbyAndInterestEntity hobbyAndInterestEntity = HobbyAndInterestEntity.builder().title("anyInterest").build();
-        Set<HobbyAndInterestEntity> hobbyAndInterestEntities = new HashSet<>();
-        hobbyAndInterestEntities.add(hobbyAndInterestEntity);
-
-        UserEntity userEntity = UserEntity.builder()
-                .id(userId)
-                .name("anyName")
-                .dob("anyDob")
-                .gender("anyGender")
-                .selfIntroduction("anySelfIntroduction")
-                .creationDate("anyCreationDate")
-                .handle("anyHandle")
-                .status("anyStatus")
-                .nativeLanguage("anyNativeLanguage")
-                .targetLanguage("anyTargetLanguage")
-                .occupation("anyOccupation")
-                .placesToVisit("anyPlacesToVisit")
-                .hometownEntity(buildHometownEntity(hometown))
-                .hobbyAndInterestEntities(hobbyAndInterestEntities)
-                .build();
-
         User user = User.buildUserFromEntity(userEntity);
-
         UserDoesNotExistExistException exception =
                 assertThrows(UserDoesNotExistExistException.class, () -> userService.updateUser(userId, user));
 
@@ -241,34 +180,10 @@ class UserServiceTest {
     @Test
     void testDeleteUser() {
 
-        UUID userId = UUID.fromString("1bfff94a-b70e-4b39-bd2a-be1c0f898589");
-        Hometown hometown = Hometown.builder().city("anyCity").country("anyCountry").build();
-        HobbyAndInterestEntity hobbyAndInterestEntity = HobbyAndInterestEntity.builder().title("anyInterest").build();
-        Set<HobbyAndInterestEntity> hobbyAndInterestEntities = new HashSet<>();
-        hobbyAndInterestEntities.add(hobbyAndInterestEntity);
-
-        UserEntity userEntity = UserEntity.builder()
-                .id(userId)
-                .name("anyName")
-                .dob("anyDob")
-                .gender("anyGender")
-                .selfIntroduction("anySelfIntroduction")
-                .creationDate("anyCreationDate")
-                .handle("anyHandle")
-                .status("anyStatus")
-                .nativeLanguage("anyNativeLanguage")
-                .targetLanguage("anyTargetLanguage")
-                .occupation("anyOccupation")
-                .placesToVisit("anyPlacesToVisit")
-                .hometownEntity(buildHometownEntity(hometown))
-                .hobbyAndInterestEntities(hobbyAndInterestEntities)
-                .build();
-
-        when(userRepository.findById(any())).thenReturn(Optional.of(userEntity)); //todo: test for when exception is thrown - 09/11/2022
-        
+        when(userRepository.findById(any())).thenReturn(Optional.of(userEntity));
         assertDoesNotThrow(() -> userService.deleteUser(userId));
     }
-    
+
     @Test
     void testDeleteUser_ThrowsExceptionUserNotFound() {
 

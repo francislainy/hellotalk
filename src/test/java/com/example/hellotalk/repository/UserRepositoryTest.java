@@ -3,9 +3,8 @@ package com.example.hellotalk.repository;
 import com.example.hellotalk.entity.user.HobbyAndInterestEntity;
 import com.example.hellotalk.entity.user.HometownEntity;
 import com.example.hellotalk.entity.user.UserEntity;
-import org.junit.jupiter.api.BeforeAll;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -17,52 +16,16 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class UserRepositoryTest extends PostgresContainer { // We can use both this class or BaseIntegrationClass
+class UserRepositoryTest {
 
     @Autowired UserRepository userRepository;
     @Autowired HometownRepository hometownRepository;
     @Autowired HobbyAndInterestRepository hobbyAndInterestRepository;
 
-    private UserEntity userEntity;
-    private HometownEntity hometownEntity;
-    private HobbyAndInterestEntity hobbyAndInterestEntity;
-
-    @BeforeAll
-    void setUp() {
-
-        hometownEntity = HometownEntity.builder().city("anyCity").country("anyCountry").build();
-        hobbyAndInterestEntity = HobbyAndInterestEntity.builder()
-                .title("anyInterest")
-                .build();
-        hobbyAndInterestEntity = hobbyAndInterestRepository.save(hobbyAndInterestEntity);
-        Set<HobbyAndInterestEntity> hobbyAndInterestEntities = new HashSet<>();
-        hobbyAndInterestEntities.add(hobbyAndInterestEntity);
-        userEntity = UserEntity.builder()
-                .name("anyName")
-                .dob("anyDob")
-                .gender("anyGender")
-                .creationDate("anyCreationDate")
-                .handle("anyHandle")
-                .status("anyStatus")
-                .nativeLanguage("anyNativeLanguage")
-                .targetLanguage("anyTargetLanguage")
-                .selfIntroduction("anySelfIntroduction")
-                .occupation("anyOccupation")
-                .placesToVisit("anyPlacesToVisit")
-                .hometownEntity(hometownEntity)
-                .hobbyAndInterestEntities(hobbyAndInterestEntities)
-                .build();
-    }
-
     @Test
     void getUser() {
 
-        hometownRepository.save(hometownEntity);
-        userEntity = userRepository.save(userEntity);
-
-        Set<UserEntity> userEntitySet = new HashSet<>();
-        hobbyAndInterestEntity.setUserEntities(userEntitySet);
+        UserEntity userEntity = saveUserEntity();
 
         assertTrue(userRepository.findAll().size() > 0);
         userEntity = userRepository.findById(userEntity.getId()).orElse(null);
@@ -91,12 +54,8 @@ class UserRepositoryTest extends PostgresContainer { // We can use both this cla
 
     @Test
     void editUser() { //todo
-        
-        hometownRepository.save(hometownEntity);
-        userEntity = userRepository.save(userEntity);
 
-        Set<UserEntity> userEntitySet = new HashSet<>();
-        hobbyAndInterestEntity.setUserEntities(userEntitySet);
+        UserEntity userEntity = saveUserEntity();
 
         userEntity = userRepository.findById(userEntity.getId()).orElse(null);
         assertTrue(userRepository.findAll().size() > 0);
@@ -127,12 +86,7 @@ class UserRepositoryTest extends PostgresContainer { // We can use both this cla
     @Test
     void deleteUser() {
 
-        hometownRepository.save(hometownEntity);
-        hobbyAndInterestEntity = hobbyAndInterestRepository.save(hobbyAndInterestEntity);
-        userEntity = userRepository.save(userEntity);
-
-        Set<UserEntity> userEntitySet = new HashSet<>();
-        hobbyAndInterestEntity.setUserEntities(userEntitySet);
+        UserEntity userEntity = saveUserEntity();
 
         assertTrue(userRepository.findAll().size() > 0);
         userEntity = userRepository.findById(userEntity.getId()).orElse(null);
@@ -141,5 +95,40 @@ class UserRepositoryTest extends PostgresContainer { // We can use both this cla
         userRepository.delete(userEntity);
 
         assertTrue(userRepository.findById(userEntity.getId()).isEmpty());
+    }
+
+    // Helpers
+    @NotNull private UserEntity saveUserEntity() {
+        HometownEntity hometownEntity = HometownEntity.builder().city("anyCity").country("anyCountry").build();
+
+        hometownRepository.save(hometownEntity);
+
+        HobbyAndInterestEntity hobbyAndInterestEntity = HobbyAndInterestEntity.builder()
+                .title("anyInterest")
+                .build();
+        hobbyAndInterestEntity = hobbyAndInterestRepository.save(hobbyAndInterestEntity);
+        Set<HobbyAndInterestEntity> hobbyAndInterestEntities = new HashSet<>();
+        hobbyAndInterestEntities.add(hobbyAndInterestEntity);
+
+        UserEntity userEntity = UserEntity.builder()
+                .name("anyName")
+                .dob("anyDob")
+                .gender("anyGender")
+                .creationDate("anyCreationDate")
+                .handle("anyHandle")
+                .status("anyStatus")
+                .nativeLanguage("anyNativeLanguage")
+                .targetLanguage("anyTargetLanguage")
+                .selfIntroduction("anySelfIntroduction")
+                .occupation("anyOccupation")
+                .placesToVisit("anyPlacesToVisit")
+                .hometownEntity(hometownEntity)
+                .hobbyAndInterestEntities(hobbyAndInterestEntities)
+                .build();
+        userEntity = userRepository.save(userEntity);
+
+        Set<UserEntity> userEntitySet = new HashSet<>();
+        hobbyAndInterestEntity.setUserEntities(userEntitySet);
+        return userEntity;
     }
 }

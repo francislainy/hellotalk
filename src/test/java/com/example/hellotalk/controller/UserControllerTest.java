@@ -5,7 +5,6 @@ import com.example.hellotalk.model.user.HobbyAndInterest;
 import com.example.hellotalk.model.user.Hometown;
 import com.example.hellotalk.model.user.User;
 import com.example.hellotalk.service.user.UserService;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -29,6 +28,7 @@ import java.util.UUID;
 
 import static com.example.hellotalk.util.Utils.convertToNewObject;
 import static com.example.hellotalk.util.Utils.jsonStringFromObject;
+import static java.util.UUID.randomUUID;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
@@ -46,20 +46,32 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class UserControllerTest {
 
     private UUID userId;
-    private User user;
+    private User userRequest;
+    private User userResponse;
+    private String jsonRequest;
+    private String jsonResponse;
+
+    @Autowired MockMvc mockMvc;
+
+    @MockBean UserService userService;
 
     @BeforeAll
     void initData() {
         userId = UUID.fromString("1bfff94a-b70e-4b39-bd2a-be1c0f898589");
 
-        Hometown hometown = Hometown.builder().city("anyCity").country("anyCountry").build();
-        HobbyAndInterest hobbyAndInterest = HobbyAndInterest.builder()
-                .title("anyInterest")
-                .build();
-        Set<HobbyAndInterest> hobbyAndInterests = new HashSet<>();
-        hobbyAndInterests.add(hobbyAndInterest);
+        Hometown hometownRequest = Hometown.builder().city("anyCity").country("anyCountry").build();
+        Hometown hometownResponse = convertToNewObject(hometownRequest, Hometown.class);
+        hometownResponse.setId(randomUUID());
+        HobbyAndInterest hobbyAndInterestRequest = HobbyAndInterest.builder().title("anyInterest").build();
+        Set<HobbyAndInterest> hobbyAndInterestsRequest = new HashSet<>();
+        hobbyAndInterestsRequest.add(hobbyAndInterestRequest);
 
-        user = User.builder()
+        HobbyAndInterest hobbyAndInterestResponse = convertToNewObject(hobbyAndInterestRequest, HobbyAndInterest.class);
+        hobbyAndInterestResponse.setId(randomUUID());
+        Set<HobbyAndInterest> hobbyAndInterestsResponse = new HashSet<>();
+        hobbyAndInterestsResponse.add(hobbyAndInterestResponse);
+
+        userRequest = User.builder()
                 .name("anyName")
                 .dob("anyDob")
                 .gender("anyGender")
@@ -72,9 +84,17 @@ class UserControllerTest {
                 .selfIntroduction("anySelfIntroduction")
                 .occupation("anyOccupation")
                 .placesToVisit("anyPlacesToVisit")
-                .hometown(hometown)
-                .hobbyAndInterests(hobbyAndInterests)
+                .hometown(hometownRequest)
+                .hobbyAndInterests(hobbyAndInterestsRequest)
                 .build();
+
+        jsonRequest = jsonStringFromObject(userRequest);
+        userResponse = convertToNewObject(userRequest, User.class);
+        userResponse.setId(userId);
+        userResponse.setHometown(hometownResponse);
+        userResponse.setHobbyAndInterests(hobbyAndInterestsResponse);
+
+        jsonResponse = jsonStringFromObject(userResponse);
     }
 
     @BeforeEach
@@ -86,63 +106,45 @@ class UserControllerTest {
                 .build();
     }
 
-    @Autowired MockMvc mockMvc;
-
-    @MockBean UserService userService;
-
     @Test
     void testGetUser() throws Exception {
 
-        when(userService.getUser(userId)).thenReturn(user);
+        when(userService.getUser(userId)).thenReturn(userResponse);
 
         mockMvc.perform(get("/api/v1/ht/user/{userId}", userId))
-                .andExpect(status().is2xxSuccessful());
+                .andExpect(status().is2xxSuccessful())
+                .andExpect(content().json(jsonResponse));
     }
 
     @Test
     void testCreateUser() throws Exception {
 
-        String json = jsonStringFromObject(user);
-        ObjectMapper objectMapper = new ObjectMapper();
-        User userWithId = objectMapper.readValue(json, User.class);
-        userWithId.setId(userId);
+        when(userService.createUser(any())).thenReturn(userResponse);
 
-        String jsonWithId = jsonStringFromObject(userWithId);
-
-        when(userService.createUser(any())).thenReturn(userWithId);
-
-        mockMvc.perform(post("/api/v1/ht/user").content(json).contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(post("/api/v1/ht/user").content(jsonRequest).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is2xxSuccessful())
-                .andExpect(content().json(jsonWithId));
+                .andExpect(content().json(jsonResponse));
     }
 
     @Test
     void testUpdateUser() throws Exception {
 
-        String json = jsonStringFromObject(user);
-        User userWithId = convertToNewObject(user, User.class);
-        userWithId.setId(userId);
-
-        String jsonWithId = jsonStringFromObject(userWithId);
-
-        when(userService.updateUser(any(), any())).thenReturn(userWithId);
+        when(userService.updateUser(any(), any())).thenReturn(userResponse);
 
         mockMvc.perform(put("/api/v1/ht/user/{userId}", userId)
-                        .content(json)
+                        .content(jsonRequest)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is2xxSuccessful())
-                .andExpect(content().json(jsonWithId));
+                .andExpect(content().json(jsonResponse));
     }
 
     @Test
     void testUpdateUser_ThrowsExceptionWhenUserDoesNotExist() throws Exception {
 
-        String json = jsonStringFromObject(user);
-
         when(userService.updateUser(any(), any())).thenThrow(new UserDoesNotExistExistException("No user found with this id"));
 
         mockMvc.perform(put("/api/v1/ht/user/{userId}", userId)
-                        .content(json)
+                        .content(jsonRequest)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is(204))
                 .andExpect(content().string("No user found with this id"));
@@ -151,7 +153,7 @@ class UserControllerTest {
     @Test
     void testDeleteUser() throws Exception {
 
-        when(userService.getUser(any())).thenReturn(user);
+        when(userService.getUser(any())).thenReturn(userResponse);
 
         mockMvc.perform(delete("/api/v1/ht/user/{userId}", userId).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is2xxSuccessful());

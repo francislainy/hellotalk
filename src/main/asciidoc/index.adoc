@@ -1,0 +1,41 @@
+= Getting Started With Spring REST Docs
+
+This is an example output for a service running at http://localhost:8080:
+
+.request
+include::{snippets}/test-create-user/http-request.adoc[]
+
+.response
+include::{snippets}/test-create-user/http-response.adoc[]
+
+.request
+include::{snippets}/test-delete-user/http-request.adoc[]
+
+.response
+include::{snippets}/test-delete-user/http-response.adoc[]
+
+.request
+include::{snippets}/test-delete-user_-throws-exception-when-user-not-found/http-request.adoc[]
+
+.response
+include::{snippets}/test-delete-user_-throws-exception-when-user-not-found/http-response.adoc[]
+
+.request
+include::{snippets}/test-get-user/http-request.adoc[]
+
+.response
+include::{snippets}/test-get-user/http-response.adoc[]
+
+.request
+include::{snippets}/test-update-user/http-request.adoc[]
+
+.response
+include::{snippets}/test-update-user/http-response.adoc[]
+
+.request
+include::{snippets}/test-update-user_-throws-exception-when-user-does-not-exist/http-request.adoc[]
+
+.response
+include::{snippets}/test-update-user_-throws-exception-when-user-does-not-exist/http-response.adoc[]
+
+As you can see the format is very simple, and in fact you always get the same message.

@@ -67,23 +67,15 @@ public class UserEntity {
             inverseJoinColumns = @JoinColumn(name = "hobby_and_interest_id", referencedColumnName = "id"))
     private Set<HobbyAndInterestEntity> hobbyAndInterestEntities;
 
-    @ManyToMany
-    @JoinTable(
-            name = "users_followers",
-            joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name = "follower_id", referencedColumnName = "id"))
-    private Set<UserEntity> followedBy;
-
-    @ManyToMany
-    @JoinTable(
-            name = "users_followers",
-            joinColumns = @JoinColumn(name = "follower_id", referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"))
-    private Set<UserEntity> followerOf;
-
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
     @JoinColumn(name = "hometown_id", referencedColumnName = "id")
     private HometownEntity hometownEntity;
+
+    @OneToMany(mappedBy = "userReceiverEntity", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = false)
+    private Set<FollowingRequestEntity> followedByEntity;
+
+    @OneToMany(mappedBy = "userSenderEntity", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = false)
+    private Set<FollowingRequestEntity> followerOfEntity;
 
     public static UserEntity buildUserEntityFromModel(User user) {
 
@@ -93,16 +85,21 @@ public class UserEntity {
                 .title(h.getTitle())
                 .build()));
 
-        Set<UserEntity> followedBys = new HashSet<>();
-        user.getFollowedBy().forEach(h -> followedBys.add(UserEntity.builder()
-                .id(h.getId())
-                .name(h.getName())
+        Set<FollowingRequestEntity> followedBys = new HashSet<>();
+        user.getFollowedBy().forEach(h -> followedBys.add(FollowingRequestEntity.builder()
+                .userReceiverEntity(UserEntity.builder()
+                        .id(h.getId())
+                        .name(h.getDob())
+                        .dob(h.getDob())
+                        .build())
                 .build()));
 
-        Set<UserEntity> followerOfs = new HashSet<>();
-        user.getFollowerOf().forEach(h -> followerOfs.add(UserEntity.builder()
-                .id(h.getId())
-                .name(h.getName())
+        Set<FollowingRequestEntity> followerOfs = new HashSet<>();
+        user.getFollowerOf().forEach(h -> followerOfs.add(FollowingRequestEntity.builder()
+                .userSenderEntity(UserEntity.builder().id(h.getId())
+                        .name(h.getName())
+                        .dob(h.getDob()) // todo: add more fields
+                        .build())
                 .build()));
 
         return UserEntity.builder()
@@ -119,8 +116,8 @@ public class UserEntity {
                 .targetLanguage(user.getTargetLanguage())
                 .placesToVisit(user.getPlacesToVisit())
                 .hobbyAndInterestEntities(hobbyAndInterestEntities)
-                .followedBy(followedBys)
-                .followerOf(followerOfs)
+                .followedByEntity(followedBys)
+                .followerOfEntity(followerOfs)
                 .build();
     }
 }

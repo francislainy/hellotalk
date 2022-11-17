@@ -1,5 +1,6 @@
 package com.example.hellotalk.repository;
 
+import com.example.hellotalk.entity.user.FollowingRequestEntity;
 import com.example.hellotalk.entity.user.HobbyAndInterestEntity;
 import com.example.hellotalk.entity.user.HometownEntity;
 import com.example.hellotalk.entity.user.UserEntity;
@@ -20,6 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class UserRepositoryTest {
 
     @Autowired UserRepository userRepository;
+    @Autowired FollowingRequestRepository followingRequestRepository;
     @Autowired HometownRepository hometownRepository;
     @Autowired HobbyAndInterestRepository hobbyAndInterestRepository;
 
@@ -48,8 +50,8 @@ class UserRepositoryTest {
                 () -> assertEquals("anyCountry", finalUserEntity.getHometownEntity().getCountry()),
                 () -> assertEquals("anyOccupation", finalUserEntity.getOccupation()),
                 () -> assertEquals("anyPlacesToVisit", finalUserEntity.getPlacesToVisit()),
-                () -> assertTrue(finalUserEntity.getFollowedBy().size() > 0),
-                () -> assertTrue(finalUserEntity.getFollowerOf().size() > 0),
+                () -> assertTrue(finalUserEntity.getFollowedByEntity().size() > 0),
+                () -> assertTrue(finalUserEntity.getFollowerOfEntity().size() > 0),
                 () -> assertTrue(finalUserEntity.getHobbyAndInterestEntities().size() > 0)
         );
 
@@ -65,47 +67,16 @@ class UserRepositoryTest {
         assertTrue(userRepository.findAll().size() > 0);
         userEntity = userRepository.findById(userEntity.getId()).orElse(null);
         assertNotNull(userEntity);
-
-        HometownEntity hometownEntity = userEntity.getHometownEntity();
-        hometownEntity.setCity("anyUpdatedCity");
-        hometownEntity.setCountry("anyUpdatedCountry");
-        hometownEntity = hometownRepository.save(hometownEntity);
-
         final HobbyAndInterestEntity[] hobbyAndInterestEntityOriginal = new HobbyAndInterestEntity[1];
         userEntity.getHobbyAndInterestEntities().forEach(h -> hobbyAndInterestEntityOriginal[0] = h);
 
-        HobbyAndInterestEntity hobbyAndInterestEntity = hobbyAndInterestEntityOriginal[0];
-        hobbyAndInterestEntity.setTitle("anyUpdatedInterest");
-        hobbyAndInterestEntity = hobbyAndInterestRepository.save(hobbyAndInterestEntity);
-        Set<HobbyAndInterestEntity> hobbyAndInterestEntities = new HashSet<>();
-        hobbyAndInterestEntities.add(hobbyAndInterestEntity);
-
-        userEntity.setName("anyUpdatedName");
-        userEntity.setDob("anyUpdatedDob");
-        userEntity.setGender("anyUpdatedGender");
-        userEntity.setSubscriptionType("anyUpdatedSubscriptionType");
-        userEntity.setCreationDate("anyUpdatedCreationDate");
-        userEntity.setHandle("anyUpdatedHandle");
-        userEntity.setStatus("anyUpdatedStatus");
-        userEntity.setNativeLanguage("anyUpdatedNativeLanguage");
-        userEntity.setTargetLanguage("anyUpdatedTargetLanguage");
-        userEntity.setSelfIntroduction("anyUpdatedSelfIntroduction");
-        userEntity.setOccupation("anyUpdatedOccupation");
-        userEntity.setPlacesToVisit("anyUpdatedPlacesToVisit");
-        userEntity.setHometownEntity(hometownEntity);
-        userEntity.setHobbyAndInterestEntities(hobbyAndInterestEntities);
-        //                .friends(followerEntities)
-        //                .friendOfs(followingEntities)
-        //                .build();
-
-        userEntity = userRepository.save(userEntity);
+        HometownEntity hometownEntity = getUpdatedHometown(userEntity);
+        userEntity = getUpdatedUser(userEntity);
         UUID updatedUserId = userEntity.getId();
-
         final HobbyAndInterestEntity[] hobbyAndInterestEntityUpdated = new HobbyAndInterestEntity[1];
         userEntity.getHobbyAndInterestEntities().forEach(h -> hobbyAndInterestEntityUpdated[0] = h);
 
         UserEntity finalUserEntity = userEntity;
-        HometownEntity finalHometownEntity = hometownEntity;
         assertAll(
                 () -> assertEquals("anyUpdatedName", finalUserEntity.getName()),
                 () -> assertEquals(originalUserId, updatedUserId),
@@ -118,14 +89,15 @@ class UserRepositoryTest {
                 () -> assertEquals("anyUpdatedNativeLanguage", finalUserEntity.getNativeLanguage()),
                 () -> assertEquals("anyUpdatedTargetLanguage", finalUserEntity.getTargetLanguage()),
                 () -> assertEquals("anyUpdatedSelfIntroduction", finalUserEntity.getSelfIntroduction()),
-                () -> assertEquals(finalHometownEntity.getId(), finalUserEntity.getHometownEntity().getId()),
+                () -> assertEquals(hometownEntity.getId(), finalUserEntity.getHometownEntity().getId()),
                 () -> assertEquals("anyUpdatedCity", finalUserEntity.getHometownEntity().getCity()),
                 () -> assertEquals("anyUpdatedCountry", finalUserEntity.getHometownEntity().getCountry()),
                 () -> assertEquals("anyUpdatedCountry", finalUserEntity.getHometownEntity().getCountry()),
                 () -> assertEquals("anyUpdatedOccupation", finalUserEntity.getOccupation()),
                 () -> assertEquals("anyUpdatedPlacesToVisit", finalUserEntity.getPlacesToVisit()),
-                () -> assertTrue(finalUserEntity.getFollowedBy().size() > 0),
-                () -> assertTrue(finalUserEntity.getFollowedBy().size() > 0),
+                () -> assertTrue(finalUserEntity.getFollowedByEntity().size() > 0),
+                // user who already has followers or follows someone should not have this changed after an update
+                () -> assertTrue(finalUserEntity.getFollowerOfEntity().size() > 0),
                 () -> assertTrue(finalUserEntity.getHobbyAndInterestEntities().size() > 0)
         );
 
@@ -150,15 +122,21 @@ class UserRepositoryTest {
     // Helpers
     @NotNull private UserEntity saveUserEntity() {
 
-        UserEntity followerEntity = UserEntity.builder().id(UUID.randomUUID()).build();
-        followerEntity = userRepository.save(followerEntity);
-        Set<UserEntity> followerEntities = new HashSet<>();
-        followerEntities.add(followerEntity);
+        UserEntity userSenderEntity = UserEntity.builder().name("anySender").build();
+        UserEntity userReceiverEntity = UserEntity.builder().name("anyReceiver").build();
+        userSenderEntity = userRepository.save(userSenderEntity);
+        userReceiverEntity = userRepository.save(userReceiverEntity);
 
-        UserEntity friendEntity = UserEntity.builder().id(UUID.randomUUID()).build();
-        friendEntity = userRepository.save(friendEntity);
-        Set<UserEntity> followingEntities = new HashSet<>();
-        followingEntities.add(friendEntity);
+        FollowingRequestEntity followingRequestEntity = FollowingRequestEntity.builder().userSenderEntity(userSenderEntity).userReceiverEntity(userReceiverEntity).build();
+        followingRequestEntity = followingRequestRepository.save(followingRequestEntity);
+
+        FollowingRequestEntity followerOfEntity = FollowingRequestEntity.builder().userReceiverEntity(userReceiverEntity).build();
+        Set<FollowingRequestEntity> followerOfEntities = new HashSet<>();
+        followerOfEntities.add(followerOfEntity);
+
+        FollowingRequestEntity followedByEntity = FollowingRequestEntity.builder().userSenderEntity(userSenderEntity).build();
+        Set<FollowingRequestEntity> followedByEntities = new HashSet<>();
+        followedByEntities.add(followedByEntity);
 
         HometownEntity hometownEntity = HometownEntity.builder().city("anyCity").country("anyCountry").build();
         hometownRepository.save(hometownEntity);
@@ -185,13 +163,55 @@ class UserRepositoryTest {
                 .placesToVisit("anyPlacesToVisit")
                 .hometownEntity(hometownEntity)
                 .hobbyAndInterestEntities(hobbyAndInterestEntities)
-                .followerOf(followerEntities)
-                .followedBy(followingEntities)
+                .followedByEntity(followedByEntities)
+                .followerOfEntity(followerOfEntities)
                 .build();
         userEntity = userRepository.save(userEntity);
 
         Set<UserEntity> userEntitySet = new HashSet<>();
         hobbyAndInterestEntity.setUserEntities(userEntitySet);
         return userEntity;
+    }
+
+    @NotNull private UserEntity getUpdatedUser(UserEntity userEntity) {
+        HometownEntity hometownEntity = getUpdatedHometown(userEntity);
+        Set<HobbyAndInterestEntity> hobbyAndInterestEntities = new HashSet<>();
+        hobbyAndInterestEntities.add(getUpdatedHobbyAndInterest(userEntity));
+
+        userEntity.setName("anyUpdatedName");
+        userEntity.setDob("anyUpdatedDob");
+        userEntity.setGender("anyUpdatedGender");
+        userEntity.setSubscriptionType("anyUpdatedSubscriptionType");
+        userEntity.setCreationDate("anyUpdatedCreationDate");
+        userEntity.setHandle("anyUpdatedHandle");
+        userEntity.setStatus("anyUpdatedStatus");
+        userEntity.setNativeLanguage("anyUpdatedNativeLanguage");
+        userEntity.setTargetLanguage("anyUpdatedTargetLanguage");
+        userEntity.setSelfIntroduction("anyUpdatedSelfIntroduction");
+        userEntity.setOccupation("anyUpdatedOccupation");
+        userEntity.setPlacesToVisit("anyUpdatedPlacesToVisit");
+        userEntity.setHometownEntity(hometownEntity);
+        userEntity.setHobbyAndInterestEntities(hobbyAndInterestEntities);
+
+        userEntity = userRepository.save(userEntity);
+        return userEntity;
+    }
+
+    @NotNull private HometownEntity getUpdatedHometown(UserEntity userEntity) {
+        HometownEntity hometownEntity = userEntity.getHometownEntity();
+        hometownEntity.setCity("anyUpdatedCity");
+        hometownEntity.setCountry("anyUpdatedCountry");
+        hometownEntity = hometownRepository.save(hometownEntity);
+        return hometownEntity;
+    }
+
+    @NotNull private HobbyAndInterestEntity getUpdatedHobbyAndInterest(UserEntity userEntity) {
+        final HobbyAndInterestEntity[] hobbyAndInterestEntityOriginal = new HobbyAndInterestEntity[1];
+        userEntity.getHobbyAndInterestEntities().forEach(h -> hobbyAndInterestEntityOriginal[0] = h);
+
+        HobbyAndInterestEntity hobbyAndInterestEntity = hobbyAndInterestEntityOriginal[0];
+        hobbyAndInterestEntity.setTitle("anyUpdatedInterest");
+        hobbyAndInterestEntity = hobbyAndInterestRepository.save(hobbyAndInterestEntity);
+        return hobbyAndInterestEntity;
     }
 }

@@ -46,14 +46,6 @@ class UserServiceTest {
         Set<HobbyAndInterestEntity> hobbyAndInterestEntities = new HashSet<>();
         hobbyAndInterestEntities.add(hobbyAndInterestEntity);
 
-        UserEntity followerOfEntity = UserEntity.builder().id(UUID.randomUUID()).build();
-        Set<UserEntity> followerOfEntities = new HashSet<>();
-        followerOfEntities.add(followerOfEntity);
-
-        UserEntity followedByEntity = UserEntity.builder().id(UUID.randomUUID()).build();
-        Set<UserEntity> followedByEntities = new HashSet<>();
-        followedByEntities.add(followedByEntity);
-
         userEntity = UserEntity.builder()
                 .id(userId)
                 .name("anyName")
@@ -70,8 +62,6 @@ class UserServiceTest {
                 .subscriptionType("anySubscriptionType")
                 .hometownEntity(buildHometownEntity(hometown))
                 .hobbyAndInterestEntities(hobbyAndInterestEntities)
-                .followerOf(followerOfEntities)
-                .followedBy(followedByEntities)
                 .build();
     }
 

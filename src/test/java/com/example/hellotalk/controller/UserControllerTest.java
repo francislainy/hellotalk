@@ -146,8 +146,11 @@ class UserControllerTest {
         mockMvc.perform(put("/api/v1/ht/user/{userId}", userId)
                         .content(jsonRequest)
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().is(204))
-                .andExpect(content().string("No user found with this id"));
+                .andExpect(status().is(204));
+//                //                .andExpect(content().json("{\"error\": \"No user found with this id\"}"));
+//                .andExpect(content().json("""
+//                        {"error": "No user found with this id"}
+//                        """));
     }
 
     @Test

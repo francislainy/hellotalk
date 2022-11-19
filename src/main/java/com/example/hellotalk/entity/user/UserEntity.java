@@ -84,24 +84,7 @@ public class UserEntity {
                 .id(h.getId())
                 .title(h.getTitle())
                 .build()));
-
-        Set<FollowingRequestEntity> followedBys = new HashSet<>();
-        user.getFollowedBy().forEach(h -> followedBys.add(FollowingRequestEntity.builder()
-                .userReceiverEntity(UserEntity.builder()
-                        .id(h.getId())
-                        .name(h.getDob())
-                        .dob(h.getDob())
-                        .build())
-                .build()));
-
-        Set<FollowingRequestEntity> followerOfs = new HashSet<>();
-        user.getFollowerOf().forEach(h -> followerOfs.add(FollowingRequestEntity.builder()
-                .userSenderEntity(UserEntity.builder().id(h.getId())
-                        .name(h.getName())
-                        .dob(h.getDob()) // todo: add more fields
-                        .build())
-                .build()));
-
+        
         return UserEntity.builder()
                 .name(user.getName())
                 .dob(user.getDob())
@@ -116,8 +99,6 @@ public class UserEntity {
                 .targetLanguage(user.getTargetLanguage())
                 .placesToVisit(user.getPlacesToVisit())
                 .hobbyAndInterestEntities(hobbyAndInterestEntities)
-                .followedByEntity(followedBys)
-                .followerOfEntity(followerOfs)
                 .build();
     }
 }

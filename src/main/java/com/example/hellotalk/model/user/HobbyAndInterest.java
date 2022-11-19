@@ -1,11 +1,13 @@
 package com.example.hellotalk.model.user;
 
+import com.example.hellotalk.entity.user.HobbyAndInterestEntity;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.UUID;
+import java.util.*;
 
 @Data
 @Builder
@@ -15,4 +17,29 @@ public class HobbyAndInterest {
 
     private UUID id;
     private String title;
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private List<HobbyAndInterest> hobbyAndInterests = new ArrayList<>();
+    
+    public void addHobbyAndInterest(HobbyAndInterest hobbyAndInterest) {
+        hobbyAndInterests.add(hobbyAndInterest);
+    }
+    
+    public static HobbyAndInterest buildHobbyAndInterestFromEntity(HobbyAndInterestEntity hobbyAndInterestEntity) {
+        return HobbyAndInterest.builder()
+                .id(hobbyAndInterestEntity.getId())
+                .title(hobbyAndInterestEntity.getTitle())
+                .build();
+    }
+
+    public static Set<HobbyAndInterest> buildSetHobbyAndInterestFromEntity(Set<HobbyAndInterestEntity> hobbyAndInterestEntities) {
+
+        Set<HobbyAndInterest> hobbyAndInterests = new HashSet<>();
+        hobbyAndInterestEntities.forEach(
+                h -> hobbyAndInterests.add(buildHobbyAndInterestFromEntity(h))
+        );
+
+        return hobbyAndInterests;
+    }
+    
 }

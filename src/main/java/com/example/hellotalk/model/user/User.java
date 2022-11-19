@@ -10,6 +10,8 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
+import static com.example.hellotalk.model.user.Hometown.buildHometownFromEntity;
+
 @Data
 @Builder
 @NoArgsConstructor
@@ -43,14 +45,6 @@ public class User {
                 .title(h.getTitle())
                 .build()));
 
-        User followedBy = User.builder().id(UUID.randomUUID()).build();
-        Set<User> followerBys = new HashSet<>();
-        followerBys.add(followedBy);
-
-        User followerOf = User.builder().id(UUID.randomUUID()).build();
-        Set<User> followingOfs = new HashSet<>();
-        followingOfs.add(followerOf);
-
         return User.builder()
                 .id(userEntity.getId())
                 .name(userEntity.getName())
@@ -65,10 +59,8 @@ public class User {
                 .occupation(userEntity.getOccupation())
                 .selfIntroduction(userEntity.getSelfIntroduction())
                 .placesToVisit(userEntity.getPlacesToVisit())
-                .hometown(Hometown.builder().city(userEntity.getHometownEntity().getCity()).country(userEntity.getHometownEntity().getCountry()).build())
+                .hometown(buildHometownFromEntity(userEntity.getHometownEntity()))
                 .hobbyAndInterests(hobbyAndInterests)
-                .followedBy(followerBys)
-                .followerOf(followingOfs)
                 .build();
     }
 }

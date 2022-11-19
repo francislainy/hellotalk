@@ -64,9 +64,6 @@ class UserRepositoryTest {
         UserEntity userEntity = saveUserEntity();
         UUID originalUserId = userEntity.getId();
 
-        assertTrue(userRepository.findAll().size() > 0);
-        userEntity = userRepository.findById(userEntity.getId()).orElse(null);
-        assertNotNull(userEntity);
         final HobbyAndInterestEntity[] hobbyAndInterestEntityOriginal = new HobbyAndInterestEntity[1];
         userEntity.getHobbyAndInterestEntities().forEach(h -> hobbyAndInterestEntityOriginal[0] = h);
 

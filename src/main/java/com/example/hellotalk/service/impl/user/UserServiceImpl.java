@@ -1,15 +1,17 @@
 package com.example.hellotalk.service.impl.user;
 
+import com.example.hellotalk.entity.user.FollowingRequestEntity;
 import com.example.hellotalk.entity.user.UserEntity;
-import com.example.hellotalk.exception.UserDoesNotExistExistException;
+import com.example.hellotalk.exception.FollowerNotFoundException;
+import com.example.hellotalk.exception.UserNotFoundException;
 import com.example.hellotalk.model.user.HobbyAndInterest;
 import com.example.hellotalk.model.user.Hometown;
 import com.example.hellotalk.model.user.User;
 import com.example.hellotalk.repository.UserRepository;
 import com.example.hellotalk.service.user.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -20,7 +22,11 @@ import static com.example.hellotalk.entity.user.UserEntity.buildUserEntityFromMo
 @Service
 public class UserServiceImpl implements UserService {
 
-    @Autowired UserRepository userRepository;
+    final UserRepository userRepository;
+
+    public UserServiceImpl(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
     @Override
     public User getUser(UUID userId) {
@@ -80,18 +86,54 @@ public class UserServiceImpl implements UserService {
             userEntity = userRepository.save(userEntity);
             return User.buildUserFromEntity(userEntity);
         } else {
-            throw new UserDoesNotExistExistException("No user found with this id");
+            throw new UserNotFoundException("No user found with this id");
         }
     }
 
-    @Override public void deleteUser(UUID userId){
+    @Override public void deleteUser(UUID userId) {
 
         Optional<UserEntity> optionalUserEntity = userRepository.findById(userId);
 
         if (optionalUserEntity.isPresent()) {
             userRepository.deleteById(userId);
         } else {
-            throw new UserDoesNotExistExistException("No user found with this id");
+            throw new UserNotFoundException("No user found with this id");
         }
+    }
+
+    @Override public void followUser(UUID fromId, UUID toId) throws FollowerNotFoundException {
+
+        Optional<UserEntity> userEntityOptionalFrom = userRepository.findById(fromId);
+        Optional<UserEntity> userEntityOptionalTo = userRepository.findById(toId);
+
+        if (userEntityOptionalFrom.isEmpty() || userEntityOptionalTo.isEmpty()) {
+            throw new UserNotFoundException("No user found with this id");
+        }
+
+        UserEntity userEntityTo = userEntityOptionalTo.get();
+        UserEntity userEntityFrom = userEntityOptionalFrom.get();
+
+        Set<FollowingRequestEntity> followingRequestEntities = new HashSet<>();
+        FollowingRequestEntity followingRequestEntity = FollowingRequestEntity.builder().userSenderEntity(userEntityFrom).userReceiverEntity(userEntityTo).build();
+        followingRequestEntities.add(followingRequestEntity);
+
+        userEntityTo.setFollowedByEntity(followingRequestEntities);
+
+        userEntityTo = userRepository.save(userEntityTo);
+        
+        
+        if (userEntityTo.getFollowedByEntity() == null || userEntityTo.getFollowedByEntity().isEmpty()) {
+            throw new FollowerNotFoundException("Follower Not Found");
+        }
+    }
+
+    public UserEntity setFollower(UserEntity userEntityTo, UserEntity userEntityFrom) {
+        Set<FollowingRequestEntity> followingRequestEntities = new HashSet<>();
+        FollowingRequestEntity followingRequestEntity = FollowingRequestEntity.builder().userSenderEntity(userEntityFrom).userReceiverEntity(userEntityTo).build();
+        followingRequestEntities.add(followingRequestEntity);
+
+        userEntityTo.setFollowedByEntity(followingRequestEntities);
+        
+        return userEntityTo;
     }
 }

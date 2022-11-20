@@ -1,6 +1,6 @@
 package com.example.hellotalk.controller;
 
-import com.example.hellotalk.exception.UserDoesNotExistExistException;
+import com.example.hellotalk.exception.UserNotFoundException;
 import com.example.hellotalk.model.user.User;
 import com.example.hellotalk.service.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +31,7 @@ public class UserController {
 
         try {
             return new ResponseEntity<>(userService.updateUser(userId, user), HttpStatus.OK);
-        } catch (UserDoesNotExistExistException e) {
+        } catch (UserNotFoundException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NO_CONTENT);
         }
     }
@@ -42,7 +42,7 @@ public class UserController {
         try {
             userService.deleteUser(userId);
             return new ResponseEntity<>(HttpStatus.PARTIAL_CONTENT);
-        } catch (UserDoesNotExistExistException e) {
+        } catch (UserNotFoundException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NO_CONTENT);
         }
     }

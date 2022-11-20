@@ -1,6 +1,6 @@
 package com.example.hellotalk.controller;
 
-import com.example.hellotalk.exception.UserDoesNotExistExistException;
+import com.example.hellotalk.exception.UserNotFoundException;
 import com.example.hellotalk.model.user.HobbyAndInterest;
 import com.example.hellotalk.model.user.Hometown;
 import com.example.hellotalk.model.user.User;
@@ -141,7 +141,7 @@ class UserControllerTest {
     @Test
     void testUpdateUser_ThrowsExceptionWhenUserDoesNotExist() throws Exception {
 
-        when(userService.updateUser(any(), any())).thenThrow(new UserDoesNotExistExistException("No user found with this id"));
+        when(userService.updateUser(any(), any())).thenThrow(new UserNotFoundException("No user found with this id"));
 
         mockMvc.perform(put("/api/v1/ht/user/{userId}", userId)
                         .content(jsonRequest)
@@ -165,7 +165,7 @@ class UserControllerTest {
     @Test
     void testDeleteUser_ThrowsExceptionWhenUserNotFound() throws Exception {
 
-        doThrow(new UserDoesNotExistExistException("No user found with this id")).when(userService).deleteUser(any());
+        doThrow(new UserNotFoundException("No user found with this id")).when(userService).deleteUser(any());
 
         mockMvc.perform(delete("/api/v1/ht/user/{userId}", userId).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is2xxSuccessful())

@@ -1,10 +1,7 @@
 package com.example.hellotalk.entity.user;
 
 import com.example.hellotalk.model.user.User;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.HashSet;
@@ -71,9 +68,13 @@ public class UserEntity {
     @JoinColumn(name = "hometown_id", referencedColumnName = "id")
     private HometownEntity hometownEntity;
 
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     @OneToMany(mappedBy = "userReceiverEntity", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = false)
     private Set<FollowingRequestEntity> followedByEntity;
 
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     @OneToMany(mappedBy = "userSenderEntity", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = false)
     private Set<FollowingRequestEntity> followerOfEntity;
 

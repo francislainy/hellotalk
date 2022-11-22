@@ -35,7 +35,7 @@ class UserServiceTest {
 
     @Mock
     UserRepository userRepository;
-    
+
     @InjectMocks
     UserServiceImpl userService;
 
@@ -272,7 +272,7 @@ class UserServiceTest {
 
         when(userRepository.findById(userEntityFrom.getId())).thenReturn(Optional.of(userEntityFrom));
         when(userRepository.findById(userEntityTo.getId())).thenReturn(Optional.of(userEntityTo));
-        
+
         userEntityTo.setFollowedByEntity(followingRequestEntities);
 
         when(userRepository.save(any())).thenReturn(userEntityTo);
@@ -291,22 +291,16 @@ class UserServiceTest {
 
         UserEntity userEntityTo = getUserEntity();
         userEntityTo.setId(userToId);
-        userEntityTo.setName("new name");
-       
 
         when(userRepository.findById(userEntityFrom.getId())).thenReturn(Optional.of(userEntityFrom));
         when(userRepository.findById(userEntityTo.getId())).thenReturn(Optional.of(userEntityTo));
-//        when(userRepository.save(userEntityTo)).thenReturn(userEntityTo);
-        userEntityTo.setFollowerOfEntity(null);
-        userEntityTo.setFollowedByEntity(null);
-        doReturn(userEntityTo).when(userRepository).save(any());
-//        when(userEntityTo.getFollowedByEntity()).thenReturn(null);
         
-//        doReturn(userEntityTo).when(userService).setFol(any(), any());
-        
+        userEntityTo.setId(null);
+        when(userRepository.save(userEntityTo)).thenReturn(userEntityTo);
+
         FollowerNotFoundException exception =
                 assertThrows(FollowerNotFoundException.class, () -> userService.followUser(userFromId, userToId));
 
-        assertEquals("Follower Not Found", exception.getMessage());
+        assertEquals("Error saving follower", exception.getMessage());
     }
 }

@@ -112,28 +112,20 @@ public class UserServiceImpl implements UserService {
 
         UserEntity userEntityTo = userEntityOptionalTo.get();
         UserEntity userEntityFrom = userEntityOptionalFrom.get();
-
-        Set<FollowingRequestEntity> followingRequestEntities = new HashSet<>();
-        FollowingRequestEntity followingRequestEntity = FollowingRequestEntity.builder().userSenderEntity(userEntityFrom).userReceiverEntity(userEntityTo).build();
-        followingRequestEntities.add(followingRequestEntity);
-
-        userEntityTo.setFollowedByEntity(followingRequestEntities);
-
-        userEntityTo = userRepository.save(userEntityTo);
+        userEntityTo = userRepository.save(setFollower(userEntityTo, userEntityFrom));
         
-        
-        if (userEntityTo.getFollowedByEntity() == null || userEntityTo.getFollowedByEntity().isEmpty()) {
-            throw new FollowerNotFoundException("Follower Not Found");
+        if (userEntityTo.getId() == null) { // Not sure how to assert the follower was saved properly, so if there's a problem with the id for the original user it means the whole object has been compromised
+            throw new FollowerNotFoundException("Error saving follower");
         }
     }
 
-    public UserEntity setFollower(UserEntity userEntityTo, UserEntity userEntityFrom) {
+    private UserEntity setFollower(UserEntity userEntityTo, UserEntity userEntityFrom) {
         Set<FollowingRequestEntity> followingRequestEntities = new HashSet<>();
         FollowingRequestEntity followingRequestEntity = FollowingRequestEntity.builder().userSenderEntity(userEntityFrom).userReceiverEntity(userEntityTo).build();
         followingRequestEntities.add(followingRequestEntity);
 
         userEntityTo.setFollowedByEntity(followingRequestEntities);
-        
+
         return userEntityTo;
     }
 }

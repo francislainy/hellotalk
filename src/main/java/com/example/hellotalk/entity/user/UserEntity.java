@@ -86,7 +86,7 @@ public class UserEntity {
                 .title(h.getTitle())
                 .build()));
 
-        UserEntity userEntity = UserEntity.builder()
+        return UserEntity.builder()
                 .id(user.getId())
                 .name(user.getName())
                 .dob(user.getDob())
@@ -102,6 +102,5 @@ public class UserEntity {
                 .placesToVisit(user.getPlacesToVisit())
                 .hobbyAndInterestEntities(hobbyAndInterestEntities)
                 .build();
-        return userEntity;
     }
 }

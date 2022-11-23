@@ -45,7 +45,7 @@ public class User {
                 .title(h.getTitle())
                 .build()));
 
-        return User.builder()
+        User user = User.builder()
                 .id(userEntity.getId())
                 .name(userEntity.getName())
                 .dob(userEntity.getDob())
@@ -62,5 +62,6 @@ public class User {
                 .hometown(buildHometownFromEntity(userEntity.getHometownEntity()))
                 .hobbyAndInterests(hobbyAndInterests)
                 .build();
+        return user;
     }
 }

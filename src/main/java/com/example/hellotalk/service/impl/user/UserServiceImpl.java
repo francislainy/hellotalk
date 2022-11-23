@@ -72,7 +72,8 @@ public class UserServiceImpl implements UserService {
 
     @Override public User createUser(User user) {
 
-        UserEntity userEntity = userRepository.save(buildUserEntityFromModel(user));
+        UserEntity userEntity = buildUserEntityFromModel(user);
+        userEntity = userRepository.save(userEntity);
         user.setId(userEntity.getId());
         return user;
     }
@@ -113,8 +114,9 @@ public class UserServiceImpl implements UserService {
         UserEntity userEntityTo = userEntityOptionalTo.get();
         UserEntity userEntityFrom = userEntityOptionalFrom.get();
         userEntityTo = userRepository.save(setFollower(userEntityTo, userEntityFrom));
-        
-        if (userEntityTo.getId() == null) { // Not sure how to assert the follower was saved properly, so if there's a problem with the id for the original user it means the whole object has been compromised
+
+        if (userEntityTo.getId()
+                == null) { // Not sure how to assert the follower was saved properly, so if there's a problem with the id for the original user it means the whole object has been compromised
             throw new FollowerNotFoundException("Error saving follower");
         }
     }

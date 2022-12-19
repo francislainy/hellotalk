@@ -18,12 +18,16 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-class UserRepositoryTest {
+class UserRepositoryTest extends BaseIntegrationTest {
 
-    @Autowired UserRepository userRepository;
-    @Autowired FollowingRequestRepository followingRequestRepository;
-    @Autowired HometownRepository hometownRepository;
-    @Autowired HobbyAndInterestRepository hobbyAndInterestRepository;
+    @Autowired
+    UserRepository userRepository;
+    @Autowired
+    FollowingRequestRepository followingRequestRepository;
+    @Autowired
+    HometownRepository hometownRepository;
+    @Autowired
+    HobbyAndInterestRepository hobbyAndInterestRepository;
 
     @Test
     void testGetUser() {
@@ -117,7 +121,8 @@ class UserRepositoryTest {
     }
 
     // Helpers
-    @NotNull private UserEntity saveUserEntity() {
+    @NotNull
+    private UserEntity saveUserEntity() {
 
         UserEntity userSenderEntity = UserEntity.builder().name("anySender").build();
         UserEntity userReceiverEntity = UserEntity.builder().name("anyReceiver").build();
@@ -170,7 +175,8 @@ class UserRepositoryTest {
         return userEntity;
     }
 
-    @NotNull private UserEntity getUpdatedUser(UserEntity userEntity) {
+    @NotNull
+    private UserEntity getUpdatedUser(UserEntity userEntity) {
         HometownEntity hometownEntity = getUpdatedHometown(userEntity);
         Set<HobbyAndInterestEntity> hobbyAndInterestEntities = new HashSet<>();
         hobbyAndInterestEntities.add(getUpdatedHobbyAndInterest(userEntity));
@@ -194,7 +200,8 @@ class UserRepositoryTest {
         return userEntity;
     }
 
-    @NotNull private HometownEntity getUpdatedHometown(UserEntity userEntity) {
+    @NotNull
+    private HometownEntity getUpdatedHometown(UserEntity userEntity) {
         HometownEntity hometownEntity = userEntity.getHometownEntity();
         hometownEntity.setCity("anyUpdatedCity");
         hometownEntity.setCountry("anyUpdatedCountry");
@@ -202,7 +209,8 @@ class UserRepositoryTest {
         return hometownEntity;
     }
 
-    @NotNull private HobbyAndInterestEntity getUpdatedHobbyAndInterest(UserEntity userEntity) {
+    @NotNull
+    private HobbyAndInterestEntity getUpdatedHobbyAndInterest(UserEntity userEntity) {
         final HobbyAndInterestEntity[] hobbyAndInterestEntityOriginal = new HobbyAndInterestEntity[1];
         userEntity.getHobbyAndInterestEntities().forEach(h -> hobbyAndInterestEntityOriginal[0] = h);
 

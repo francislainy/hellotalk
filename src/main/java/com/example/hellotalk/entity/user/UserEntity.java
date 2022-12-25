@@ -31,7 +31,7 @@ public class UserEntity {
     private String gender;
 
     @Column(name = "creation_date")
-    private String creationDate; //timestamp
+    private String creationDate; // timestamp
 
     @Column(name = "handle")
     private String handle;

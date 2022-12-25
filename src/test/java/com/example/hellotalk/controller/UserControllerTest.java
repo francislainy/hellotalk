@@ -102,7 +102,7 @@ class UserControllerTest {
 
     @BeforeEach
     void setUp(WebApplicationContext webApplicationContext,
-               RestDocumentationContextProvider restDocumentation) {
+            RestDocumentationContextProvider restDocumentation) {
         this.mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext)
                 .apply(documentationConfiguration(restDocumentation)).alwaysDo(document("{method-name}",
                         preprocessRequest(prettyPrint()), preprocessResponse(prettyPrint())))
@@ -135,8 +135,8 @@ class UserControllerTest {
         when(userService.updateUser(any(), any())).thenReturn(userResponse);
 
         mockMvc.perform(put("/api/v1/ht/user/{userId}", userId)
-                        .content(jsonRequest)
-                        .contentType(MediaType.APPLICATION_JSON))
+                .content(jsonRequest)
+                .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(content().json(jsonResponse));
     }

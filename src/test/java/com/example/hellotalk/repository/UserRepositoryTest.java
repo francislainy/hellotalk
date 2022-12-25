@@ -56,8 +56,7 @@ class UserRepositoryTest extends BaseIntegrationTest {
                 () -> assertEquals("anyPlacesToVisit", finalUserEntity.getPlacesToVisit()),
                 () -> assertTrue(finalUserEntity.getFollowedByEntity().size() > 0),
                 () -> assertTrue(finalUserEntity.getFollowerOfEntity().size() > 0),
-                () -> assertTrue(finalUserEntity.getHobbyAndInterestEntities().size() > 0)
-        );
+                () -> assertTrue(finalUserEntity.getHobbyAndInterestEntities().size() > 0));
 
         finalUserEntity.getHobbyAndInterestEntities().forEach(h -> assertEquals("anyInterest", h.getTitle()));
     }
@@ -99,8 +98,7 @@ class UserRepositoryTest extends BaseIntegrationTest {
                 () -> assertTrue(finalUserEntity.getFollowedByEntity().size() > 0),
                 // user who already has followers or follows someone should not have this changed after an update
                 () -> assertTrue(finalUserEntity.getFollowerOfEntity().size() > 0),
-                () -> assertTrue(finalUserEntity.getHobbyAndInterestEntities().size() > 0)
-        );
+                () -> assertTrue(finalUserEntity.getHobbyAndInterestEntities().size() > 0));
 
         finalUserEntity.getHobbyAndInterestEntities().forEach(h -> assertEquals("anyUpdatedInterest", h.getTitle()));
         finalUserEntity.getHobbyAndInterestEntities().forEach(h -> assertEquals(hobbyAndInterestEntityOriginal[0].getId(), hobbyAndInterestEntityUpdated[0].getId()));

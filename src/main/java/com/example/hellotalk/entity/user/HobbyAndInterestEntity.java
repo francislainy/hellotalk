@@ -41,12 +41,9 @@ public class HobbyAndInterestEntity {
 
         Set<HobbyAndInterestEntity> hobbyAndInterestsEntity = new HashSet<>();
         hobbyAndInterests.forEach(
-                h -> hobbyAndInterestsEntity.add(buildHobbyAndInterestFromModel(h))
-        );
+                h -> hobbyAndInterestsEntity.add(buildHobbyAndInterestFromModel(h)));
 
         return hobbyAndInterestsEntity;
     }
-    
-    
-}
 
+}

@@ -96,8 +96,7 @@ class UserServiceTest {
                 () -> assertEquals("anyOccupation", user.getOccupation()),
                 () -> assertEquals("anyCity", user.getHometown().getCity()),
                 () -> assertEquals("anyCountry", user.getHometown().getCountry()),
-                () -> assertEquals("anyPlacesToVisit", user.getPlacesToVisit())
-        );
+                () -> assertEquals("anyPlacesToVisit", user.getPlacesToVisit()));
 
         user.getHobbyAndInterests().forEach(h -> assertEquals("anyInterest", h.getTitle()));
     }
@@ -125,192 +124,190 @@ class UserServiceTest {
                 () -> assertEquals("anyOccupation", user.getOccupation()),
                 () -> assertEquals("anyCity", user.getHometown().getCity()),
                 () -> assertEquals("anyCountry", user.getHometown().getCountry()),
-                () -> assertEquals("anyPlacesToVisit", user.getPlacesToVisit())
-        );
+                () -> assertEquals("anyPlacesToVisit", user.getPlacesToVisit()));
 
         user.getHobbyAndInterests().forEach(h -> assertEquals("anyInterest", h.getTitle()));
     }
 
-        @Test
-        void testUpdateUserDetails() {
+    @Test
+    void testUpdateUserDetails() {
 
-            HobbyAndInterestEntity hobbyAndInterestEntityUpdated = HobbyAndInterestEntity.builder().title("anyUpdatedInterest").build();
-            Set<HobbyAndInterestEntity> hobbyAndInterestEntitiesUpdated = new HashSet<>();
-            hobbyAndInterestEntitiesUpdated.add(hobbyAndInterestEntityUpdated);
-            Hometown updatedHometown = Hometown.builder().city("anyUpdatedCity").country("anyUpdatedCountry").build();
-            UserEntity userEntityUpdated = UserEntity.builder()
-                    .id(userId)
-                    .name("anyUpdatedName")
-                    .dob("anyUpdatedDob")
-                    .gender("anyUpdatedGender")
-                    .subscriptionType("anyUpdatedSubscriptionType")
-                    .selfIntroduction("anyUpdatedSelfIntroduction")
-                    .creationDate("anyUpdatedCreationDate")
-                    .handle("anyUpdatedHandle")
-                    .status("anyUpdatedStatus")
-                    .nativeLanguage("anyUpdatedNativeLanguage")
-                    .targetLanguage("anyUpdatedTargetLanguage")
-                    .occupation("anyUpdatedOccupation")
-                    .placesToVisit("anyUpdatedPlacesToVisit")
-                    .hometownEntity(buildHometownEntity(updatedHometown))
-                    .hobbyAndInterestEntities(hobbyAndInterestEntitiesUpdated)
-                    .build();
+        HobbyAndInterestEntity hobbyAndInterestEntityUpdated = HobbyAndInterestEntity.builder().title("anyUpdatedInterest").build();
+        Set<HobbyAndInterestEntity> hobbyAndInterestEntitiesUpdated = new HashSet<>();
+        hobbyAndInterestEntitiesUpdated.add(hobbyAndInterestEntityUpdated);
+        Hometown updatedHometown = Hometown.builder().city("anyUpdatedCity").country("anyUpdatedCountry").build();
+        UserEntity userEntityUpdated = UserEntity.builder()
+                .id(userId)
+                .name("anyUpdatedName")
+                .dob("anyUpdatedDob")
+                .gender("anyUpdatedGender")
+                .subscriptionType("anyUpdatedSubscriptionType")
+                .selfIntroduction("anyUpdatedSelfIntroduction")
+                .creationDate("anyUpdatedCreationDate")
+                .handle("anyUpdatedHandle")
+                .status("anyUpdatedStatus")
+                .nativeLanguage("anyUpdatedNativeLanguage")
+                .targetLanguage("anyUpdatedTargetLanguage")
+                .occupation("anyUpdatedOccupation")
+                .placesToVisit("anyUpdatedPlacesToVisit")
+                .hometownEntity(buildHometownEntity(updatedHometown))
+                .hobbyAndInterestEntities(hobbyAndInterestEntitiesUpdated)
+                .build();
 
-            when(userRepository.findById(any())).thenReturn(Optional.of(getUserEntity()));
-            when(userRepository.save(any())).thenReturn(userEntityUpdated);
+        when(userRepository.findById(any())).thenReturn(Optional.of(getUserEntity()));
+        when(userRepository.save(any())).thenReturn(userEntityUpdated);
 
-            User user = User.buildUserFromEntity(getUserEntity());
-            user = userService.updateUser(userId, user);
+        User user = User.buildUserFromEntity(getUserEntity());
+        user = userService.updateUser(userId, user);
 
-            User finalUser = user;
-            assertAll(
-                    () -> assertEquals(userId, finalUser.getId()),
-                    () -> assertEquals("anyUpdatedName", finalUser.getName()),
-                    () -> assertEquals("anyUpdatedDob", finalUser.getDob()),
-                    () -> assertEquals("anyUpdatedGender", finalUser.getGender()),
-                    () -> assertEquals("anyUpdatedSubscriptionType", finalUser.getSubscriptionType()),
-                    () -> assertEquals("anyUpdatedSelfIntroduction", finalUser.getSelfIntroduction()),
-                    () -> assertEquals("anyUpdatedCreationDate", finalUser.getCreationDate()),
-                    () -> assertEquals("anyUpdatedHandle", finalUser.getHandle()),
-                    () -> assertEquals("anyUpdatedStatus", finalUser.getStatus()),
-                    () -> assertEquals("anyUpdatedNativeLanguage", finalUser.getNativeLanguage()),
-                    () -> assertEquals("anyUpdatedTargetLanguage", finalUser.getTargetLanguage()),
-                    () -> assertEquals("anyUpdatedOccupation", finalUser.getOccupation()),
-                    () -> assertEquals("anyUpdatedCity", finalUser.getHometown().getCity()),
-                    () -> assertEquals("anyUpdatedCountry", finalUser.getHometown().getCountry())
-            );
+        User finalUser = user;
+        assertAll(
+                () -> assertEquals(userId, finalUser.getId()),
+                () -> assertEquals("anyUpdatedName", finalUser.getName()),
+                () -> assertEquals("anyUpdatedDob", finalUser.getDob()),
+                () -> assertEquals("anyUpdatedGender", finalUser.getGender()),
+                () -> assertEquals("anyUpdatedSubscriptionType", finalUser.getSubscriptionType()),
+                () -> assertEquals("anyUpdatedSelfIntroduction", finalUser.getSelfIntroduction()),
+                () -> assertEquals("anyUpdatedCreationDate", finalUser.getCreationDate()),
+                () -> assertEquals("anyUpdatedHandle", finalUser.getHandle()),
+                () -> assertEquals("anyUpdatedStatus", finalUser.getStatus()),
+                () -> assertEquals("anyUpdatedNativeLanguage", finalUser.getNativeLanguage()),
+                () -> assertEquals("anyUpdatedTargetLanguage", finalUser.getTargetLanguage()),
+                () -> assertEquals("anyUpdatedOccupation", finalUser.getOccupation()),
+                () -> assertEquals("anyUpdatedCity", finalUser.getHometown().getCity()),
+                () -> assertEquals("anyUpdatedCountry", finalUser.getHometown().getCountry()));
 
-            user.getHobbyAndInterests().forEach(h -> assertEquals("anyUpdatedInterest", h.getTitle()));
-        }
+        user.getHobbyAndInterests().forEach(h -> assertEquals("anyUpdatedInterest", h.getTitle()));
+    }
 
-        @Test
-        void testUpdateUserDetails_ThrowsExceptionWhenUserIsNotFound() {
+    @Test
+    void testUpdateUserDetails_ThrowsExceptionWhenUserIsNotFound() {
 
-            User user = User.buildUserFromEntity(getUserEntity());
-            UserNotFoundException exception =
-                    assertThrows(UserNotFoundException.class, () -> userService.updateUser(userId, user));
+        User user = User.buildUserFromEntity(getUserEntity());
+        UserNotFoundException exception =
+                assertThrows(UserNotFoundException.class, () -> userService.updateUser(userId, user));
 
-            assertEquals(USER_NOT_FOUND_EXCEPTION, exception.getMessage());
-        }
+        assertEquals(USER_NOT_FOUND_EXCEPTION, exception.getMessage());
+    }
 
-        @Test
-        void testDeleteUser() {
+    @Test
+    void testDeleteUser() {
 
-            when(userRepository.findById(any())).thenReturn(Optional.of(getUserEntity()));
-            assertDoesNotThrow(() -> userService.deleteUser(userId));
-        }
+        when(userRepository.findById(any())).thenReturn(Optional.of(getUserEntity()));
+        assertDoesNotThrow(() -> userService.deleteUser(userId));
+    }
 
-        @Test
-        void testDeleteUser_ThrowsExceptionUserNotFound() {
+    @Test
+    void testDeleteUser_ThrowsExceptionUserNotFound() {
 
-            UUID userId = UUID.fromString("1bfff94a-b70e-4b39-bd2a-be1c0f898589");
+        UUID userId = UUID.fromString("1bfff94a-b70e-4b39-bd2a-be1c0f898589");
 
-            UserNotFoundException exception =
-                    assertThrows(UserNotFoundException.class, () -> userService.deleteUser(userId));
+        UserNotFoundException exception =
+                assertThrows(UserNotFoundException.class, () -> userService.deleteUser(userId));
 
-            assertEquals(USER_NOT_FOUND_EXCEPTION, exception.getMessage());
-        }
+        assertEquals(USER_NOT_FOUND_EXCEPTION, exception.getMessage());
+    }
 
-        @Test
-        void testFollowUser_DoesNotThrowExceptionWhenBothUsersExist() {
+    @Test
+    void testFollowUser_DoesNotThrowExceptionWhenBothUsersExist() {
 
-            UserEntity userEntity1 = getUserEntity();
-            userEntity1.setId(randomUUID());
+        UserEntity userEntity1 = getUserEntity();
+        userEntity1.setId(randomUUID());
 
-            UserEntity userEntity2 = getUserEntity();
-            userEntity2.setId(randomUUID());
+        UserEntity userEntity2 = getUserEntity();
+        userEntity2.setId(randomUUID());
 
-            when(userRepository.findById(userEntity1.getId())).thenReturn(Optional.of(userEntity1));
-            when(userRepository.findById(userEntity2.getId())).thenReturn(Optional.of(userEntity2));
-            when(userRepository.save(any())).thenReturn(userEntity1);
+        when(userRepository.findById(userEntity1.getId())).thenReturn(Optional.of(userEntity1));
+        when(userRepository.findById(userEntity2.getId())).thenReturn(Optional.of(userEntity2));
+        when(userRepository.save(any())).thenReturn(userEntity1);
 
-            assertDoesNotThrow(() -> userService.followUser(userEntity1.getId(), userEntity2.getId()));
-        }
+        assertDoesNotThrow(() -> userService.followUser(userEntity1.getId(), userEntity2.getId()));
+    }
 
-        @Test
-        void testFollowUser_ThrowsUserExceptionWhenUserFromDoesNotExist() {
+    @Test
+    void testFollowUser_ThrowsUserExceptionWhenUserFromDoesNotExist() {
 
-            UserEntity userEntity1 = getUserEntity();
-            userEntity1.setId(randomUUID());
+        UserEntity userEntity1 = getUserEntity();
+        userEntity1.setId(randomUUID());
 
-            UserEntity userEntity2 = getUserEntity();
-            userEntity2.setId(randomUUID());
+        UserEntity userEntity2 = getUserEntity();
+        userEntity2.setId(randomUUID());
 
-            when(userRepository.findById(userEntity1.getId())).thenReturn(Optional.empty());
-            when(userRepository.findById(userEntity2.getId())).thenReturn(Optional.of(userEntity2));
+        when(userRepository.findById(userEntity1.getId())).thenReturn(Optional.empty());
+        when(userRepository.findById(userEntity2.getId())).thenReturn(Optional.of(userEntity2));
 
-            UserNotFoundException exception =
-                    assertThrows(UserNotFoundException.class, () -> userService.followUser(userEntity1.getId(), userEntity2.getId()));
+        UserNotFoundException exception =
+                assertThrows(UserNotFoundException.class, () -> userService.followUser(userEntity1.getId(), userEntity2.getId()));
 
-            assertEquals(USER_NOT_FOUND_EXCEPTION, exception.getMessage());
-        }
+        assertEquals(USER_NOT_FOUND_EXCEPTION, exception.getMessage());
+    }
 
-        @Test
-        void testFollowUser_ThrowsUserExceptionWhenUserToDoesNotExist() {
+    @Test
+    void testFollowUser_ThrowsUserExceptionWhenUserToDoesNotExist() {
 
-            UUID userId1 = UUID.fromString("1bfff94a-b70e-4b39-bd2a-be1c0f898589");
-            UUID userId2 = UUID.fromString("2afff94a-b70e-4b39-bd2a-be1c0f898589");
-            UserEntity userEntity1 = getUserEntity();
-            userEntity1.setId(userId1);
+        UUID userId1 = UUID.fromString("1bfff94a-b70e-4b39-bd2a-be1c0f898589");
+        UUID userId2 = UUID.fromString("2afff94a-b70e-4b39-bd2a-be1c0f898589");
+        UserEntity userEntity1 = getUserEntity();
+        userEntity1.setId(userId1);
 
-            UserEntity userEntity2 = getUserEntity();
-            userEntity2.setId(userId2);
+        UserEntity userEntity2 = getUserEntity();
+        userEntity2.setId(userId2);
 
-            when(userRepository.findById(userEntity1.getId())).thenReturn(Optional.of(userEntity1));
-            when(userRepository.findById(userEntity2.getId())).thenReturn(Optional.empty());
+        when(userRepository.findById(userEntity1.getId())).thenReturn(Optional.of(userEntity1));
+        when(userRepository.findById(userEntity2.getId())).thenReturn(Optional.empty());
 
-            UserNotFoundException exception =
-                    assertThrows(UserNotFoundException.class, () -> userService.followUser(userEntity1.getId(), userEntity2.getId()));
+        UserNotFoundException exception =
+                assertThrows(UserNotFoundException.class, () -> userService.followUser(userEntity1.getId(), userEntity2.getId()));
 
-            assertEquals(USER_NOT_FOUND_EXCEPTION, exception.getMessage());
-        }
+        assertEquals(USER_NOT_FOUND_EXCEPTION, exception.getMessage());
+    }
 
-        @Test
-        void testFollowUser_DoesNotThrowExceptionWhenFollowerIsFound() {
+    @Test
+    void testFollowUser_DoesNotThrowExceptionWhenFollowerIsFound() {
 
-            UUID userFromId = randomUUID();
-            UUID userToId = randomUUID();
-            UserEntity userEntityFrom = getUserEntity();
-            userEntityFrom.setId(userFromId);
+        UUID userFromId = randomUUID();
+        UUID userToId = randomUUID();
+        UserEntity userEntityFrom = getUserEntity();
+        userEntityFrom.setId(userFromId);
 
-            UserEntity userEntityTo = getUserEntity();
-            userEntityTo.setId(userToId);
+        UserEntity userEntityTo = getUserEntity();
+        userEntityTo.setId(userToId);
 
-            Set<FollowingRequestEntity> followingRequestEntities = new HashSet<>();
-            FollowingRequestEntity followingRequestEntity = FollowingRequestEntity.builder().userSenderEntity(userEntityFrom).userReceiverEntity(userEntityTo).build();
-            followingRequestEntities.add(followingRequestEntity);
+        Set<FollowingRequestEntity> followingRequestEntities = new HashSet<>();
+        FollowingRequestEntity followingRequestEntity = FollowingRequestEntity.builder().userSenderEntity(userEntityFrom).userReceiverEntity(userEntityTo).build();
+        followingRequestEntities.add(followingRequestEntity);
 
-            when(userRepository.findById(userEntityFrom.getId())).thenReturn(Optional.of(userEntityFrom));
-            when(userRepository.findById(userEntityTo.getId())).thenReturn(Optional.of(userEntityTo));
+        when(userRepository.findById(userEntityFrom.getId())).thenReturn(Optional.of(userEntityFrom));
+        when(userRepository.findById(userEntityTo.getId())).thenReturn(Optional.of(userEntityTo));
 
-            userEntityTo.setFollowedByEntity(followingRequestEntities);
+        userEntityTo.setFollowedByEntity(followingRequestEntities);
 
-            when(userRepository.save(any())).thenReturn(userEntityTo);
-            userEntityFrom = userRepository.save(userEntityFrom);
+        when(userRepository.save(any())).thenReturn(userEntityTo);
+        userEntityFrom = userRepository.save(userEntityFrom);
 
-            assertDoesNotThrow(() -> userService.followUser(userFromId, userToId));
-        }
+        assertDoesNotThrow(() -> userService.followUser(userFromId, userToId));
+    }
 
-        @Test
-        void testFollowUser_ThrowsExceptionWhenFollowerIsNotFound() {
+    @Test
+    void testFollowUser_ThrowsExceptionWhenFollowerIsNotFound() {
 
-            UUID userFromId = randomUUID();
-            UUID userToId = randomUUID();
-            UserEntity userEntityFrom = getUserEntity();
-            userEntityFrom.setId(userFromId);
+        UUID userFromId = randomUUID();
+        UUID userToId = randomUUID();
+        UserEntity userEntityFrom = getUserEntity();
+        userEntityFrom.setId(userFromId);
 
-            UserEntity userEntityTo = getUserEntity();
-            userEntityTo.setId(userToId);
+        UserEntity userEntityTo = getUserEntity();
+        userEntityTo.setId(userToId);
 
-            when(userRepository.findById(userEntityFrom.getId())).thenReturn(Optional.of(userEntityFrom));
-            when(userRepository.findById(userEntityTo.getId())).thenReturn(Optional.of(userEntityTo));
+        when(userRepository.findById(userEntityFrom.getId())).thenReturn(Optional.of(userEntityFrom));
+        when(userRepository.findById(userEntityTo.getId())).thenReturn(Optional.of(userEntityTo));
 
-            userEntityTo.setId(null);
-            when(userRepository.save(userEntityTo)).thenReturn(userEntityTo);
+        userEntityTo.setId(null);
+        when(userRepository.save(userEntityTo)).thenReturn(userEntityTo);
 
-            FollowerNotFoundException exception =
-                    assertThrows(FollowerNotFoundException.class, () -> userService.followUser(userFromId, userToId));
+        FollowerNotFoundException exception =
+                assertThrows(FollowerNotFoundException.class, () -> userService.followUser(userFromId, userToId));
 
-            assertEquals("Error saving follower", exception.getMessage());
-        }
+        assertEquals("Error saving follower", exception.getMessage());
+    }
 }

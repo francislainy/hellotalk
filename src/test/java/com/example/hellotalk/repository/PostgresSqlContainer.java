@@ -1,15 +1,12 @@
 package com.example.hellotalk.repository;
 
-import org.junit.runner.RunWith;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.testcontainers.containers.PostgreSQLContainer;
 
 /**
  * The type Postgresql container.
  * Please refer : https://www.testcontainers.org/
  */
-public class PostgresSqlContainer extends PostgreSQLContainer<PostgresSqlContainer>{
+public class PostgresSqlContainer extends PostgreSQLContainer<PostgresSqlContainer> {
 
     private static final String IMAGE_VERSION = "postgres:13.5";
 
@@ -21,7 +18,7 @@ public class PostgresSqlContainer extends PostgreSQLContainer<PostgresSqlContain
 
     public static PostgresSqlContainer getInstance() {
         if (container == null) {
-            container = new PostgresSqlContainer().withReuse(true);//.withInitScript("db-table-structure.sql");
+            container = new PostgresSqlContainer().withReuse(true);// .withInitScript("db-table-structure.sql");
         }
         return container;
     }
@@ -36,6 +33,6 @@ public class PostgresSqlContainer extends PostgreSQLContainer<PostgresSqlContain
 
     @Override
     public void stop() {
-        //do nothing, JVM handles shut down
+        // do nothing, JVM handles shut down
     }
 }

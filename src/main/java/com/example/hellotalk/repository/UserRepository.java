@@ -16,7 +16,8 @@ public interface UserRepository extends JpaRepository<UserEntity, UUID> {
 
     @Query(value = SELECT_FROM_USERS_WHERE_FOLLOWER_OF_ID_ORDER_BY_ID, nativeQuery = true)
     List<UserEntity> findAllByFollowerOf(UUID followerId);
-//
+
+    //
     @Query(value = SELECT_FROM_USERS_WHERE_FOLLOWED_BY_ID_ORDER_BY_ID, nativeQuery = true)
     List<UserEntity> findAllByFollowedBy(UUID followerId);
 }

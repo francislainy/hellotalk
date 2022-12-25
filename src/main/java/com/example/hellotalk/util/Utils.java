@@ -6,7 +6,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class Utils {
-    
+
     public static String jsonStringFromObject(Object jsonObject) {
         if (jsonObject == null) {
             return "";
@@ -32,10 +32,10 @@ public class Utils {
             throw new JacksonConversionException(e.getMessage());
         }
     }
-    
+
     public static <T> T convertToNewObject(Object o, Class<T> c) {
         String json = jsonStringFromObject(o);
         return objectFromJsonString(json, c);
     }
-    
+
 }

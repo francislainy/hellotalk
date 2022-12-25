@@ -13,6 +13,6 @@ public interface UserService {
     User updateUser(UUID userId, User user);
 
     void deleteUser(UUID userId) throws Exception;
-    
+
     void followUser(UUID fromId, UUID toId) throws Exception;
 }

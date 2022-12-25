@@ -71,7 +71,8 @@ public class UserServiceImpl implements UserService {
 
     }
 
-    @Override public User createUser(User user) {
+    @Override
+    public User createUser(User user) {
 
         UserEntity userEntity = buildUserEntityFromModel(user);
         userEntity = userRepository.save(userEntity);
@@ -79,7 +80,8 @@ public class UserServiceImpl implements UserService {
         return user;
     }
 
-    @Override public User updateUser(UUID userId, User user) {
+    @Override
+    public User updateUser(UUID userId, User user) {
 
         if (userRepository.findById(userId).isPresent()) {
             UserEntity userEntity = UserEntity.buildUserEntityFromModel(user);
@@ -92,7 +94,8 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-    @Override public void deleteUser(UUID userId) {
+    @Override
+    public void deleteUser(UUID userId) {
 
         Optional<UserEntity> optionalUserEntity = userRepository.findById(userId);
 
@@ -103,7 +106,8 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-    @Override public void followUser(UUID fromId, UUID toId) throws FollowerNotFoundException {
+    @Override
+    public void followUser(UUID fromId, UUID toId) throws FollowerNotFoundException {
 
         Optional<UserEntity> userEntityOptionalFrom = userRepository.findById(fromId);
         Optional<UserEntity> userEntityOptionalTo = userRepository.findById(toId);
@@ -116,8 +120,8 @@ public class UserServiceImpl implements UserService {
         UserEntity userEntityFrom = userEntityOptionalFrom.get();
         userEntityTo = userRepository.save(setFollower(userEntityTo, userEntityFrom));
 
-        if (userEntityTo.getId()
-                == null) { // Not sure how to assert the follower was saved properly, so if there's a problem with the id for the original user it means the whole object has been compromised
+        if (userEntityTo.getId() == null) { // Not sure how to assert the follower was saved properly, so if there's a problem with the id for the original user it means the whole object has
+                                            // been compromised
             throw new FollowerNotFoundException("Error saving follower");
         }
     }

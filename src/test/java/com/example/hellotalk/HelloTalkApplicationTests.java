@@ -7,8 +7,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 @SpringBootTest
 class HelloTalkApplicationTests extends BaseIntegrationTest {
 
-	@Test
-	void contextLoads() {
-	}
+    @Test
+    void contextLoads() {}
 
 }

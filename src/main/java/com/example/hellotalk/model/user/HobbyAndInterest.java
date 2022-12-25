@@ -20,11 +20,11 @@ public class HobbyAndInterest {
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private List<HobbyAndInterest> hobbyAndInterests = new ArrayList<>();
-    
+
     public void addHobbyAndInterest(HobbyAndInterest hobbyAndInterest) {
         hobbyAndInterests.add(hobbyAndInterest);
     }
-    
+
     public static HobbyAndInterest buildHobbyAndInterestFromEntity(HobbyAndInterestEntity hobbyAndInterestEntity) {
         return HobbyAndInterest.builder()
                 .id(hobbyAndInterestEntity.getId())
@@ -36,10 +36,9 @@ public class HobbyAndInterest {
 
         Set<HobbyAndInterest> hobbyAndInterests = new HashSet<>();
         hobbyAndInterestEntities.forEach(
-                h -> hobbyAndInterests.add(buildHobbyAndInterestFromEntity(h))
-        );
+                h -> hobbyAndInterests.add(buildHobbyAndInterestFromEntity(h)));
 
         return hobbyAndInterests;
     }
-    
+
 }

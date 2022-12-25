@@ -18,6 +18,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static com.example.hellotalk.entity.user.UserEntity.buildUserEntityFromModel;
+import static com.example.hellotalk.exception.AppExceptionHandler.USER_NOT_FOUND_EXCEPTION;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -65,7 +66,7 @@ public class UserServiceImpl implements UserService {
                     .hobbyAndInterests(hobbyAndInterestEntities)
                     .build();
         } else {
-            return null;
+            throw new UserNotFoundException(USER_NOT_FOUND_EXCEPTION);
         }
 
     }
@@ -87,7 +88,7 @@ public class UserServiceImpl implements UserService {
             userEntity = userRepository.save(userEntity);
             return User.buildUserFromEntity(userEntity);
         } else {
-            throw new UserNotFoundException("No user found with this id");
+            throw new UserNotFoundException(USER_NOT_FOUND_EXCEPTION);
         }
     }
 
@@ -98,7 +99,7 @@ public class UserServiceImpl implements UserService {
         if (optionalUserEntity.isPresent()) {
             userRepository.deleteById(userId);
         } else {
-            throw new UserNotFoundException("No user found with this id");
+            throw new UserNotFoundException(USER_NOT_FOUND_EXCEPTION);
         }
     }
 
@@ -108,7 +109,7 @@ public class UserServiceImpl implements UserService {
         Optional<UserEntity> userEntityOptionalTo = userRepository.findById(toId);
 
         if (userEntityOptionalFrom.isEmpty() || userEntityOptionalTo.isEmpty()) {
-            throw new UserNotFoundException("No user found with this id");
+            throw new UserNotFoundException(USER_NOT_FOUND_EXCEPTION);
         }
 
         UserEntity userEntityTo = userEntityOptionalTo.get();

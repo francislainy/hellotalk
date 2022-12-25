@@ -24,10 +24,10 @@ import java.util.Set;
 import java.util.UUID;
 
 import static com.example.hellotalk.entity.user.HometownEntity.buildHometownEntity;
+import static com.example.hellotalk.exception.AppExceptionHandler.USER_NOT_FOUND_EXCEPTION;
 import static java.util.UUID.randomUUID;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -190,7 +190,7 @@ class UserServiceTest {
             UserNotFoundException exception =
                     assertThrows(UserNotFoundException.class, () -> userService.updateUser(userId, user));
 
-            assertEquals("No user found with this id", exception.getMessage());
+            assertEquals(USER_NOT_FOUND_EXCEPTION, exception.getMessage());
         }
 
         @Test
@@ -208,7 +208,7 @@ class UserServiceTest {
             UserNotFoundException exception =
                     assertThrows(UserNotFoundException.class, () -> userService.deleteUser(userId));
 
-            assertEquals("No user found with this id", exception.getMessage());
+            assertEquals(USER_NOT_FOUND_EXCEPTION, exception.getMessage());
         }
 
         @Test
@@ -242,7 +242,7 @@ class UserServiceTest {
             UserNotFoundException exception =
                     assertThrows(UserNotFoundException.class, () -> userService.followUser(userEntity1.getId(), userEntity2.getId()));
 
-            assertEquals("No user found with this id", exception.getMessage());
+            assertEquals(USER_NOT_FOUND_EXCEPTION, exception.getMessage());
         }
 
         @Test
@@ -262,7 +262,7 @@ class UserServiceTest {
             UserNotFoundException exception =
                     assertThrows(UserNotFoundException.class, () -> userService.followUser(userEntity1.getId(), userEntity2.getId()));
 
-            assertEquals("No user found with this id", exception.getMessage());
+            assertEquals(USER_NOT_FOUND_EXCEPTION, exception.getMessage());
         }
 
         @Test

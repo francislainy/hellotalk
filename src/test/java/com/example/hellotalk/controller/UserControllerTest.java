@@ -26,6 +26,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
+import static com.example.hellotalk.exception.AppExceptionHandler.USER_NOT_FOUND_EXCEPTION;
 import static com.example.hellotalk.util.Utils.convertToNewObject;
 import static com.example.hellotalk.util.Utils.jsonStringFromObject;
 import static java.util.UUID.randomUUID;
@@ -51,9 +52,11 @@ class UserControllerTest {
     private String jsonRequest;
     private String jsonResponse;
 
-    @Autowired MockMvc mockMvc;
+    @Autowired
+    MockMvc mockMvc;
 
-    @MockBean UserService userService;
+    @MockBean
+    UserService userService;
 
     @BeforeAll
     void initData() {
@@ -99,7 +102,7 @@ class UserControllerTest {
 
     @BeforeEach
     void setUp(WebApplicationContext webApplicationContext,
-            RestDocumentationContextProvider restDocumentation) {
+               RestDocumentationContextProvider restDocumentation) {
         this.mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext)
                 .apply(documentationConfiguration(restDocumentation)).alwaysDo(document("{method-name}",
                         preprocessRequest(prettyPrint()), preprocessResponse(prettyPrint())))
@@ -141,16 +144,18 @@ class UserControllerTest {
     @Test
     void testUpdateUser_ThrowsExceptionWhenUserDoesNotExist() throws Exception {
 
-        when(userService.updateUser(any(), any())).thenThrow(new UserNotFoundException("No user found with this id"));
+        when(userService.updateUser(any(), any())).thenThrow(new UserNotFoundException(USER_NOT_FOUND_EXCEPTION));
+
+        String jsonError = """
+                {"message": "jsonError"}
+                """;
+        jsonError = jsonError.replace("jsonError", USER_NOT_FOUND_EXCEPTION);
 
         mockMvc.perform(put("/api/v1/ht/user/{userId}", userId)
                         .content(jsonRequest)
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().is(204));
-//                //                .andExpect(content().json("{\"error\": \"No user found with this id\"}"));
-//                .andExpect(content().json("""
-//                        {"error": "No user found with this id"}
-//                        """));
+                .andExpect(status().is(404))
+                .andExpect(content().json(jsonError));
     }
 
     @Test
@@ -165,11 +170,17 @@ class UserControllerTest {
     @Test
     void testDeleteUser_ThrowsExceptionWhenUserNotFound() throws Exception {
 
-        doThrow(new UserNotFoundException("No user found with this id")).when(userService).deleteUser(any());
+        doThrow(new UserNotFoundException(USER_NOT_FOUND_EXCEPTION)).when(userService).deleteUser(any());
+
+        String jsonError = """
+                {"message": "jsonError"}
+                """;
+        jsonError = jsonError.replace("jsonError", USER_NOT_FOUND_EXCEPTION);
 
         mockMvc.perform(delete("/api/v1/ht/user/{userId}", userId).contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().is2xxSuccessful())
-                .andExpect(content().string("No user found with this id"));
+                .andExpect(status().is4xxClientError())
+                .andExpect(content().json(jsonError
+                ));
     }
 
 }

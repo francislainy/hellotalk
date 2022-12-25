@@ -1,6 +1,5 @@
 package com.example.hellotalk.controller;
 
-import com.example.hellotalk.exception.UserNotFoundException;
 import com.example.hellotalk.model.user.User;
 import com.example.hellotalk.service.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,11 +9,14 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
+// TODO: 23/12/2022 add exception handler for all the controllers and finish updating tests accordingly
+
 @RestController
 @RequestMapping("/api/v1/ht/user")
 public class UserController {
 
-    @Autowired UserService userService;
+    @Autowired
+    UserService userService;
 
     @GetMapping({"/{userId}", "/{userId}/"})
     public ResponseEntity<Object> getUser(@PathVariable UUID userId) {
@@ -28,23 +30,13 @@ public class UserController {
 
     @PutMapping({"/{userId}", "/{userId}/"})
     public ResponseEntity<Object> updateUser(@PathVariable UUID userId, @RequestBody User user) {
-
-        try {
-            return new ResponseEntity<>(userService.updateUser(userId, user), HttpStatus.OK);
-        } catch (UserNotFoundException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.NO_CONTENT);
-        }
+        return new ResponseEntity<>(userService.updateUser(userId, user), HttpStatus.OK);
     }
 
     @DeleteMapping({"/{userId}", "/{userId}/"})
     public ResponseEntity<Object> deleteUser(@PathVariable UUID userId) throws Exception {
-
-        try {
-            userService.deleteUser(userId);
-            return new ResponseEntity<>(HttpStatus.PARTIAL_CONTENT);
-        } catch (UserNotFoundException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.NO_CONTENT);
-        }
+        userService.deleteUser(userId);
+        return new ResponseEntity<>(HttpStatus.PARTIAL_CONTENT);
     }
 
 }

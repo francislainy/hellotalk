@@ -254,7 +254,6 @@
                 <!-- Edit this URL for sonarQube server -->
                 <sonar.host.url>http://localhost:9000/</sonar.host.url>
                 <sonar.login>sqa_4d76ac946c1c619a60e7e9272c3540c0c476fee5</sonar.login>
-                <sonar.pullrequest.github.repository>Ed-Core/viaduct-service</sonar.pullrequest.github.repository>
                 <!-- Sonar-JaCoCo properties -->
                 <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
                 <sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
@@ -263,7 +262,7 @@
                 <java.version>17</java.version>
                 <sonar.exclusions>**/entity/**</sonar.exclusions>
                 <sonar.coverage.exclusions>
-                    **/ViaductService.java, **/*Exception*.java, **/dao/**, **/dto/**, **/entity/**
+                    **/HelloTalk.java, **/*Exception*.java, **/dao/**, **/dto/**, **/entity/**
                 </sonar.coverage.exclusions>
                 <sonar.test.exclusions>src/test/**/*</sonar.test.exclusions>
             </properties>

@@ -16,7 +16,7 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
 @ControllerAdvice
 public class AppExceptionHandler extends ResponseEntityExceptionHandler {
 
-    public static String USER_NOT_FOUND_EXCEPTION = "NO USER FOUND WITH THIS ID";
+    public static final String USER_NOT_FOUND_EXCEPTION = "NO USER FOUND WITH THIS ID";
 
     @ExceptionHandler(UserNotFoundException.class)
     public ResponseEntity<Object> handleUserNotFoundException(UserNotFoundException ex, WebRequest webRequest) {

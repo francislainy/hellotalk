@@ -4,8 +4,11 @@ import com.example.hellotalk.exception.JacksonConversionException;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
-public class Utils {
+@NoArgsConstructor(access= AccessLevel.PRIVATE)
+public final class Utils {
 
     public static String jsonStringFromObject(Object jsonObject) {
         if (jsonObject == null) {

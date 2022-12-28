@@ -7,6 +7,8 @@ import com.example.hellotalk.exception.FollowerNotFoundException;
 import com.example.hellotalk.exception.UserNotFoundException;
 import com.example.hellotalk.model.user.Hometown;
 import com.example.hellotalk.model.user.User;
+import com.example.hellotalk.repository.HobbyAndInterestRepository;
+import com.example.hellotalk.repository.HometownRepository;
 import com.example.hellotalk.repository.UserRepository;
 import com.example.hellotalk.service.impl.user.UserServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,10 +20,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 import static com.example.hellotalk.entity.user.HometownEntity.buildHometownEntity;
 import static com.example.hellotalk.exception.AppExceptionHandler.USER_NOT_FOUND_EXCEPTION;
@@ -37,13 +36,19 @@ class UserServiceTest {
     @Mock
     UserRepository userRepository;
 
+    @Mock
+    HobbyAndInterestRepository hobbyAndInterestRepository;
+
+    @Mock
+    HometownRepository hometownRepository;
+
     @InjectMocks
     UserServiceImpl userService;
 
     @BeforeEach
     void setUp() {
         userRepository = Mockito.mock(UserRepository.class);
-        userService = new UserServiceImpl(userRepository);
+        userService = new UserServiceImpl(userRepository, hobbyAndInterestRepository, hometownRepository);
     }
 
     private final UUID userId = UUID.fromString("1bfff94a-b70e-4b39-bd2a-be1c0f898589");
@@ -102,10 +107,45 @@ class UserServiceTest {
     }
 
     @Test
+    void testGetAllUsers() {
+
+        UserEntity userEntity = getUserEntity();
+        List<UserEntity> userEntityList = new ArrayList<>();
+        userEntityList.add(userEntity);
+        when(userRepository.findAll()).thenReturn(userEntityList);
+
+        User user = userService.getAllUsers().get(0);
+        assertAll(
+                () -> assertEquals(userId, user.getId()),
+                () -> assertEquals("anyName", user.getName()),
+                () -> assertEquals("anyDob", user.getDob()),
+                () -> assertEquals("anyGender", user.getGender()),
+                () -> assertEquals("anySubscriptionType", user.getSubscriptionType()),
+                () -> assertEquals("anyCreationDate", user.getCreationDate()),
+                () -> assertEquals("anyStatus", user.getStatus()),
+                () -> assertEquals("anyHandle", user.getHandle()),
+                () -> assertEquals("anyDob", user.getDob()),
+                () -> assertEquals("anyNativeLanguage", user.getNativeLanguage()),
+                () -> assertEquals("anyTargetLanguage", user.getTargetLanguage()),
+                () -> assertEquals("anySelfIntroduction", user.getSelfIntroduction()),
+                () -> assertEquals("anyOccupation", user.getOccupation()),
+                () -> assertEquals("anyCity", user.getHometown().getCity()),
+                () -> assertEquals("anyCountry", user.getHometown().getCountry()),
+                () -> assertEquals("anyPlacesToVisit", user.getPlacesToVisit()));
+
+        user.getHobbyAndInterests().forEach(h -> assertEquals("anyInterest", h.getTitle()));
+    }
+
+    @Test
     void testCreateUser() {
 
         UserEntity userEntity = getUserEntity();
-        when(userRepository.save(any(UserEntity.class))).thenReturn(userEntity);
+        when(hometownRepository.save(any())).thenReturn(userEntity.getHometownEntity());
+
+        Set<HobbyAndInterestEntity> hobbyAndInterestEntities = userEntity.getHobbyAndInterestEntities();
+        List<HobbyAndInterestEntity> hobbyAndInterestEntityList = new ArrayList<>(hobbyAndInterestEntities);
+        when(hobbyAndInterestRepository.saveAll(any())).thenReturn(hobbyAndInterestEntityList);
+        when(userRepository.save(any())).thenReturn(userEntity);
 
         User user = userService.createUser(User.buildUserFromEntity(userEntity));
         assertAll(

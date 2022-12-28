@@ -1,32 +1,37 @@
 package com.example.hellotalk.service.impl.user;
 
 import com.example.hellotalk.entity.user.FollowingRequestEntity;
+import com.example.hellotalk.entity.user.HobbyAndInterestEntity;
+import com.example.hellotalk.entity.user.HometownEntity;
 import com.example.hellotalk.entity.user.UserEntity;
 import com.example.hellotalk.exception.FollowerNotFoundException;
 import com.example.hellotalk.exception.UserNotFoundException;
 import com.example.hellotalk.model.user.HobbyAndInterest;
-import com.example.hellotalk.model.user.Hometown;
 import com.example.hellotalk.model.user.User;
+import com.example.hellotalk.repository.HobbyAndInterestRepository;
+import com.example.hellotalk.repository.HometownRepository;
 import com.example.hellotalk.repository.UserRepository;
 import com.example.hellotalk.service.user.UserService;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.example.hellotalk.entity.user.UserEntity.buildUserEntityFromModel;
 import static com.example.hellotalk.exception.AppExceptionHandler.USER_NOT_FOUND_EXCEPTION;
+import static com.example.hellotalk.model.user.Hometown.buildHometownFromEntity;
 
 @Service
 public class UserServiceImpl implements UserService {
 
     final UserRepository userRepository;
+    final HobbyAndInterestRepository hobbyAndInterestRepository;
+    final HometownRepository hometownRepository;
 
-    public UserServiceImpl(UserRepository userRepository) {
+    public UserServiceImpl(UserRepository userRepository, HobbyAndInterestRepository hobbyAndInterestRepository, HometownRepository hometownRepository) {
         this.userRepository = userRepository;
+        this.hobbyAndInterestRepository = hobbyAndInterestRepository;
+        this.hometownRepository = hometownRepository;
     }
 
     @Override
@@ -40,9 +45,7 @@ public class UserServiceImpl implements UserService {
 
             Set<HobbyAndInterest> hobbyAndInterestEntities =
                     userEntity.getHobbyAndInterestEntities().stream()
-                            .map(h -> HobbyAndInterest.builder()
-                                    .id(h.getId())
-                                    .title(h.getTitle()).build())
+                            .map(HobbyAndInterest::buildHobbyAndInterestFromEntity)
                             .collect(Collectors.toSet());
 
             return User.builder()
@@ -59,10 +62,7 @@ public class UserServiceImpl implements UserService {
                     .selfIntroduction(userEntity.getSelfIntroduction())
                     .occupation(userEntity.getOccupation())
                     .placesToVisit(userEntity.getPlacesToVisit())
-                    .hometown(Hometown.builder()
-                            .city(userEntity.getHometownEntity().getCity())
-                            .country(userEntity.getHometownEntity().getCountry())
-                            .build())
+                    .hometown(buildHometownFromEntity(userEntity.getHometownEntity()))
                     .hobbyAndInterests(hobbyAndInterestEntities)
                     .build();
         } else {
@@ -72,12 +72,34 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public List<User> getAllUsers() {
+
+        List<User> userList = new ArrayList<>();
+        List<UserEntity> userEntityList = userRepository.findAll();
+
+        if (!userEntityList.isEmpty()) {
+            userEntityList.forEach(userEntity -> userList.add(User.buildUserFromEntity(userEntity)
+            ));
+        }
+
+        return userList;
+    }
+
+    @Override
     public User createUser(User user) {
 
         UserEntity userEntity = buildUserEntityFromModel(user);
+
+        List<HobbyAndInterestEntity> hobbyAndInterestEntityList = hobbyAndInterestRepository.saveAll(userEntity.getHobbyAndInterestEntities());
+        HometownEntity hometownEntity = hometownRepository.save(userEntity.getHometownEntity());
+
+        Set<HobbyAndInterestEntity> hobbyAndInterestEntitySet = new HashSet<>(hobbyAndInterestEntityList);
+        userEntity.setHobbyAndInterestEntities(hobbyAndInterestEntitySet);
+        userEntity.setHometownEntity(hometownEntity);
+
         userEntity = userRepository.save(userEntity);
-        user.setId(userEntity.getId());
-        return user;
+
+        return User.buildUserFromEntity(userEntity);
     }
 
     @Override
@@ -121,7 +143,7 @@ public class UserServiceImpl implements UserService {
         userEntityTo = userRepository.save(setFollower(userEntityTo, userEntityFrom));
 
         if (userEntityTo.getId() == null) { // Not sure how to assert the follower was saved properly, so if there's a problem with the id for the original user it means the whole object has
-                                            // been compromised
+            // been compromised
             throw new FollowerNotFoundException("Error saving follower");
         }
     }

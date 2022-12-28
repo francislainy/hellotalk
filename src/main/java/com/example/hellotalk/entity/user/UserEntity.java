@@ -11,7 +11,8 @@ import java.util.UUID;
 @Entity
 @Table(name = "users")
 @Builder
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserEntity {
@@ -68,13 +69,9 @@ public class UserEntity {
     @JoinColumn(name = "hometown_id", referencedColumnName = "id")
     private HometownEntity hometownEntity;
 
-    @ToString.Exclude
-    @EqualsAndHashCode.Exclude
     @OneToMany(mappedBy = "userReceiverEntity", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = false)
     private Set<FollowingRequestEntity> followedByEntity;
-
-    @ToString.Exclude
-    @EqualsAndHashCode.Exclude
+    
     @OneToMany(mappedBy = "userSenderEntity", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = false)
     private Set<FollowingRequestEntity> followerOfEntity;
 
@@ -85,6 +82,8 @@ public class UserEntity {
                 .id(h.getId())
                 .title(h.getTitle())
                 .build()));
+
+        HometownEntity hometownEntity = HometownEntity.buildHometownEntity(user.getHometown());
 
         return UserEntity.builder()
                 .id(user.getId())
@@ -100,6 +99,7 @@ public class UserEntity {
                 .nativeLanguage(user.getNativeLanguage())
                 .targetLanguage(user.getTargetLanguage())
                 .placesToVisit(user.getPlacesToVisit())
+                .hometownEntity(hometownEntity)
                 .hobbyAndInterestEntities(hobbyAndInterestEntities)
                 .build();
     }

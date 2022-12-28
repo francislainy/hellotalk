@@ -9,8 +9,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
-// TODO: 23/12/2022 add exception handler for all the controllers and finish updating tests accordingly
-
 @RestController
 @RequestMapping("/api/v1/ht/user")
 public class UserController {
@@ -21,6 +19,11 @@ public class UserController {
     @GetMapping({"/{userId}", "/{userId}/"})
     public ResponseEntity<Object> getUser(@PathVariable UUID userId) {
         return new ResponseEntity<>(userService.getUser(userId), HttpStatus.OK);
+    }
+
+    @GetMapping({"", "/"})
+    public ResponseEntity<Object> getAllUsers() {
+        return new ResponseEntity<>(userService.getAllUsers(), HttpStatus.OK);
     }
 
     @PostMapping({"", "/"})

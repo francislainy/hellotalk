@@ -22,9 +22,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 import static com.example.hellotalk.exception.AppExceptionHandler.USER_NOT_FOUND_EXCEPTION;
 import static com.example.hellotalk.util.Utils.convertToNewObject;
@@ -112,7 +110,8 @@ class UserControllerTest {
     @Test
     void testGetUser() throws Exception {
 
-        when(userService.getUser(userId)).thenReturn(userResponse);
+        User user = this.userResponse;
+        when(userService.getUser(userId)).thenReturn(user);
 
         mockMvc.perform(get("/api/v1/ht/user/{userId}", userId))
                 .andExpect(status().is2xxSuccessful())
@@ -120,9 +119,26 @@ class UserControllerTest {
     }
 
     @Test
+    void testGetAllUsers() throws Exception {
+
+        User user = this.userResponse;
+        when(userService.getAllUsers()).thenReturn(List.of(user));
+
+        List<User> userList = new ArrayList<>();
+        userList.add(userResponse);
+
+        String jsonResponse = jsonStringFromObject(userList);
+
+        mockMvc.perform(get("/api/v1/ht/user/"))
+                .andExpect(status().is2xxSuccessful())
+                .andExpect(content().json(jsonResponse));
+    }
+
+    @Test
     void testCreateUser() throws Exception {
 
-        when(userService.createUser(any())).thenReturn(userResponse);
+        User user = userResponse;
+        when(userService.createUser(any())).thenReturn(user);
 
         mockMvc.perform(post("/api/v1/ht/user").content(jsonRequest).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is2xxSuccessful())
@@ -132,11 +148,12 @@ class UserControllerTest {
     @Test
     void testUpdateUser() throws Exception {
 
-        when(userService.updateUser(any(), any())).thenReturn(userResponse);
+        User user = userResponse;
+        when(userService.updateUser(any(), any())).thenReturn(user);
 
         mockMvc.perform(put("/api/v1/ht/user/{userId}", userId)
-                .content(jsonRequest)
-                .contentType(MediaType.APPLICATION_JSON))
+                        .content(jsonRequest)
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(content().json(jsonResponse));
     }
@@ -161,7 +178,8 @@ class UserControllerTest {
     @Test
     void testDeleteUser() throws Exception {
 
-        when(userService.getUser(any())).thenReturn(userResponse);
+        User user = userResponse;
+        when(userService.getUser(any())).thenReturn(user);
 
         mockMvc.perform(delete("/api/v1/ht/user/{userId}", userId).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is2xxSuccessful());

@@ -71,7 +71,7 @@ class UserRepositoryTest extends BaseIntegrationTest {
         userEntity.getHobbyAndInterestEntities().forEach(h -> hobbyAndInterestEntityOriginal[0] = h);
 
         HometownEntity hometownEntity = getUpdatedHometown(userEntity);
-        userEntity = getUpdatedUser(userEntity);
+        userEntity = getUpdatedUserEntity(userEntity);
         UUID updatedUserId = userEntity.getId();
         final HobbyAndInterestEntity[] hobbyAndInterestEntityUpdated = new HobbyAndInterestEntity[1];
         userEntity.getHobbyAndInterestEntities().forEach(h -> hobbyAndInterestEntityUpdated[0] = h);
@@ -174,7 +174,7 @@ class UserRepositoryTest extends BaseIntegrationTest {
     }
 
     @NotNull
-    private UserEntity getUpdatedUser(UserEntity userEntity) {
+    private UserEntity getUpdatedUserEntity(UserEntity userEntity) {
         HometownEntity hometownEntity = getUpdatedHometown(userEntity);
         Set<HobbyAndInterestEntity> hobbyAndInterestEntities = new HashSet<>();
         hobbyAndInterestEntities.add(getUpdatedHobbyAndInterest(userEntity));

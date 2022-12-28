@@ -1,24 +1,8 @@
-= Getting Started With Spring REST Docs
+https://xxx[= Getting Started With Spring REST Docs]
 
 This is an example output for a service running at http://localhost:8080:
 
-.request
-include::{snippets}/test-create-user/http-request.adoc[]
-
-.response
-include::{snippets}/test-create-user/http-response.adoc[]
-
-.request
-include::{snippets}/test-delete-user/http-request.adoc[]
-
-.response
-include::{snippets}/test-delete-user/http-response.adoc[]
-
-.request
-include::{snippets}/test-delete-user_-throws-exception-when-user-not-found/http-request.adoc[]
-
-.response
-include::{snippets}/test-delete-user_-throws-exception-when-user-not-found/http-response.adoc[]
+Get User
 
 .request
 include::{snippets}/test-get-user/http-request.adoc[]
@@ -26,16 +10,52 @@ include::{snippets}/test-get-user/http-request.adoc[]
 .response
 include::{snippets}/test-get-user/http-response.adoc[]
 
+Get Users
+
+.request
+include::{snippets}/test-get-all-users/http-request.adoc[]
+
+.response
+include::{snippets}/test-get-all-users/http-response.adoc[]
+
+Post Create User
+
+.request
+include::{snippets}/test-create-user/http-request.adoc[]
+
+.response
+include::{snippets}/test-create-user/http-response.adoc[]
+
+Update User
+
 .request
 include::{snippets}/test-update-user/http-request.adoc[]
 
 .response
 include::{snippets}/test-update-user/http-response.adoc[]
 
+Update User Throws Exception When User Not Found
+
 .request
 include::{snippets}/test-update-user_-throws-exception-when-user-does-not-exist/http-request.adoc[]
 
 .response
 include::{snippets}/test-update-user_-throws-exception-when-user-does-not-exist/http-response.adoc[]
+
+Delete User
+
+.request
+include::{snippets}/test-delete-user/http-request.adoc[]
+
+.response
+include::{snippets}/test-delete-user/http-response.adoc[]
+
+Delete User Throws Exception When User Not Found
+
+.request
+include::{snippets}/test-delete-user_-throws-exception-when-user-not-found/http-request.adoc[]
+
+.response
+include::{snippets}/test-delete-user_-throws-exception-when-user-not-found/http-response.adoc[]
 
 As you can see the format is very simple, and in fact you always get the same message.

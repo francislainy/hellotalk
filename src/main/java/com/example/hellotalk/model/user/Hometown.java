@@ -19,10 +19,16 @@ public class Hometown {
     private String country;
 
     public static Hometown buildHometownFromEntity(HometownEntity hometownEntity) {
-        return Hometown.builder()
-                .id(hometownEntity.getId())
-                .city(hometownEntity.getCity())
-                .country(hometownEntity.getCountry())
-                .build();
+
+        if (hometownEntity != null) {
+
+            return Hometown.builder()
+                    .id(hometownEntity.getId())
+                    .city(hometownEntity.getCity())
+                    .country(hometownEntity.getCountry())
+                    .build();
+        } else {
+            return null;
+        }
     }
 }

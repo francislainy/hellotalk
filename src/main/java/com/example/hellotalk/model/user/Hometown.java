@@ -1,6 +1,7 @@
 package com.example.hellotalk.model.user;
 
 import com.example.hellotalk.entity.user.HometownEntity;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -14,6 +15,7 @@ import java.util.UUID;
 @AllArgsConstructor
 public class Hometown {
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private UUID id;
     private String city;
     private String country;

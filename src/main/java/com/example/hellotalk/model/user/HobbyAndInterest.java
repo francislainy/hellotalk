@@ -15,6 +15,7 @@ import java.util.*;
 @AllArgsConstructor
 public class HobbyAndInterest {
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private UUID id;
     private String title;
 

@@ -45,13 +45,13 @@ class UserServiceTest {
     @InjectMocks
     UserServiceImpl userService;
 
+    private final UUID userId = UUID.fromString("1bfff94a-b70e-4b39-bd2a-be1c0f898589");
+
     @BeforeEach
     void setUp() {
         userRepository = Mockito.mock(UserRepository.class);
         userService = new UserServiceImpl(userRepository, hobbyAndInterestRepository, hometownRepository);
     }
-
-    private final UUID userId = UUID.fromString("1bfff94a-b70e-4b39-bd2a-be1c0f898589");
 
     private UserEntity getUserEntity() {
         Hometown hometown = Hometown.builder().city("anyCity").country("anyCountry").build();

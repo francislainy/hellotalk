@@ -1,6 +1,7 @@
 package com.example.hellotalk.model.user;
 
 import com.example.hellotalk.entity.user.UserEntity;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -18,6 +19,7 @@ import static com.example.hellotalk.model.user.Hometown.buildHometownFromEntity;
 @AllArgsConstructor
 public class User {
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private UUID id;
     private String name;
     private String dob;
@@ -34,7 +36,9 @@ public class User {
 
     private Hometown hometown;
     private Set<HobbyAndInterest> hobbyAndInterests;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private Set<User> followedBy;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private Set<User> followerOf;
 
     public static User buildUserFromEntity(UserEntity userEntity) {

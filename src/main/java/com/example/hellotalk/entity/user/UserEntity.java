@@ -58,7 +58,7 @@ public class UserEntity {
     @Column(name = "subscription_type")
     private String subscriptionType;
 
-    @ManyToMany
+    @ManyToMany(cascade = {CascadeType.ALL})
     @JoinTable(
             name = "users_hobbies",
             joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
@@ -71,7 +71,7 @@ public class UserEntity {
 
     @OneToMany(mappedBy = "userReceiverEntity", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = false)
     private Set<FollowingRequestEntity> followedByEntity;
-    
+
     @OneToMany(mappedBy = "userSenderEntity", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = false)
     private Set<FollowingRequestEntity> followerOfEntity;
 

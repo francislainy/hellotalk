@@ -20,6 +20,7 @@ import java.util.stream.Collectors;
 import static com.example.hellotalk.entity.user.UserEntity.buildUserEntityFromModel;
 import static com.example.hellotalk.exception.AppExceptionHandler.USER_NOT_FOUND_EXCEPTION;
 import static com.example.hellotalk.model.user.Hometown.buildHometownFromEntity;
+import static com.example.hellotalk.model.user.User.buildUserFromEntity;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -78,8 +79,7 @@ public class UserServiceImpl implements UserService {
         List<UserEntity> userEntityList = userRepository.findAll();
 
         if (!userEntityList.isEmpty()) {
-            userEntityList.forEach(userEntity -> userList.add(User.buildUserFromEntity(userEntity)
-            ));
+            userEntityList.forEach(userEntity -> userList.add(buildUserFromEntity(userEntity)));
         }
 
         return userList;
@@ -99,18 +99,29 @@ public class UserServiceImpl implements UserService {
 
         userEntity = userRepository.save(userEntity);
 
-        return User.buildUserFromEntity(userEntity);
+        return buildUserFromEntity(userEntity);
     }
 
     @Override
     public User updateUser(UUID userId, User user) {
 
-        if (userRepository.findById(userId).isPresent()) {
+        Optional<UserEntity> userEntityOptional = userRepository.findById(userId);
+        if (userEntityOptional.isPresent()) {
             UserEntity userEntity = UserEntity.buildUserEntityFromModel(user);
             userEntity.setId(userId);
 
+            HometownEntity hometownEntity = userEntityOptional.get().getHometownEntity();
+            if (hometownEntity != null) {
+                hometownRepository.save(hometownEntity);
+            }
+
+            Set<HobbyAndInterestEntity> hobbyAndInterestEntities = userEntityOptional.get().getHobbyAndInterestEntities();
+            if (!hobbyAndInterestEntities.isEmpty()) {
+                hobbyAndInterestRepository.saveAll(hobbyAndInterestEntities);
+            }
+
             userEntity = userRepository.save(userEntity);
-            return User.buildUserFromEntity(userEntity);
+            return buildUserFromEntity(userEntity);
         } else {
             throw new UserNotFoundException(USER_NOT_FOUND_EXCEPTION);
         }

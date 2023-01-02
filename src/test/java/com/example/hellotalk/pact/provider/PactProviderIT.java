@@ -23,7 +23,7 @@ import static com.example.hellotalk.utils.Utils.logCurlFromPact;
 /* Uncomment this and comment @PactBroker instead to test locally by pasting a .json file for the contract under
  the target/pacts folder */
 @PactFolder("target/pacts")
-//@PactBroker(host = BROKER_PACT_URL, consumers = {"MY_CONSUMER"})
+// @PactBroker(host = BROKER_PACT_URL, consumers = {"MY_CONSUMER"})
 @VerificationReports(value = {"markdown"}, reportDir = "target/pacts")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class PactProviderIT {
@@ -46,10 +46,6 @@ class PactProviderIT {
         context.setTarget(new HttpTestTarget("localhost", port, ""));
     }
 
-    @State("A request to retrieve a list of users")
-    void getUsers() {
-    }
-
     @State("A request to retrieve a user")
     Map<String, Object> getUser() {
         Map<String, Object> map = new HashMap<>();
@@ -57,4 +53,10 @@ class PactProviderIT {
         return map;
     }
 
+    @State("A request to update a user")
+    Map<String, Object> updateUser() {
+        Map<String, Object> map = new HashMap<>();
+        map.put("userId", "d3256c76-62d7-4481-9d1c-a0ccc4da380f");
+        return map;
+    }
 }

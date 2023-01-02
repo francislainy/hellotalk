@@ -7,7 +7,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
-@NoArgsConstructor(access= AccessLevel.PRIVATE)
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class Utils {
 
     public static String jsonStringFromObject(Object jsonObject) {

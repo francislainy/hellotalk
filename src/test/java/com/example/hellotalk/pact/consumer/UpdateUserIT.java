@@ -8,9 +8,6 @@ import au.com.dius.pact.consumer.junit5.PactTestFor;
 import au.com.dius.pact.core.model.PactSpecVersion;
 import au.com.dius.pact.core.model.RequestResponsePact;
 import au.com.dius.pact.core.model.annotations.Pact;
-import au.com.dius.pact.provider.junitsupport.VerificationReports;
-import com.example.hellotalk.entity.user.HobbyAndInterestEntity;
-import com.example.hellotalk.entity.user.UserEntity;
 import com.example.hellotalk.model.user.HobbyAndInterest;
 import com.example.hellotalk.model.user.Hometown;
 import com.example.hellotalk.model.user.User;
@@ -21,12 +18,11 @@ import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.util.*;
 
-import static com.example.hellotalk.entity.user.HometownEntity.buildHometownEntity;
 import static com.example.hellotalk.utils.Utils.getRequestSpecification;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ExtendWith(PactConsumerTestExt.class)
-class PactConsumerCreateUserIT {
+class UpdateUserIT {
 
     Map<String, String> headers = new HashMap<>();
 
@@ -40,7 +36,7 @@ class PactConsumerCreateUserIT {
 
         DslPart bodyReceived = new PactDslJsonBody()
                 .stringType("name", "anyName")
-                .stringType("dob", "anyDob") //todo: use date type
+                .stringType("dob", "anyDob") // todo: use date type
                 .stringType("gender", "anyGender")
                 .stringType("selfIntroduction", "anySelfIntroduction")
                 .stringType("creationDate", "anyCreationDate")
@@ -63,7 +59,7 @@ class PactConsumerCreateUserIT {
         DslPart bodyReturned = new PactDslJsonBody()
                 .uuid("id", userId)
                 .stringType("name", "anyName")
-                .stringType("dob", "anyDob") //todo: use date type
+                .stringType("dob", "anyDob") // todo: use date type
                 .stringType("gender", "anyGender")
                 .stringType("selfIntroduction", "anySelfIntroduction")
                 .stringType("creationDate", "anyDate")
@@ -86,23 +82,23 @@ class PactConsumerCreateUserIT {
                 .close();
 
         return builder
-                .uponReceiving("A request to create a user")
-                .path(path)
+                .given("A request to update a user")
+                .uponReceiving("A request to update a user")
+                .pathFromProviderState(path + "${userId}", path + userId)
                 .body(bodyReceived)
-                .method("POST")
+                .method("PUT")
                 .headers(headers)
                 .willRespondWith()
-                .status(201)
+                .status(200)
                 .body(bodyReturned)
                 .toPact();
-
     }
 
     @Test
     @PactTestFor(providerName = "MY_PROVIDER", port = "8082", pactVersion = PactSpecVersion.V3)
     void runTest() {
 
-        //Mock url
+        // Mock url
         RequestSpecification rq = getRequestSpecification().baseUri("http://localhost:8082").headers(headers);
 
         Hometown hometown = Hometown.builder().city("anyCity").country("anyCountry").build();
@@ -127,9 +123,9 @@ class PactConsumerCreateUserIT {
                 .hobbyAndInterests(hobbyAndInterests)
                 .build();
 
-        Response response = rq.body(user).post(path);
+        Response response = rq.body(user).put(path + userId);
 
-        assertEquals(201, response.getStatusCode());
+        assertEquals(200, response.getStatusCode());
     }
 
 }

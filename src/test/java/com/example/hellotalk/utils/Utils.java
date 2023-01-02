@@ -2,8 +2,6 @@ package com.example.hellotalk.utils;
 
 import au.com.dius.pact.core.model.RequestResponseInteraction;
 import au.com.dius.pact.provider.junit5.PactVerificationContext;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -19,7 +17,6 @@ import org.apache.hc.core5.http.Header;
 import org.apache.hc.core5.http.HttpRequest;
 
 import java.lang.reflect.Type;
-import java.util.HashMap;
 
 import static io.restassured.RestAssured.given;
 
@@ -47,8 +44,7 @@ public class Utils {
                         return om;
                     }
 
-                }
-        ));
+                }));
 
         return given()
                 .config(config)
@@ -79,16 +75,27 @@ public class Utils {
 
         String curl = "" +
                 "curl " +
-                "--request " + method + " " +
-                "'" + url + "' \\" + "\n" +
+                "--request " +
+                method +
+                " " +
+                "'" +
+                url +
+                "' \\" +
+                "\n" +
                 headersString +
-                "--data-binary " + "'" + bodyParam + "' \\" + "\n" +
-                "--compressed \\" + "\n" +
-                "--insecure \\" + "\n" +
+                "--data-binary " +
+                "'" +
+                bodyParam +
+                "' \\" +
+                "\n" +
+                "--compressed \\" +
+                "\n" +
+                "--insecure \\" +
+                "\n" +
                 "--verbose" +
                 "";
 
-//        log.debug(curl + "\n\n " + bodyResponse + "\n ---- \n\n");
+        // log.debug(curl + "\n\n " + bodyResponse + "\n ---- \n\n");
         System.out.println((curl + "\n\n " + bodyResponse + "\n ---- \n\n"));
     }
 

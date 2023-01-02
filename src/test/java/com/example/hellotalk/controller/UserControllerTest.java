@@ -152,8 +152,8 @@ class UserControllerTest {
         when(userService.updateUser(any(), any())).thenReturn(user);
 
         mockMvc.perform(put("/api/v1/ht/user/{userId}", userId)
-                        .content(jsonRequest)
-                        .contentType(MediaType.APPLICATION_JSON))
+                .content(jsonRequest)
+                .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(content().json(jsonResponse));
     }

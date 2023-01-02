@@ -1,7 +1,7 @@
 package com.example.hellotalk.pact.consumer;
 
 import au.com.dius.pact.consumer.dsl.DslPart;
-import au.com.dius.pact.consumer.dsl.PactDslJsonArray;
+import au.com.dius.pact.consumer.dsl.PactDslJsonBody;
 import au.com.dius.pact.consumer.dsl.PactDslWithProvider;
 import au.com.dius.pact.consumer.junit5.PactConsumerTestExt;
 import au.com.dius.pact.consumer.junit5.PactTestFor;
@@ -15,25 +15,28 @@ import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import static com.example.hellotalk.utils.Utils.getRequestSpecification;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ExtendWith(PactConsumerTestExt.class)
-class PactConsumerGetUsersIT {
+class GetUserIT {
 
     Map<String, String> headers = new HashMap<>();
 
-    String path = "/api/v1/ht/user";
+    String path = "/api/v1/ht/user/";
+    UUID userId = UUID.fromString("1bfff94a-b70e-4b39-bd2a-be1c0f898589");
 
     @Pact(provider = "MY_PROVIDER", consumer = "MY_CONSUMER")
     public RequestResponsePact createPact(PactDslWithProvider builder) {
         headers.put("Content-Type", "application/json");
         headers.put("Accept", "application/json");
-        DslPart bodyReturned = PactDslJsonArray.arrayEachLike()
-                .uuid("id", "d3256c76-62d7-4481-9d1c-a0ccc4da380f")
+
+        DslPart bodyReturned = new PactDslJsonBody()
+                .uuid("id", userId)
                 .stringType("name", "anyName")
-                .stringType("dob", "anyDob") //todo: use date type
+                .stringType("dob", "anyDob") // todo: use date type
                 .stringType("gender", "anyGender")
                 .stringType("selfIntroduction", "anySelfIntroduction")
                 .stringType("creationDate", "anyDate")
@@ -53,25 +56,29 @@ class PactConsumerGetUsersIT {
                 .uuid("id", "e135b321-c58d-47c3-b9c4-c081a5b4684f")
                 .stringType("title", "anyCity")
                 .closeArray()
-                .closeObject();
+                .close();
+
         return builder
-                .uponReceiving("A request to retrieve a list of users")
-                .path(path)
+                .given("A request to retrieve a user")
+                .uponReceiving("A request to retrieve a user")
+                .pathFromProviderState(path + "${userId}", path + userId)
                 .method("GET")
                 .headers(headers)
                 .willRespondWith()
+                .status(200)
                 .body(bodyReturned)
                 .toPact();
+
     }
 
     @Test
     @PactTestFor(providerName = "MY_PROVIDER", port = "8082", pactVersion = PactSpecVersion.V3)
     void runTest() {
 
-        //Mock url
+        // Mock url
         RequestSpecification rq = getRequestSpecification().baseUri("http://localhost:8082").headers(headers);
 
-        Response response = rq.get(path);
+        Response response = rq.get(path + userId);
 
         assertEquals(200, response.getStatusCode());
     }

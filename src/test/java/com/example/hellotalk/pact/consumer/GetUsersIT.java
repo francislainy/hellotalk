@@ -16,6 +16,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.example.hellotalk.config.Constants.*;
 import static com.example.hellotalk.utils.Utils.getRequestSpecification;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -26,7 +27,7 @@ class GetUsersIT {
 
     String path = "/api/v1/ht/user";
 
-    @Pact(provider = "MY_PROVIDER", consumer = "MY_CONSUMER")
+    @Pact(provider = PACT_PROVIDER, consumer = PACT_CONSUMER)
     public RequestResponsePact createPact(PactDslWithProvider builder) {
         headers.put("Content-Type", "application/json");
         headers.put("Accept", "application/json");
@@ -54,6 +55,7 @@ class GetUsersIT {
                 .stringType("title", "anyCity")
                 .closeArray()
                 .closeObject();
+
         return builder
                 .uponReceiving("A request to retrieve a list of users")
                 .path(path)
@@ -62,14 +64,15 @@ class GetUsersIT {
                 .willRespondWith()
                 .body(bodyReturned)
                 .toPact();
+
     }
 
     @Test
-    @PactTestFor(providerName = "MY_PROVIDER", port = "8082", pactVersion = PactSpecVersion.V3)
+    @PactTestFor(providerName = PACT_PROVIDER, port = MOCK_PACT_PORT, pactVersion = PactSpecVersion.V3)
     void runTest() {
 
         // Mock url
-        RequestSpecification rq = getRequestSpecification().baseUri("http://localhost:8082").headers(headers);
+        RequestSpecification rq = getRequestSpecification().baseUri(MOCK_PACT_URL).headers(headers);
 
         Response response = rq.get(path);
 

@@ -18,6 +18,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.util.*;
 
+import static com.example.hellotalk.config.Constants.*;
 import static com.example.hellotalk.utils.Utils.getRequestSpecification;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -29,7 +30,7 @@ class CreateUserIT {
     String path = "/api/v1/ht/user/";
     UUID userId = UUID.fromString("1bfff94a-b70e-4b39-bd2a-be1c0f898589");
 
-    @Pact(provider = "MY_PROVIDER", consumer = "MY_CONSUMER")
+    @Pact(provider = PACT_PROVIDER, consumer = PACT_CONSUMER)
     public RequestResponsePact createPact(PactDslWithProvider builder) {
         headers.put("Content-Type", "application/json");
         headers.put("Accept", "application/json");
@@ -94,11 +95,11 @@ class CreateUserIT {
     }
 
     @Test
-    @PactTestFor(providerName = "MY_PROVIDER", port = "8082", pactVersion = PactSpecVersion.V3)
+    @PactTestFor(providerName = PACT_PROVIDER, port = MOCK_PACT_PORT, pactVersion = PactSpecVersion.V3)
     void runTest() {
 
         // Mock url
-        RequestSpecification rq = getRequestSpecification().baseUri("http://localhost:8082").headers(headers);
+        RequestSpecification rq = getRequestSpecification().baseUri(MOCK_PACT_URL).headers(headers);
 
         Hometown hometown = Hometown.builder().city("anyCity").country("anyCountry").build();
         HobbyAndInterest hobbyAndInterest = HobbyAndInterest.builder().title("anyInterest").build();

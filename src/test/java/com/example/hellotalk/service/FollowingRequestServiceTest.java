@@ -92,18 +92,18 @@ class FollowingRequestServiceTest {
     @Test
     void testFollowUser_ThrowsUserExceptionWhenUserFromDoesNotExist() {
 
-        UserEntity userEntity1 = getUserEntity();
-        userEntity1.setId(randomUUID());
+        UserEntity userFromEntity = getUserEntity();
+        userFromEntity.setId(randomUUID());
 
-        UserEntity userEntity2 = getUserEntity();
-        userEntity2.setId(randomUUID());
+        UserEntity userToEntity = getUserEntity();
+        userToEntity.setId(randomUUID());
 
-        when(userRepository.findById(userEntity1.getId())).thenReturn(Optional.empty());
-        when(userRepository.findById(userEntity2.getId())).thenReturn(Optional.of(userEntity2));
+        when(userRepository.findById(userFromEntity.getId())).thenReturn(Optional.empty());
+        when(userRepository.findById(userToEntity.getId())).thenReturn(Optional.of(userToEntity));
 
         FollowingRequest followingRequest = FollowingRequest.builder()
-                .userFromId(userEntity1.getId())
-                .userToId(userEntity2.getId())
+                .userFromId(userFromEntity.getId())
+                .userToId(userToEntity.getId())
                 .build();
 
         UserNotFoundException exception =
@@ -115,20 +115,20 @@ class FollowingRequestServiceTest {
     @Test
     void testFollowUser_ThrowsUserExceptionWhenUserToDoesNotExist() {
 
-        UUID userId1 = UUID.fromString("1bfff94a-b70e-4b39-bd2a-be1c0f898589");
-        UUID userId2 = UUID.fromString("2afff94a-b70e-4b39-bd2a-be1c0f898589");
-        UserEntity userEntity1 = getUserEntity();
-        userEntity1.setId(userId1);
+        UUID userFromId = UUID.fromString("1bfff94a-b70e-4b39-bd2a-be1c0f898589");
+        UUID userToId = UUID.fromString("2afff94a-b70e-4b39-bd2a-be1c0f898589");
+        UserEntity userFromEntity = getUserEntity();
+        userFromEntity.setId(userFromId);
 
-        UserEntity userEntity2 = getUserEntity();
-        userEntity2.setId(userId2);
+        UserEntity userToEntity = getUserEntity();
+        userToEntity.setId(userToId);
 
-        when(userRepository.findById(userEntity1.getId())).thenReturn(Optional.of(userEntity1));
-        when(userRepository.findById(userEntity2.getId())).thenReturn(Optional.empty());
+        when(userRepository.findById(userFromId)).thenReturn(Optional.of(userFromEntity));
+        when(userRepository.findById(userToId)).thenReturn(Optional.empty());
 
         FollowingRequest followingRequest = FollowingRequest.builder()
-                .userFromId(userEntity1.getId())
-                .userToId(userEntity2.getId())
+                .userFromId(userFromId)
+                .userToId(userToId)
                 .build();
 
         UserNotFoundException exception =

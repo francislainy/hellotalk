@@ -1,9 +1,7 @@
 package com.example.hellotalk.service;
 
-import com.example.hellotalk.entity.user.FollowingRequestEntity;
 import com.example.hellotalk.entity.user.HobbyAndInterestEntity;
 import com.example.hellotalk.entity.user.UserEntity;
-import com.example.hellotalk.exception.FollowerNotFoundException;
 import com.example.hellotalk.exception.UserNotFoundException;
 import com.example.hellotalk.model.user.Hometown;
 import com.example.hellotalk.model.user.User;
@@ -247,107 +245,5 @@ class UserServiceTest {
 
         assertEquals(USER_NOT_FOUND_EXCEPTION, exception.getMessage());
     }
-
-    @Test
-    void testFollowUser_DoesNotThrowExceptionWhenBothUsersExist() {
-
-        UserEntity userEntity1 = getUserEntity();
-        userEntity1.setId(randomUUID());
-
-        UserEntity userEntity2 = getUserEntity();
-        userEntity2.setId(randomUUID());
-
-        when(userRepository.findById(userEntity1.getId())).thenReturn(Optional.of(userEntity1));
-        when(userRepository.findById(userEntity2.getId())).thenReturn(Optional.of(userEntity2));
-        when(userRepository.save(any())).thenReturn(userEntity1);
-
-        assertDoesNotThrow(() -> userService.followUser(userEntity1.getId(), userEntity2.getId()));
-    }
-
-    @Test
-    void testFollowUser_ThrowsUserExceptionWhenUserFromDoesNotExist() {
-
-        UserEntity userEntity1 = getUserEntity();
-        userEntity1.setId(randomUUID());
-
-        UserEntity userEntity2 = getUserEntity();
-        userEntity2.setId(randomUUID());
-
-        when(userRepository.findById(userEntity1.getId())).thenReturn(Optional.empty());
-        when(userRepository.findById(userEntity2.getId())).thenReturn(Optional.of(userEntity2));
-
-        UserNotFoundException exception =
-                assertThrows(UserNotFoundException.class, () -> userService.followUser(userEntity1.getId(), userEntity2.getId()));
-
-        assertEquals(USER_NOT_FOUND_EXCEPTION, exception.getMessage());
-    }
-
-    @Test
-    void testFollowUser_ThrowsUserExceptionWhenUserToDoesNotExist() {
-
-        UUID userId1 = UUID.fromString("1bfff94a-b70e-4b39-bd2a-be1c0f898589");
-        UUID userId2 = UUID.fromString("2afff94a-b70e-4b39-bd2a-be1c0f898589");
-        UserEntity userEntity1 = getUserEntity();
-        userEntity1.setId(userId1);
-
-        UserEntity userEntity2 = getUserEntity();
-        userEntity2.setId(userId2);
-
-        when(userRepository.findById(userEntity1.getId())).thenReturn(Optional.of(userEntity1));
-        when(userRepository.findById(userEntity2.getId())).thenReturn(Optional.empty());
-
-        UserNotFoundException exception =
-                assertThrows(UserNotFoundException.class, () -> userService.followUser(userEntity1.getId(), userEntity2.getId()));
-
-        assertEquals(USER_NOT_FOUND_EXCEPTION, exception.getMessage());
-    }
-
-    @Test
-    void testFollowUser_DoesNotThrowExceptionWhenFollowerIsFound() {
-
-        UUID userFromId = randomUUID();
-        UUID userToId = randomUUID();
-        UserEntity userEntityFrom = getUserEntity();
-        userEntityFrom.setId(userFromId);
-
-        UserEntity userEntityTo = getUserEntity();
-        userEntityTo.setId(userToId);
-
-        Set<FollowingRequestEntity> followingRequestEntities = new HashSet<>();
-        FollowingRequestEntity followingRequestEntity = FollowingRequestEntity.builder().userSenderEntity(userEntityFrom).userReceiverEntity(userEntityTo).build();
-        followingRequestEntities.add(followingRequestEntity);
-
-        when(userRepository.findById(userEntityFrom.getId())).thenReturn(Optional.of(userEntityFrom));
-        when(userRepository.findById(userEntityTo.getId())).thenReturn(Optional.of(userEntityTo));
-
-        userEntityTo.setFollowedByEntity(followingRequestEntities);
-
-        when(userRepository.save(any())).thenReturn(userEntityTo);
-        userEntityFrom = userRepository.save(userEntityFrom);
-
-        assertDoesNotThrow(() -> userService.followUser(userFromId, userToId));
-    }
-
-    @Test
-    void testFollowUser_ThrowsExceptionWhenFollowerIsNotFound() {
-
-        UUID userFromId = randomUUID();
-        UUID userToId = randomUUID();
-        UserEntity userEntityFrom = getUserEntity();
-        userEntityFrom.setId(userFromId);
-
-        UserEntity userEntityTo = getUserEntity();
-        userEntityTo.setId(userToId);
-
-        when(userRepository.findById(userEntityFrom.getId())).thenReturn(Optional.of(userEntityFrom));
-        when(userRepository.findById(userEntityTo.getId())).thenReturn(Optional.of(userEntityTo));
-
-        userEntityTo.setId(null);
-        when(userRepository.save(userEntityTo)).thenReturn(userEntityTo);
-
-        FollowerNotFoundException exception =
-                assertThrows(FollowerNotFoundException.class, () -> userService.followUser(userFromId, userToId));
-
-        assertEquals("Error saving follower", exception.getMessage());
-    }
+    
 }

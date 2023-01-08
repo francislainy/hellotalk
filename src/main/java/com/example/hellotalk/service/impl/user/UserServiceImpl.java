@@ -151,7 +151,7 @@ public class UserServiceImpl implements UserService {
 
         UserEntity userEntityTo = userEntityOptionalTo.get();
         UserEntity userEntityFrom = userEntityOptionalFrom.get();
-        userEntityTo = userRepository.save(setFollower(userEntityTo, userEntityFrom));
+        userEntityTo = userRepository.save(getUserWithFollowingRequest(userEntityTo, userEntityFrom));
 
         if (userEntityTo.getId() == null) { // Not sure how to assert the follower was saved properly, so if there's a problem with the id for the original user it means the whole object has
             // been compromised
@@ -159,7 +159,7 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-    private UserEntity setFollower(UserEntity userEntityTo, UserEntity userEntityFrom) {
+    private UserEntity getUserWithFollowingRequest(UserEntity userEntityTo, UserEntity userEntityFrom) {
         Set<FollowingRequestEntity> followingRequestEntities = new HashSet<>();
         FollowingRequestEntity followingRequestEntity = FollowingRequestEntity.builder().userSenderEntity(userEntityFrom).userReceiverEntity(userEntityTo).build();
         followingRequestEntities.add(followingRequestEntity);

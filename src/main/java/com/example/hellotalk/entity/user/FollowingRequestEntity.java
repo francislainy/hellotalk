@@ -22,10 +22,10 @@ public class FollowingRequestEntity {
     private UUID id;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
-    @JoinColumn(name = "received_by_user_id", referencedColumnName = "id")
-    private UserEntity userReceiverEntity;
+    @JoinColumn(name = "userToId", referencedColumnName = "id")
+    private UserEntity userToEntity;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
-    @JoinColumn(name = "sent_by_user_id", referencedColumnName = "id")
-    private UserEntity userSenderEntity;
+    @JoinColumn(name = "userFromId", referencedColumnName = "id")
+    private UserEntity userFromEntity;
 }

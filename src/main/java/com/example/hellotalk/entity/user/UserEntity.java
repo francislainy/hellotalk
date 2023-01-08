@@ -69,10 +69,10 @@ public class UserEntity {
     @JoinColumn(name = "hometown_id", referencedColumnName = "id")
     private HometownEntity hometownEntity;
 
-    @OneToMany(mappedBy = "userReceiverEntity", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = false)
+    @OneToMany(mappedBy = "userToEntity", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = false)
     private Set<FollowingRequestEntity> followedByEntity;
 
-    @OneToMany(mappedBy = "userSenderEntity", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = false)
+    @OneToMany(mappedBy = "userFromEntity", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = false)
     private Set<FollowingRequestEntity> followerOfEntity;
 
     public static UserEntity buildUserEntityFromModel(User user) {

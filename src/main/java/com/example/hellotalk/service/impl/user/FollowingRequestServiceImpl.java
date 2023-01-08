@@ -41,7 +41,7 @@ public class FollowingRequestServiceImpl implements FollowingRequestService {
 
         if (userEntityOptionalTo.get().getFollowedByEntity() != null) {
             for (FollowingRequestEntity followingRequestEntity : userEntityOptionalTo.get().getFollowedByEntity()) {
-                if (followingRequestEntity.getUserSenderEntity().getId().equals(userFromId)) {
+                if (followingRequestEntity.getUserFromEntity().getId().equals(userFromId)) {
                     throw new FollowerNotFoundException("Already a Follower");
                 }
             }
@@ -51,16 +51,16 @@ public class FollowingRequestServiceImpl implements FollowingRequestService {
         UserEntity userEntityFrom = userEntityOptionalFrom.get();
 
         FollowingRequestEntity followingRequestEntity = FollowingRequestEntity.builder()
-                .userReceiverEntity(userEntityTo)
-                .userSenderEntity(userEntityFrom)
+                .userToEntity(userEntityTo)
+                .userFromEntity(userEntityFrom)
                 .build();
 
         followingRequestEntity = followingRequestRepository.save(followingRequestEntity);
 
         return FollowingRequest.builder()
                 .id(followingRequestEntity.getId())
-                .userFromId(followingRequestEntity.getUserSenderEntity().getId())
-                .userToId(followingRequestEntity.getUserReceiverEntity().getId())
+                .userFromId(followingRequestEntity.getUserFromEntity().getId())
+                .userToId(followingRequestEntity.getUserToEntity().getId())
                 .build();
     }
 }

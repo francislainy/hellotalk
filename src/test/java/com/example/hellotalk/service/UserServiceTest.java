@@ -245,5 +245,5 @@ class UserServiceTest {
 
         assertEquals(USER_NOT_FOUND_EXCEPTION, exception.getMessage());
     }
-    
+
 }

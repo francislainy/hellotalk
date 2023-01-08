@@ -67,8 +67,8 @@ class FollowingRequestServiceTest {
         UUID followingRequestId = UUID.randomUUID();
         FollowingRequestEntity followingRequestEntity = FollowingRequestEntity.builder()
                 .id(followingRequestId)
-                .userSenderEntity(userFromEntity)
-                .userReceiverEntity(userToEntity)
+                .userFromEntity(userFromEntity)
+                .userToEntity(userToEntity)
                 .build();
 
         FollowingRequest followingRequest = FollowingRequest.builder()
@@ -149,8 +149,8 @@ class FollowingRequestServiceTest {
         userEntityTo.setId(userToId);
 
         FollowingRequestEntity followingRequestEntity = FollowingRequestEntity.builder()
-                .userSenderEntity(UserEntity.builder().id(userFromId).build())
-                .userReceiverEntity(UserEntity.builder().id(userToId).build()).build();
+                .userFromEntity(UserEntity.builder().id(userFromId).build())
+                .userToEntity(UserEntity.builder().id(userToId).build()).build();
         Set<FollowingRequestEntity> followingRequestSet = new HashSet<>();
         followingRequestSet.add(followingRequestEntity);
         userEntityTo.setFollowedByEntity(followingRequestSet);

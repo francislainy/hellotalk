@@ -122,19 +122,19 @@ class UserRepositoryTest extends BaseIntegrationTest {
     @NotNull
     private UserEntity saveUserEntity() {
 
-        UserEntity userSenderEntity = UserEntity.builder().name("anySender").build();
-        UserEntity userReceiverEntity = UserEntity.builder().name("anyReceiver").build();
-        userSenderEntity = userRepository.save(userSenderEntity);
-        userReceiverEntity = userRepository.save(userReceiverEntity);
+        UserEntity userFromEntity = UserEntity.builder().name("anySender").build();
+        UserEntity userToEntity = UserEntity.builder().name("anyReceiver").build();
+        userFromEntity = userRepository.save(userFromEntity);
+        userToEntity = userRepository.save(userToEntity);
 
-        FollowingRequestEntity followingRequestEntity = FollowingRequestEntity.builder().userSenderEntity(userSenderEntity).userReceiverEntity(userReceiverEntity).build();
+        FollowingRequestEntity followingRequestEntity = FollowingRequestEntity.builder().userFromEntity(userFromEntity).userToEntity(userToEntity).build();
         followingRequestEntity = followingRequestRepository.save(followingRequestEntity);
 
-        FollowingRequestEntity followerOfEntity = FollowingRequestEntity.builder().userReceiverEntity(userReceiverEntity).build();
+        FollowingRequestEntity followerOfEntity = FollowingRequestEntity.builder().userToEntity(userToEntity).build();
         Set<FollowingRequestEntity> followerOfEntities = new HashSet<>();
         followerOfEntities.add(followerOfEntity);
 
-        FollowingRequestEntity followedByEntity = FollowingRequestEntity.builder().userSenderEntity(userSenderEntity).build();
+        FollowingRequestEntity followedByEntity = FollowingRequestEntity.builder().userFromEntity(userFromEntity).build();
         Set<FollowingRequestEntity> followedByEntities = new HashSet<>();
         followedByEntities.add(followedByEntity);
 

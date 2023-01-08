@@ -161,7 +161,7 @@ public class UserServiceImpl implements UserService {
 
     private UserEntity getUserWithFollowingRequest(UserEntity userEntityTo, UserEntity userEntityFrom) {
         Set<FollowingRequestEntity> followingRequestEntities = new HashSet<>();
-        FollowingRequestEntity followingRequestEntity = FollowingRequestEntity.builder().userSenderEntity(userEntityFrom).userReceiverEntity(userEntityTo).build();
+        FollowingRequestEntity followingRequestEntity = FollowingRequestEntity.builder().userFromEntity(userEntityFrom).userToEntity(userEntityTo).build();
         followingRequestEntities.add(followingRequestEntity);
 
         userEntityTo.setFollowedByEntity(followingRequestEntities);

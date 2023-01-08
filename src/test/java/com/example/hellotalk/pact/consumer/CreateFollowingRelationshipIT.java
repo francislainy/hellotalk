@@ -23,7 +23,7 @@ import static java.util.UUID.fromString;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ExtendWith(PactConsumerTestExt.class)
-class FollowUserIT {
+class CreateFollowingRelationshipIT {
 
     Map<String, String> headers = new HashMap<>();
 

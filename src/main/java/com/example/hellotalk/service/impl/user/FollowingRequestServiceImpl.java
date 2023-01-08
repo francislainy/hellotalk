@@ -2,7 +2,7 @@ package com.example.hellotalk.service.impl.user;
 
 import com.example.hellotalk.entity.user.FollowingRequestEntity;
 import com.example.hellotalk.entity.user.UserEntity;
-import com.example.hellotalk.exception.FollowerNotFoundException;
+import com.example.hellotalk.exception.FollowingRelationshipNotCreatedException;
 import com.example.hellotalk.exception.UserNotFoundException;
 import com.example.hellotalk.model.user.FollowingRequest;
 import com.example.hellotalk.repository.FollowingRequestRepository;
@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 import java.util.UUID;
 
+import static com.example.hellotalk.exception.AppExceptionHandler.FOLLOWING_RELATIONSHIP_ALREADY_EXISTS_EXCEPTION;
 import static com.example.hellotalk.exception.AppExceptionHandler.USER_NOT_FOUND_EXCEPTION;
 
 @Service
@@ -42,7 +43,7 @@ public class FollowingRequestServiceImpl implements FollowingRequestService {
         if (userEntityOptionalTo.get().getFollowedByEntity() != null) {
             for (FollowingRequestEntity followingRequestEntity : userEntityOptionalTo.get().getFollowedByEntity()) {
                 if (followingRequestEntity.getUserFromEntity().getId().equals(userFromId)) {
-                    throw new FollowerNotFoundException("Already a Follower");
+                    throw new FollowingRelationshipNotCreatedException(FOLLOWING_RELATIONSHIP_ALREADY_EXISTS_EXCEPTION);
                 }
             }
         }

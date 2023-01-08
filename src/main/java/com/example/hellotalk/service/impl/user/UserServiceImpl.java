@@ -4,7 +4,7 @@ import com.example.hellotalk.entity.user.FollowingRequestEntity;
 import com.example.hellotalk.entity.user.HobbyAndInterestEntity;
 import com.example.hellotalk.entity.user.HometownEntity;
 import com.example.hellotalk.entity.user.UserEntity;
-import com.example.hellotalk.exception.FollowerNotFoundException;
+import com.example.hellotalk.exception.FollowingRelationshipNotCreatedException;
 import com.example.hellotalk.exception.UserNotFoundException;
 import com.example.hellotalk.model.user.HobbyAndInterest;
 import com.example.hellotalk.model.user.User;
@@ -140,7 +140,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void followUser(UUID fromId, UUID toId) throws FollowerNotFoundException {
+    public void followUser(UUID fromId, UUID toId) throws FollowingRelationshipNotCreatedException {
 
         Optional<UserEntity> userEntityOptionalFrom = userRepository.findById(fromId);
         Optional<UserEntity> userEntityOptionalTo = userRepository.findById(toId);
@@ -155,7 +155,7 @@ public class UserServiceImpl implements UserService {
 
         if (userEntityTo.getId() == null) { // Not sure how to assert the follower was saved properly, so if there's a problem with the id for the original user it means the whole object has
             // been compromised
-            throw new FollowerNotFoundException("Error saving follower");
+            throw new FollowingRelationshipNotCreatedException("Error saving follower");
         }
     }
 

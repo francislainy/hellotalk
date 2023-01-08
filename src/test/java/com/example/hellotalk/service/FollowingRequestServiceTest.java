@@ -2,7 +2,7 @@ package com.example.hellotalk.service;
 
 import com.example.hellotalk.entity.user.FollowingRequestEntity;
 import com.example.hellotalk.entity.user.UserEntity;
-import com.example.hellotalk.exception.FollowerNotFoundException;
+import com.example.hellotalk.exception.FollowingRelationshipNotCreatedException;
 import com.example.hellotalk.exception.UserNotFoundException;
 import com.example.hellotalk.model.user.FollowingRequest;
 import com.example.hellotalk.repository.FollowingRequestRepository;
@@ -22,6 +22,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
+import static com.example.hellotalk.exception.AppExceptionHandler.FOLLOWING_RELATIONSHIP_ALREADY_EXISTS_EXCEPTION;
 import static com.example.hellotalk.exception.AppExceptionHandler.USER_NOT_FOUND_EXCEPTION;
 import static java.util.UUID.randomUUID;
 import static org.junit.jupiter.api.Assertions.*;
@@ -155,17 +156,17 @@ class FollowingRequestServiceTest {
         followingRequestSet.add(followingRequestEntity);
         userEntityTo.setFollowedByEntity(followingRequestSet);
 
-        when(userRepository.findById(userEntityFrom.getId())).thenReturn(Optional.of(userEntityFrom));
-        when(userRepository.findById(userEntityTo.getId())).thenReturn(Optional.of(userEntityTo));
+        when(userRepository.findById(userFromId)).thenReturn(Optional.of(userEntityFrom));
+        when(userRepository.findById(userToId)).thenReturn(Optional.of(userEntityTo));
 
         FollowingRequest followingRequest = FollowingRequest.builder()
                 .userFromId(userFromId)
                 .userToId(userToId)
                 .build();
 
-        FollowerNotFoundException exception =
-                assertThrows(FollowerNotFoundException.class, () -> followingRequestService.createFollowingRequest(followingRequest));
+        FollowingRelationshipNotCreatedException exception =
+                assertThrows(FollowingRelationshipNotCreatedException.class, () -> followingRequestService.createFollowingRequest(followingRequest));
 
-        assertEquals("Already a Follower", exception.getMessage());
+        assertEquals(FOLLOWING_RELATIONSHIP_ALREADY_EXISTS_EXCEPTION, exception.getMessage());
     }
 }

@@ -17,14 +17,15 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
 public class AppExceptionHandler extends ResponseEntityExceptionHandler {
 
     public static final String USER_NOT_FOUND_EXCEPTION = "NO USER FOUND WITH THIS ID";
+    public static final String FOLLOWING_RELATIONSHIP_ALREADY_EXISTS_EXCEPTION = "FOLLOWING RELATIONSHIP ALREADY EXISTS";
 
     @ExceptionHandler(UserNotFoundException.class)
     public ResponseEntity<Object> handleUserNotFoundException(UserNotFoundException ex, WebRequest webRequest) {
         return new ResponseEntity<>(new ApiError(ex.getMessage(), NOT_FOUND, LocalDateTime.now()), NOT_FOUND);
     }
 
-    @ExceptionHandler(FollowerNotFoundException.class)
-    public ResponseEntity<Object> handleFollowerNotFoundException(FollowerNotFoundException ex, WebRequest webRequest) {
+    @ExceptionHandler(FollowingRelationshipNotCreatedException.class)
+    public ResponseEntity<Object> handleFollowerNotFoundException(FollowingRelationshipNotCreatedException ex, WebRequest webRequest) {
         return new ResponseEntity<>(new ApiError(ex.getMessage(), NOT_FOUND, LocalDateTime.now()), NOT_FOUND);
     }
 

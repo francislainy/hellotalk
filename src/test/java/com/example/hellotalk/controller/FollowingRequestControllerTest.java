@@ -21,6 +21,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -64,7 +66,7 @@ class FollowingRequestControllerTest {
     }
 
     @Test
-    void testGetFollowingRequestId() throws Exception {
+    void testGetFollowingRequest() throws Exception {
 
         FollowingRequest followingRequest = FollowingRequest.builder()
                 .id(randomUUID())
@@ -77,6 +79,22 @@ class FollowingRequestControllerTest {
         String jsonResponse = jsonStringFromObject(followingRequest);
 
         mockMvc.perform(get("/api/v1/ht/follow/{followingRequestId}", randomUUID()))
+                .andExpect(status().is2xxSuccessful())
+                .andExpect(content().json(jsonResponse));
+    }
+
+    @Test
+    void testGetAllFollowingRequests() throws Exception {
+
+        FollowingRequest followingRequest = FollowingRequest.builder().build();
+        when(followingRequestService.getAllFollowingRequests()).thenReturn(List.of(followingRequest));
+
+        List<FollowingRequest> followingRequestList = new ArrayList<>();
+        followingRequestList.add(followingRequest);
+
+        String jsonResponse = jsonStringFromObject(followingRequestList);
+
+        mockMvc.perform(get("/api/v1/ht/follow/"))
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(content().json(jsonResponse));
     }

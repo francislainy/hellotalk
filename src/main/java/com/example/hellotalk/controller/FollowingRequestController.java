@@ -23,6 +23,11 @@ public class FollowingRequestController {
         return new ResponseEntity<>(followingRequestService.getFollowingRequest(followingRequestId), HttpStatus.OK);
     }
 
+    @GetMapping({"", "/"})
+    public ResponseEntity<Object> getAllFollowingRequests() {
+        return new ResponseEntity<>(followingRequestService.getAllFollowingRequests(), HttpStatus.OK);
+    }
+
     @PostMapping({"", "/"})
     public ResponseEntity<Object> createFollowingRequest(@RequestBody FollowingRequest followingRequest) {
 

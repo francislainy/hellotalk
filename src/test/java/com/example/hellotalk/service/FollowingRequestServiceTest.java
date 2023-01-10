@@ -18,10 +18,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 import static com.example.hellotalk.exception.AppExceptionHandler.*;
 import static java.util.UUID.randomUUID;
@@ -78,6 +75,29 @@ class FollowingRequestServiceTest {
                 () -> assertEquals(followingRequestId, followingRequest.getId()),
                 () -> assertEquals(userToId, followingRequest.getUserToId()),
                 () -> assertEquals(userFromId, followingRequest.getUserFromId()));
+    }
+
+    @Test
+    void testGetAllFollowingRequests() {
+
+        UUID followingRequestId = randomUUID();
+        UUID userFromId = randomUUID();
+        UUID userToId = randomUUID();
+
+        FollowingRequestEntity followingRequestEntity = FollowingRequestEntity.builder()
+                .id(followingRequestId)
+                .userFromEntity(UserEntity.builder().id(userFromId).build())
+                .userToEntity(UserEntity.builder().id(userToId).build())
+                .build();
+        List<FollowingRequestEntity> followingEntityList = new ArrayList<>();
+        followingEntityList.add(followingRequestEntity);
+        when(followingRequestRepository.findAll()).thenReturn(followingEntityList);
+
+        FollowingRequest followingRequest = followingRequestService.getAllFollowingRequests().get(0);
+        assertAll(
+                () -> assertEquals(followingRequestId, followingRequest.getId()),
+                () -> assertEquals(userFromId, followingRequest.getUserFromId()),
+                () -> assertEquals(userToId, followingRequest.getUserToId()));
     }
 
     @Test

@@ -10,11 +10,13 @@ import com.example.hellotalk.repository.UserRepository;
 import com.example.hellotalk.service.user.FollowingRequestService;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import static com.example.hellotalk.exception.AppExceptionHandler.FOLLOWING_RELATIONSHIP_ALREADY_EXISTS_EXCEPTION;
-import static com.example.hellotalk.exception.AppExceptionHandler.USER_NOT_FOUND_EXCEPTION;
+import static com.example.hellotalk.exception.AppExceptionHandler.*;
+import static com.example.hellotalk.model.user.FollowingRequest.buildFollowingRequestFromEntity;
 
 @Service
 public class FollowingRequestServiceImpl implements FollowingRequestService {
@@ -38,8 +40,21 @@ public class FollowingRequestServiceImpl implements FollowingRequestService {
                     .userToId(followingRequestEntity.get().getUserToEntity().getId())
                     .build();
         } else {
-            throw new FollowingRelationshipNotCreatedException("Relationship Does Not Exist");
+            throw new FollowingRelationshipNotCreatedException(FOLLOWING_RELATIONSHIP_DOES_NOT_EXIST_EXCEPTION);
         }
+    }
+
+    @Override
+    public List<FollowingRequest> getAllFollowingRequests() {
+
+        List<FollowingRequest> followingRequestList = new ArrayList<>();
+        List<FollowingRequestEntity> followingRequestEntityList = followingRequestRepository.findAll();
+
+        if (!followingRequestEntityList.isEmpty()) {
+            followingRequestEntityList.forEach(userEntity -> followingRequestList.add(buildFollowingRequestFromEntity(userEntity)));
+        }
+
+        return followingRequestList;
     }
 
     @Override

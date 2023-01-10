@@ -2,6 +2,7 @@ package com.example.hellotalk.service;
 
 import com.example.hellotalk.entity.user.FollowingRequestEntity;
 import com.example.hellotalk.entity.user.UserEntity;
+import com.example.hellotalk.exception.FollowingRelationshipDoesNotExistException;
 import com.example.hellotalk.exception.FollowingRelationshipNotCreatedException;
 import com.example.hellotalk.exception.UserNotFoundException;
 import com.example.hellotalk.model.user.FollowingRequest;
@@ -22,8 +23,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
-import static com.example.hellotalk.exception.AppExceptionHandler.FOLLOWING_RELATIONSHIP_ALREADY_EXISTS_EXCEPTION;
-import static com.example.hellotalk.exception.AppExceptionHandler.USER_NOT_FOUND_EXCEPTION;
+import static com.example.hellotalk.exception.AppExceptionHandler.*;
 import static java.util.UUID.randomUUID;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -43,6 +43,7 @@ class FollowingRequestServiceTest {
     FollowingRequestServiceImpl followingRequestService;
 
     private final UUID userId = UUID.fromString("1bfff94a-b70e-4b39-bd2a-be1c0f898589");
+    private final UUID followingRequestId = UUID.fromString("2afff94a-b70e-4b39-bd2a-be1c0f898575");
 
     @BeforeEach
     void setUp() {
@@ -54,6 +55,39 @@ class FollowingRequestServiceTest {
         return UserEntity.builder()
                 .id(userId)
                 .build();
+    }
+
+    @Test
+    void testGetUser() {
+
+        UUID userToId = randomUUID();
+        UUID userFromId = randomUUID();
+        UUID followingRequestId = randomUUID();
+
+        FollowingRequestEntity followingRequestEntity = FollowingRequestEntity.builder()
+                .id(followingRequestId)
+                .userFromEntity(UserEntity.builder().id(userFromId).build())
+                .userToEntity(UserEntity.builder().id(userToId).build())
+                .build();
+
+        when(followingRequestRepository.findById(any())).thenReturn(Optional.of(followingRequestEntity));
+
+        FollowingRequest followingRequest = followingRequestService.getFollowingRequest(followingRequestId);
+
+        assertAll(
+                () -> assertEquals(followingRequestId, followingRequest.getId()),
+                () -> assertEquals(userToId, followingRequest.getUserToId()),
+                () -> assertEquals(userFromId, followingRequest.getUserFromId()));
+    }
+
+    @Test
+    void testGetUser_ThrowsExceptionRelationshipDoesNotExist() {
+
+        when(followingRequestRepository.findById(any())).thenThrow(new FollowingRelationshipDoesNotExistException(FOLLOWING_RELATIONSHIP_DOES_NOT_EXIST_EXCEPTION));
+
+        FollowingRelationshipDoesNotExistException exception = assertThrows(FollowingRelationshipDoesNotExistException.class, () -> followingRequestService.getFollowingRequest(followingRequestId));
+
+        assertEquals(FOLLOWING_RELATIONSHIP_DOES_NOT_EXIST_EXCEPTION, exception.getMessage());
     }
 
     @Test

@@ -28,6 +28,21 @@ public class FollowingRequestServiceImpl implements FollowingRequestService {
     }
 
     @Override
+    public FollowingRequest getFollowingRequest(UUID followingRequestId) {
+
+        Optional<FollowingRequestEntity> followingRequestEntity = followingRequestRepository.findById(followingRequestId);
+        if (followingRequestEntity.isPresent()) {
+            return FollowingRequest.builder()
+                    .id(followingRequestId)
+                    .userFromId(followingRequestEntity.get().getUserFromEntity().getId())
+                    .userToId(followingRequestEntity.get().getUserToEntity().getId())
+                    .build();
+        } else {
+            throw new FollowingRelationshipNotCreatedException("Relationship Does Not Exist");
+        }
+    }
+
+    @Override
     public FollowingRequest createFollowingRequest(FollowingRequest followingRequest) {
 
         UUID userToId = followingRequest.getUserToId();

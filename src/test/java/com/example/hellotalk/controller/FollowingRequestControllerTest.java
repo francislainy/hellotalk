@@ -25,11 +25,13 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static com.example.hellotalk.util.Utils.jsonStringFromObject;
+import static java.util.UUID.randomUUID;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -62,10 +64,28 @@ class FollowingRequestControllerTest {
     }
 
     @Test
+    void testGetFollowingRequestId() throws Exception {
+
+        FollowingRequest followingRequest = FollowingRequest.builder()
+                .id(randomUUID())
+                .userFromId(randomUUID())
+                .userToId(randomUUID())
+                .build();
+
+        when(followingRequestService.getFollowingRequest(any())).thenReturn(followingRequest);
+
+        String jsonResponse = jsonStringFromObject(followingRequest);
+
+        mockMvc.perform(get("/api/v1/ht/follow/{followingRequestId}", randomUUID()))
+                .andExpect(status().is2xxSuccessful())
+                .andExpect(content().json(jsonResponse));
+    }
+
+    @Test
     void testCreateFollowingRequest() throws Exception {
 
-        UUID userToId = UUID.randomUUID();
-        UUID userFromId = UUID.randomUUID();
+        UUID userToId = randomUUID();
+        UUID userFromId = randomUUID();
 
         FollowingRequest followingRequest = FollowingRequest.builder()
                 .userToId(userToId)

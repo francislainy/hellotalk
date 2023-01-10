@@ -69,7 +69,6 @@ public class UserServiceImpl implements UserService {
         } else {
             throw new UserNotFoundException(USER_NOT_FOUND_EXCEPTION);
         }
-
     }
 
     @Override

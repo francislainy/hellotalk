@@ -18,6 +18,7 @@ public class AppExceptionHandler extends ResponseEntityExceptionHandler {
 
     public static final String USER_NOT_FOUND_EXCEPTION = "NO USER FOUND WITH THIS ID";
     public static final String FOLLOWING_RELATIONSHIP_ALREADY_EXISTS_EXCEPTION = "FOLLOWING RELATIONSHIP ALREADY EXISTS";
+    public static final String FOLLOWING_RELATIONSHIP_DOES_NOT_EXIST_EXCEPTION = "FOLLOWING RELATIONSHIP DOES NOT EXIST";
 
     @ExceptionHandler(UserNotFoundException.class)
     public ResponseEntity<Object> handleUserNotFoundException(UserNotFoundException ex, WebRequest webRequest) {

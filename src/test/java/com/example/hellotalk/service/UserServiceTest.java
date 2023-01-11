@@ -112,7 +112,10 @@ class UserServiceTest {
         userEntityList.add(userEntity);
         when(userRepository.findAll()).thenReturn(userEntityList);
 
-        User user = userService.getAllUsers().get(0);
+        List<User> allUsers = userService.getAllUsers();
+        assertFalse(allUsers.isEmpty());
+
+        User user = allUsers.get(0);
         assertAll(
                 () -> assertEquals(userId, user.getId()),
                 () -> assertEquals("anyName", user.getName()),
@@ -132,6 +135,15 @@ class UserServiceTest {
                 () -> assertEquals("anyPlacesToVisit", user.getPlacesToVisit()));
 
         user.getHobbyAndInterests().forEach(h -> assertEquals("anyInterest", h.getTitle()));
+    }
+
+    @Test
+    void testGetAllUsers_ReturnsEmptyListIfThereAreNoUsersToBeReturned() {
+
+        List<UserEntity> userEntityList = new ArrayList<>();
+        when(userRepository.findAll()).thenReturn(userEntityList);
+
+        assertTrue(userService.getAllUsers().isEmpty());
     }
 
     @Test

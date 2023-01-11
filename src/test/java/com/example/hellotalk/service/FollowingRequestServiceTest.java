@@ -55,7 +55,7 @@ class FollowingRequestServiceTest {
     }
 
     @Test
-    void testGetUser() {
+    void testGetFollowingRequest() {
 
         UUID userToId = randomUUID();
         UUID userFromId = randomUUID();
@@ -93,11 +93,23 @@ class FollowingRequestServiceTest {
         followingEntityList.add(followingRequestEntity);
         when(followingRequestRepository.findAll()).thenReturn(followingEntityList);
 
-        FollowingRequest followingRequest = followingRequestService.getAllFollowingRequests().get(0);
+        List<FollowingRequest> allFollowingRequests = followingRequestService.getAllFollowingRequests();
+        assertFalse(allFollowingRequests.isEmpty());
+
+        FollowingRequest followingRequest = allFollowingRequests.get(0);
         assertAll(
                 () -> assertEquals(followingRequestId, followingRequest.getId()),
                 () -> assertEquals(userFromId, followingRequest.getUserFromId()),
                 () -> assertEquals(userToId, followingRequest.getUserToId()));
+    }
+
+    @Test
+    void testGetAllFollowingRequests_ReturnsEmptyListWhenThereAreNoRequestsToBeReturned() {
+
+        List<FollowingRequestEntity> followingEntityList = new ArrayList<>();
+        when(followingRequestRepository.findAll()).thenReturn(followingEntityList);
+
+        assertTrue(followingRequestService.getAllFollowingRequests().isEmpty());
     }
 
     @Test

@@ -17,7 +17,9 @@ import org.apache.hc.core5.http.Header;
 import org.apache.hc.core5.http.HttpRequest;
 
 import java.lang.reflect.Type;
+import java.util.Map;
 
+import static com.example.hellotalk.config.Constants.MOCK_PACT_URL;
 import static io.restassured.RestAssured.given;
 
 @Slf4j
@@ -99,4 +101,7 @@ public class Utils {
         System.out.println((curl + "\n\n " + bodyResponse + "\n ---- \n\n"));
     }
 
+    public static RequestSpecification getMockRequest(Map<String, String> headers) {
+        return getRequestSpecification().baseUri(MOCK_PACT_URL).headers(headers);
+    }
 }

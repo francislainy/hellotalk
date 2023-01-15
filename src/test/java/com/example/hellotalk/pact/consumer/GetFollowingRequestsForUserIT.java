@@ -9,7 +9,6 @@ import au.com.dius.pact.core.model.PactSpecVersion;
 import au.com.dius.pact.core.model.RequestResponsePact;
 import au.com.dius.pact.core.model.annotations.Pact;
 import io.restassured.response.Response;
-import io.restassured.specification.RequestSpecification;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
@@ -18,7 +17,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import static com.example.hellotalk.config.Constants.*;
-import static com.example.hellotalk.utils.Utils.getRequestSpecification;
+import static com.example.hellotalk.utils.Utils.getMockRequest;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ExtendWith(PactConsumerTestExt.class)
@@ -54,12 +53,7 @@ class GetFollowingRequestsForUserIT {
     @PactTestFor(providerName = PACT_PROVIDER, port = MOCK_PACT_PORT, pactVersion = PactSpecVersion.V3)
     void runTest() {
 
-        // Mock url
-        RequestSpecification rq = getRequestSpecification().baseUri(MOCK_PACT_URL).headers(headers);
-
-        Response response = rq.get(path + userId);
-
+        Response response = getMockRequest(headers).get(path + userId);
         assertEquals(200, response.getStatusCode());
     }
-
 }

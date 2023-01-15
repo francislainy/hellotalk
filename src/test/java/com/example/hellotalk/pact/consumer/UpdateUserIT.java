@@ -12,14 +12,13 @@ import com.example.hellotalk.model.user.HobbyAndInterest;
 import com.example.hellotalk.model.user.Hometown;
 import com.example.hellotalk.model.user.User;
 import io.restassured.response.Response;
-import io.restassured.specification.RequestSpecification;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.util.*;
 
 import static com.example.hellotalk.config.Constants.*;
-import static com.example.hellotalk.utils.Utils.getRequestSpecification;
+import static com.example.hellotalk.utils.Utils.getMockRequest;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ExtendWith(PactConsumerTestExt.class)
@@ -99,9 +98,6 @@ class UpdateUserIT {
     @PactTestFor(providerName = PACT_PROVIDER, port = MOCK_PACT_PORT, pactVersion = PactSpecVersion.V3)
     void runTest() {
 
-        // Mock url
-        RequestSpecification rq = getRequestSpecification().baseUri(MOCK_PACT_URL).headers(headers);
-
         Hometown hometown = Hometown.builder().city("anyCity").country("anyCountry").build();
         HobbyAndInterest hobbyAndInterest = HobbyAndInterest.builder().title("anyInterest").build();
         Set<HobbyAndInterest> hobbyAndInterests = new HashSet<>();
@@ -124,8 +120,7 @@ class UpdateUserIT {
                 .hobbyAndInterests(hobbyAndInterests)
                 .build();
 
-        Response response = rq.body(user).put(path + userId);
-
+        Response response = getMockRequest(headers).body(user).put(path + userId);
         assertEquals(200, response.getStatusCode());
     }
 

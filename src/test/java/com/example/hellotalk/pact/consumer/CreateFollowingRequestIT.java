@@ -10,7 +10,6 @@ import au.com.dius.pact.core.model.RequestResponsePact;
 import au.com.dius.pact.core.model.annotations.Pact;
 import com.example.hellotalk.model.user.FollowingRequest;
 import io.restassured.response.Response;
-import io.restassured.specification.RequestSpecification;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
@@ -18,7 +17,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static com.example.hellotalk.config.Constants.*;
-import static com.example.hellotalk.utils.Utils.getRequestSpecification;
+import static com.example.hellotalk.utils.Utils.getMockRequest;
 import static java.util.UUID.fromString;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -61,16 +60,12 @@ class CreateFollowingRequestIT {
     @PactTestFor(providerName = PACT_PROVIDER, port = MOCK_PACT_PORT, pactVersion = PactSpecVersion.V3)
     void runTest() {
 
-        // Mock url
-        RequestSpecification rq = getRequestSpecification().baseUri(MOCK_PACT_URL).headers(headers);
-
         FollowingRequest followingRequest = FollowingRequest.builder()
                 .userFromId(fromString("499cfb0e-ede3-45a2-9272-e23135ac40fb"))
                 .userToId(fromString("ca3569ee-cb62-4f45-b1c2-199028ba5562"))
                 .build();
 
-        Response response = rq.body(followingRequest).post(path);
-
+        Response response = getMockRequest(headers).body(followingRequest).post(path);
         assertEquals(201, response.getStatusCode());
     }
 

@@ -28,6 +28,11 @@ public class FollowingRequestController {
         return new ResponseEntity<>(followingRequestService.getAllFollowingRequests(), HttpStatus.OK);
     }
 
+    @GetMapping({"/from/user/{userId}", "/from/user/{userId}/"})
+    public ResponseEntity<Object> getAllFollowingRequestsFromUser(@PathVariable UUID userId) {
+        return new ResponseEntity<>(followingRequestService.getAllFollowingRequestsFromUser(userId), HttpStatus.OK);
+    }
+
     @GetMapping({"/to/user/{userId}", "/to/user/{userId}/"})
     public ResponseEntity<Object> getAllFollowingRequestsToUser(@PathVariable UUID userId) {
         return new ResponseEntity<>(followingRequestService.getAllFollowingRequestsToUser(userId), HttpStatus.OK);

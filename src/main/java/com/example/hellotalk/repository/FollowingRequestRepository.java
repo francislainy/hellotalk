@@ -11,9 +11,13 @@ import java.util.UUID;
 @Repository
 public interface FollowingRequestRepository extends JpaRepository<FollowingRequestEntity, UUID> {
 
-    String QUERY_FOLLOWING_REQUESTS_BY_USER_TO_ID = "SELECT * FROM following_request WHERE user_to_id = :userToId ORDER BY id";
+    String QUERY_FOLLOWING_REQUESTS_SENT_BY_USER_FROM_ID = "SELECT * FROM following_request WHERE user_from_id = :userFromId ORDER BY id";
 
-    @Query(value = QUERY_FOLLOWING_REQUESTS_BY_USER_TO_ID, nativeQuery = true)
+    @Query(value = QUERY_FOLLOWING_REQUESTS_SENT_BY_USER_FROM_ID, nativeQuery = true)
+    List<FollowingRequestEntity> findFollowingRequestEntitiesByUserFromId(UUID userFromId);
+
+    String QUERY_FOLLOWING_REQUESTS_RECEIVED_BY_USER_TO_ID = "SELECT * FROM following_request WHERE user_to_id = :userToId ORDER BY id";
+
+    @Query(value = QUERY_FOLLOWING_REQUESTS_RECEIVED_BY_USER_TO_ID, nativeQuery = true)
     List<FollowingRequestEntity> findFollowingRequestEntitiesByUserToId(UUID userToId);
-
 }

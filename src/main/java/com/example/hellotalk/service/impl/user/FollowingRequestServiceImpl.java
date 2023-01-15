@@ -58,6 +58,18 @@ public class FollowingRequestServiceImpl implements FollowingRequestService {
     }
 
     @Override
+    public List<FollowingRequest> getAllFollowingRequestsFromUser(UUID userFromId) {
+        List<FollowingRequest> followingRequestList = new ArrayList<>();
+        List<FollowingRequestEntity> followingRequestEntityList = followingRequestRepository.findFollowingRequestEntitiesByUserFromId(userFromId);
+
+        if (!followingRequestEntityList.isEmpty()) {
+            followingRequestEntityList.forEach(userEntity -> followingRequestList.add(buildFollowingRequestFromEntity(userEntity)));
+        }
+
+        return followingRequestList;
+    }
+
+    @Override
     public List<FollowingRequest> getAllFollowingRequestsToUser(UUID userToId) {
         List<FollowingRequest> followingRequestList = new ArrayList<>();
         List<FollowingRequestEntity> followingRequestEntityList = followingRequestRepository.findFollowingRequestEntitiesByUserToId(userToId);

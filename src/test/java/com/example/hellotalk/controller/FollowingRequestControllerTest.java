@@ -100,6 +100,22 @@ class FollowingRequestControllerTest {
     }
 
     @Test
+    void testGetAllFollowingRequestsFromUser() throws Exception {
+
+        FollowingRequest followingRequest = FollowingRequest.builder().build();
+        when(followingRequestService.getAllFollowingRequestsFromUser(any())).thenReturn(List.of(followingRequest));
+
+        List<FollowingRequest> followingRequestList = new ArrayList<>();
+        followingRequestList.add(followingRequest);
+
+        String jsonResponse = jsonStringFromObject(followingRequestList);
+
+        mockMvc.perform(get("/api/v1/ht/follow/from/user/{userId}", randomUUID()))
+                .andExpect(status().is2xxSuccessful())
+                .andExpect(content().json(jsonResponse));
+    }
+
+    @Test
     void testGetAllFollowingRequestsToUser() throws Exception {
 
         FollowingRequest followingRequest = FollowingRequest.builder().build();

@@ -15,17 +15,19 @@ import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import static com.example.hellotalk.config.Constants.*;
 import static com.example.hellotalk.utils.Utils.getRequestSpecification;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ExtendWith(PactConsumerTestExt.class)
-class GetFollowingRequestsIT {
+class GetFollowingRequestsForUserIT {
 
     Map<String, String> headers = new HashMap<>();
 
-    String path = "/api/v1/ht/follow";
+    String path = "/api/v1/ht/follow/to/user/";
+    UUID userId = UUID.fromString("1bfff94a-b70e-4b39-bd2a-be1c0f898589");
 
     @Pact(provider = PACT_PROVIDER, consumer = PACT_CONSUMER)
     public RequestResponsePact createPact(PactDslWithProvider builder) {
@@ -38,8 +40,9 @@ class GetFollowingRequestsIT {
                 .closeObject();
 
         return builder
-                .uponReceiving("A request to retrieve a list of following requests")
-                .path(path)
+                .given("A request to retrieve a list of following requests for a given user")
+                .uponReceiving("A request to retrieve a list of following requests for a given user")
+                .pathFromProviderState(path + "${userId}", path + userId)
                 .method("GET")
                 .headers(headers)
                 .willRespondWith()
@@ -54,7 +57,7 @@ class GetFollowingRequestsIT {
         // Mock url
         RequestSpecification rq = getRequestSpecification().baseUri(MOCK_PACT_URL).headers(headers);
 
-        Response response = rq.get(path);
+        Response response = rq.get(path + userId);
 
         assertEquals(200, response.getStatusCode());
     }

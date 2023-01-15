@@ -50,7 +50,19 @@ public class FollowingRequestServiceImpl implements FollowingRequestService {
         List<FollowingRequest> followingRequestList = new ArrayList<>();
         List<FollowingRequestEntity> followingRequestEntityList = followingRequestRepository.findAll();
 
-        if (!followingRequestEntityList.isEmpty()) { // todo: add test for this and add another controller that only returns the following relationships for a given user - 10/01/2023
+        if (!followingRequestEntityList.isEmpty()) {
+            followingRequestEntityList.forEach(userEntity -> followingRequestList.add(buildFollowingRequestFromEntity(userEntity)));
+        }
+
+        return followingRequestList;
+    }
+
+    @Override
+    public List<FollowingRequest> getAllFollowingRequestsToUser(UUID userToId) {
+        List<FollowingRequest> followingRequestList = new ArrayList<>();
+        List<FollowingRequestEntity> followingRequestEntityList = followingRequestRepository.findFollowingRequestEntitiesByUserToId(userToId);
+
+        if (!followingRequestEntityList.isEmpty()) {
             followingRequestEntityList.forEach(userEntity -> followingRequestList.add(buildFollowingRequestFromEntity(userEntity)));
         }
 

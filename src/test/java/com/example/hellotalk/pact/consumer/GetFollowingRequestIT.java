@@ -41,8 +41,8 @@ class GetFollowingRequestIT {
                 .close();
 
         return builder
-                .given("A request to retrieve a following relationship")
-                .uponReceiving("A request to retrieve a following relationship")
+                .given("A request to retrieve a following request")
+                .uponReceiving("A request to retrieve a following request")
                 .pathFromProviderState(path + "${followingRequestId}", path + followingRequestId)
                 .method("GET")
                 .headers(headers)

@@ -11,5 +11,7 @@ public interface FollowingRequestService {
 
     List<FollowingRequest> getAllFollowingRequests();
 
+    List<FollowingRequest> getAllFollowingRequestsToUser(UUID userToId);
+
     FollowingRequest createFollowingRequest(FollowingRequest followingRequest);
 }

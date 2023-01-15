@@ -60,10 +60,17 @@ class PactProviderIT {
         return map;
     }
 
-    @State("A request to retrieve a following relationship")
+    @State("A request to retrieve a following request")
     Map<String, Object> getFollowingRelationship() {
         Map<String, Object> map = new HashMap<>();
         map.put("followingRequestId", "e600ce80-806b-4d16-b0ec-32f5396ba4b0");
+        return map;
+    }
+
+    @State("A request to retrieve a list of following requests for a given user")
+    Map<String, Object> getFollowingRequestsForAUser() {
+        Map<String, Object> map = new HashMap<>();
+        map.put("userId", "ca3569ee-cb62-4f45-b1c2-199028ba5562");
         return map;
     }
 }

@@ -113,6 +113,32 @@ class FollowingRequestServiceTest {
     }
 
     @Test
+    void testGetAllFollowingRequestsForUser() {
+
+        UUID followingRequestId = randomUUID();
+        UUID userFromId = randomUUID();
+        UUID userToId = randomUUID();
+
+        FollowingRequestEntity followingRequestEntity = FollowingRequestEntity.builder()
+                .id(followingRequestId)
+                .userFromEntity(UserEntity.builder().id(userFromId).build())
+                .userToEntity(UserEntity.builder().id(userToId).build())
+                .build();
+        List<FollowingRequestEntity> followingEntityList = new ArrayList<>();
+        followingEntityList.add(followingRequestEntity);
+        when(followingRequestRepository.findFollowingRequestEntitiesByUserToId(any())).thenReturn(followingEntityList);
+
+        List<FollowingRequest> allFollowingRequests = followingRequestService.getAllFollowingRequestsToUser(userToId);
+        assertFalse(allFollowingRequests.isEmpty());
+
+        FollowingRequest followingRequest = allFollowingRequests.get(0);
+        assertAll(
+                () -> assertEquals(followingRequestId, followingRequest.getId()),
+                () -> assertEquals(userFromId, followingRequest.getUserFromId()),
+                () -> assertEquals(userToId, followingRequest.getUserToId()));
+    }
+
+    @Test
     void testGetUser_ThrowsExceptionRelationshipDoesNotExist() {
 
         when(followingRequestRepository.findById(any())).thenThrow(new FollowingRelationshipDoesNotExistException(FOLLOWING_RELATIONSHIP_DOES_NOT_EXIST_EXCEPTION));

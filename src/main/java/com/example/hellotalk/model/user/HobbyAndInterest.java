@@ -19,13 +19,6 @@ public class HobbyAndInterest {
     private UUID id;
     private String title;
 
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    private List<HobbyAndInterest> hobbyAndInterests = new ArrayList<>();
-
-    public void addHobbyAndInterest(HobbyAndInterest hobbyAndInterest) {
-        hobbyAndInterests.add(hobbyAndInterest);
-    }
-
     public static HobbyAndInterest buildHobbyAndInterestFromEntity(HobbyAndInterestEntity hobbyAndInterestEntity) {
         return HobbyAndInterest.builder()
                 .id(hobbyAndInterestEntity.getId())

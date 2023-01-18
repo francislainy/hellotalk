@@ -102,7 +102,11 @@ class FollowingRequestControllerTest {
     @Test
     void testGetAllFollowingRequestsFromUser() throws Exception {
 
-        FollowingRequest followingRequest = FollowingRequest.builder().build();
+        FollowingRequest followingRequest = FollowingRequest.builder()
+                .id(randomUUID())
+                .userFromId(randomUUID())
+                .userToId(randomUUID())
+                .build();
         when(followingRequestService.getAllFollowingRequestsFromUser(any())).thenReturn(List.of(followingRequest));
 
         List<FollowingRequest> followingRequestList = new ArrayList<>();
@@ -118,7 +122,11 @@ class FollowingRequestControllerTest {
     @Test
     void testGetAllFollowingRequestsToUser() throws Exception {
 
-        FollowingRequest followingRequest = FollowingRequest.builder().build();
+        FollowingRequest followingRequest = FollowingRequest.builder()
+                .id(randomUUID())
+                .userFromId(randomUUID())
+                .userToId(randomUUID())
+                .build();
         when(followingRequestService.getAllFollowingRequestsToUser(any())).thenReturn(List.of(followingRequest));
 
         List<FollowingRequest> followingRequestList = new ArrayList<>();

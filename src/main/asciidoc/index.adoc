@@ -18,7 +18,7 @@ include::{snippets}/test-get-all-users/http-request.adoc[]
 .response
 include::{snippets}/test-get-all-users/http-response.adoc[]
 
-Post Create User
+Create User
 
 .request
 include::{snippets}/test-create-user/http-request.adoc[]
@@ -58,4 +58,26 @@ include::{snippets}/test-delete-user_-throws-exception-when-user-not-found/http-
 .response
 include::{snippets}/test-delete-user_-throws-exception-when-user-not-found/http-response.adoc[]
 
+Get Following Requests Sent To User
+
+.request
+include::{snippets}/test-get-all-following-requests-to-user/http-request.adoc[]
+
+.response
+include::{snippets}/test-get-all-following-requests-to-user/http-response.adoc[]
+
+Get Following Requests Sent By User
+
+.request
+include::{snippets}/test-get-all-following-requests-from-user/http-request.adoc[]
+
+.response
+include::{snippets}/test-get-all-following-requests-from-user/http-response.adoc[]
+
+Create Following Request
+.request
+include::{snippets}/test-create-following-request/http-request.adoc[]
+
+.response
+include::{snippets}/test-create-following-request/http-response.adoc[]
 As you can see the format is very simple, and in fact you always get the same message.

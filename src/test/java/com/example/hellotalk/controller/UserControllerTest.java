@@ -1,5 +1,6 @@
 package com.example.hellotalk.controller;
 
+import capital.scalable.restdocs.AutoDocumentation;
 import com.example.hellotalk.exception.UserNotFoundException;
 import com.example.hellotalk.model.user.HobbyAndInterest;
 import com.example.hellotalk.model.user.Hometown;
@@ -102,9 +103,9 @@ class UserControllerTest {
     }
 
     @BeforeEach
-    void setUp(WebApplicationContext webApplicationContext,
-            RestDocumentationContextProvider restDocumentation) {
-        this.mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext)
+    void setUp(WebApplicationContext webApplicationContext, RestDocumentationContextProvider restDocumentation) {
+        this.mockMvc = MockMvcBuilders
+                .webAppContextSetup(webApplicationContext)
                 .apply(documentationConfiguration(restDocumentation)).alwaysDo(document("{method-name}",
                         preprocessRequest(prettyPrint()), preprocessResponse(prettyPrint())))
                 .apply(MockMvcRestDocumentation.documentationConfiguration(restDocumentation)
@@ -115,7 +116,16 @@ class UserControllerTest {
                         .and().snippets()
                         .withDefaults(CliDocumentation.curlRequest(),
                                 HttpDocumentation.httpRequest(),
-                                HttpDocumentation.httpResponse()))
+                                HttpDocumentation.httpResponse(),
+                                AutoDocumentation.requestFields(),
+                                AutoDocumentation.responseFields(),
+                                AutoDocumentation.pathParameters(),
+                                AutoDocumentation.requestParameters(),
+                                AutoDocumentation.description(),
+                                AutoDocumentation.methodAndPath(),
+                                AutoDocumentation.section()))
+                .alwaysDo(document("{class-name}/{method-name}",
+                        preprocessRequest(prettyPrint()), preprocessResponse(prettyPrint())))
                 .build();
     }
 

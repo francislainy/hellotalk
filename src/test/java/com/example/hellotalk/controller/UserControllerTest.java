@@ -13,6 +13,7 @@ import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
@@ -21,6 +22,7 @@ import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.restdocs.cli.CliDocumentation;
 import org.springframework.restdocs.http.HttpDocumentation;
 import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation;
+import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -28,6 +30,7 @@ import org.springframework.web.context.WebApplicationContext;
 
 import java.util.*;
 
+import static com.epages.restdocs.apispec.ResourceDocumentation.resource;
 import static com.example.hellotalk.exception.AppExceptionHandler.USER_NOT_FOUND_EXCEPTION;
 import static com.example.hellotalk.util.Utils.convertToNewObject;
 import static com.example.hellotalk.util.Utils.jsonStringFromObject;
@@ -44,6 +47,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(controllers = UserController.class)
 @ExtendWith(MockitoExtension.class)
+@AutoConfigureMockMvc
 @ExtendWith({RestDocumentationExtension.class, SpringExtension.class})
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class UserControllerTest {
@@ -138,6 +142,23 @@ class UserControllerTest {
         mockMvc.perform(get("/api/v1/ht/user/{userId}", userId))
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(content().json(jsonResponse));
+
+//                .andDo(document("cart-add-product",
+//                        resource("Add products to a cart")));
+
+//                                .pathParameters(
+//                                        parameterWithName("id").description("the cart id"))
+//                                .responseFields(
+//                                        fieldWithPath("total").description("Total amount of the cart."),
+//                                        fieldWithPath("products").description("The product line item of the cart."),
+//                                        subsectionWithPath("products[]._links.product").description("Link to the product."),
+//                                        fieldWithPath("products[].quantity").description("The quantity of the line item."),
+//                                        subsectionWithPath("products[].product").description("The product the line item relates to."),
+//                                        subsectionWithPath("_links").description("Links section."))
+//                                .links(
+//                                        linkWithRel("self").ignored(),
+//                                        linkWithRel("order").description("Link to order the cart."))
+//                                .build())));
     }
 
     @Test
@@ -151,9 +172,12 @@ class UserControllerTest {
 
         String jsonResponse = jsonStringFromObject(userList);
 
-        mockMvc.perform(get("/api/v1/ht/user/"))
+        mockMvc.perform(RestDocumentationRequestBuilders.get("/api/v1/ht/user/"))
                 .andExpect(status().is2xxSuccessful())
-                .andExpect(content().json(jsonResponse));
+                .andExpect(content().json(jsonResponse))
+
+                .andDo(document("cart-add-product",
+                        resource("Add products to a cart")));
     }
 
     @Test

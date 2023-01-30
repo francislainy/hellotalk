@@ -1,0 +1,46 @@
+{
+  "openapi" : "3.0.1",
+  "info" : {
+    "title" : "HelloTalk",
+    "description" : "HelloTalk",
+    "version" : "0.0.1-SNAPSHOT"
+  },
+  "servers" : [ {
+    "url" : "http://localhost:8081"
+  } ],
+  "tags" : [ ],
+  "paths" : {
+    "/api/v1/ht/user/" : {
+      "get" : {
+        "tags" : [ "api" ],
+        "summary" : "Add products to a cart",
+        "description" : "Add products to a cart",
+        "operationId" : "cart-add-product",
+        "responses" : {
+          "200" : {
+            "description" : "200",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/api-v1-ht-user-486549215"
+                },
+                "examples" : {
+                  "cart-add-product" : {
+                    "value" : "[{\"id\":\"1bfff94a-b70e-4b39-bd2a-be1c0f898589\",\"name\":\"anyName\",\"dob\":\"anyDob\",\"gender\":\"anyGender\",\"selfIntroduction\":\"anySelfIntroduction\",\"creationDate\":\"anyCreationDate\",\"status\":\"anyStatus\",\"handle\":\"anyHandle\",\"nativeLanguage\":\"anyNativeLanguage\",\"targetLanguage\":\"anyTargetLanguage\",\"occupation\":\"anyOccupation\",\"placesToVisit\":\"anyPlacesToVisit\",\"subscriptionType\":\"anySubscriptionType\",\"hometown\":{\"id\":\"67b61042-e015-4b86-8d9b-2dddabffa0b6\",\"city\":\"anyCity\",\"country\":\"anyCountry\"},\"hobbyAndInterests\":[{\"id\":\"b6935f29-1846-4064-9950-b7d40298af4c\",\"title\":\"anyInterest\"}]}]"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components" : {
+    "schemas" : {
+      "api-v1-ht-user-486549215" : {
+        "type" : "object"
+      }
+    }
+  }
+}

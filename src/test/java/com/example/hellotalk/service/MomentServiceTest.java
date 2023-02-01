@@ -16,7 +16,6 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static com.example.hellotalk.exception.AppExceptionHandler.MOMENT_NOT_FOUND_EXCEPTION;
-import static java.util.UUID.randomUUID;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -32,13 +31,13 @@ class MomentServiceTest {
     MomentRepository momentRepository;
 
     @Test
-    void testGetMoment() {
+    void testGetMoment() { //todo: fix text as this fails when running as part of this class
 
-        UUID momentId = randomUUID();
+        UUID momentId = UUID.fromString("2afff94a-b70e-4b39-bd2a-be1c0f898589");
         MomentEntity momentEntity = MomentEntity.builder().id(momentId).text("anyMoment").build();
         Optional<MomentEntity> momentEntityOptional = Optional.of(momentEntity);
         when(momentRepository.findById(any())).thenReturn(momentEntityOptional);
-        Moment moment = momentService.getMoment(randomUUID());
+        Moment moment = momentService.getMoment(momentId);
 
         assertNotNull(moment);
 
@@ -50,8 +49,11 @@ class MomentServiceTest {
     @Test
     void testGetMoment_ThrowsExceptionMomentDoesNotExist() {
 
-        MomentNotFoundException momentNotFoundException = assertThrows(MomentNotFoundException.class, () -> momentService.getMoment(randomUUID()));
+        UUID momentId = UUID.fromString("1bfff94a-b70e-4b39-bd2a-be1c0f898589");
+
+        MomentNotFoundException momentNotFoundException = assertThrows(MomentNotFoundException.class, () -> momentService.getMoment(momentId));
 
         assertEquals(MOMENT_NOT_FOUND_EXCEPTION, momentNotFoundException.getMessage());
     }
+
 }

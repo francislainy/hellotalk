@@ -17,6 +17,7 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
 public class AppExceptionHandler extends ResponseEntityExceptionHandler {
 
     public static final String USER_NOT_FOUND_EXCEPTION = "NO USER FOUND WITH THIS ID";
+    public static final String MOMENT_NOT_FOUND_EXCEPTION = "NO MOMENT FOUND WITH THIS ID";
     public static final String FOLLOWING_RELATIONSHIP_ALREADY_EXISTS_EXCEPTION = "FOLLOWING RELATIONSHIP ALREADY EXISTS";
     public static final String FOLLOWING_RELATIONSHIP_DOES_NOT_EXIST_EXCEPTION = "FOLLOWING RELATIONSHIP DOES NOT EXIST";
 

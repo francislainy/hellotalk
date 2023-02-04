@@ -20,6 +20,7 @@ import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.restdocs.cli.CliDocumentation;
 import org.springframework.restdocs.http.HttpDocumentation;
 import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation;
+import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -30,6 +31,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import static com.epages.restdocs.apispec.ResourceDocumentation.resource;
 import static com.example.hellotalk.util.Utils.jsonStringFromObject;
 import static java.util.UUID.randomUUID;
 import static org.mockito.ArgumentMatchers.any;
@@ -37,8 +39,6 @@ import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -100,9 +100,12 @@ class FollowingRequestControllerTest {
 
         String jsonResponse = jsonStringFromObject(followingRequest);
 
-        mockMvc.perform(get("/api/v1/ht/follow/{followingRequestId}", randomUUID()))
+        mockMvc.perform(RestDocumentationRequestBuilders.get("/api/v1/ht/follow/{followingRequestId}", randomUUID()))
                 .andExpect(status().is2xxSuccessful())
-                .andExpect(content().json(jsonResponse));
+                .andExpect(content().json(jsonResponse))
+                .andDo(document("get-following-request",
+                        resource("Get a following request")))
+                .andReturn();
     }
 
     @Test
@@ -116,9 +119,12 @@ class FollowingRequestControllerTest {
 
         String jsonResponse = jsonStringFromObject(followingRequestList);
 
-        mockMvc.perform(get("/api/v1/ht/follow/"))
+        mockMvc.perform(RestDocumentationRequestBuilders.get("/api/v1/ht/follow/"))
                 .andExpect(status().is2xxSuccessful())
-                .andExpect(content().json(jsonResponse));
+                .andExpect(content().json(jsonResponse))
+                .andDo(document("get-following-requests",
+                        resource("Get a list of following requests")))
+                .andReturn();
     }
 
     @Test
@@ -136,9 +142,12 @@ class FollowingRequestControllerTest {
 
         String jsonResponse = jsonStringFromObject(followingRequestList);
 
-        mockMvc.perform(get("/api/v1/ht/follow/from/user/{userId}", randomUUID()))
+        mockMvc.perform(RestDocumentationRequestBuilders.get("/api/v1/ht/follow/from/user/{userId}", randomUUID()))
                 .andExpect(status().is2xxSuccessful())
-                .andExpect(content().json(jsonResponse));
+                .andExpect(content().json(jsonResponse))
+                .andDo(document("get-all-following-requests-from-user",
+                        resource("Get a list of following requests from a given user")))
+                .andReturn();
     }
 
     @Test
@@ -156,9 +165,12 @@ class FollowingRequestControllerTest {
 
         String jsonResponse = jsonStringFromObject(followingRequestList);
 
-        mockMvc.perform(get("/api/v1/ht/follow/to/user/{userId}", randomUUID()))
+        mockMvc.perform(RestDocumentationRequestBuilders.get("/api/v1/ht/follow/to/user/{userId}", randomUUID()))
                 .andExpect(status().is2xxSuccessful())
-                .andExpect(content().json(jsonResponse));
+                .andExpect(content().json(jsonResponse))
+                .andDo(document("get-all-following-requests-to-user",
+                        resource("Get a list of following requests to a given user")))
+                .andReturn();
     }
 
     @Test
@@ -187,8 +199,11 @@ class FollowingRequestControllerTest {
 
         String jsonRequest = jsonStringFromObject(followingRequest);
         String jsonResponse = jsonStringFromObject(followingResponse);
-        mockMvc.perform(post("/api/v1/ht/follow").content(jsonRequest).contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(RestDocumentationRequestBuilders.post("/api/v1/ht/follow").content(jsonRequest).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is2xxSuccessful())
-                .andExpect(content().json(jsonResponse));
+                .andExpect(content().json(jsonResponse))
+                .andDo(document("create-following-request-for-user",
+                        resource("Create a following request for a user")))
+                .andReturn();
     }
 }

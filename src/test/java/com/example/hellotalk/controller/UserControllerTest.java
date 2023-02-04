@@ -25,7 +25,6 @@ import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
@@ -141,7 +140,8 @@ class UserControllerTest {
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(content().json(jsonResponse))
                 .andDo(document("get-user",
-                        resource("Get a user's details")));
+                        resource("Get a user's details")))
+                .andReturn();
     }
 
     @Test
@@ -159,7 +159,8 @@ class UserControllerTest {
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(content().json(jsonResponse))
                 .andDo(document("get-users",
-                        resource("Get a list of users")));
+                        resource("Get a list of users")))
+                .andReturn();
     }
 
     @Test
@@ -172,7 +173,8 @@ class UserControllerTest {
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(content().json(jsonResponse))
                 .andDo(document("create-user",
-                        resource("Create a user")));
+                        resource("Create a user")))
+                .andReturn();
     }
 
     @Test
@@ -182,12 +184,13 @@ class UserControllerTest {
         when(userService.updateUser(any(), any())).thenReturn(user);
 
         mockMvc.perform(RestDocumentationRequestBuilders.put("/api/v1/ht/user/{userId}", userId)
-                .content(jsonRequest)
-                .contentType(MediaType.APPLICATION_JSON))
+                        .content(jsonRequest)
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(content().json(jsonResponse))
                 .andDo(document("update-user",
-                        resource("Update a user's details")));
+                        resource("Update a user's details")))
+                .andReturn();
     }
 
     @Test
@@ -206,7 +209,8 @@ class UserControllerTest {
                 .andExpect(status().is(404))
                 .andExpect(content().json(jsonError))
                 .andDo(document("update-user-throws-exception",
-                        resource("Updating a user's details throws exception when user does not exist")));
+                        resource("Updating a user's details throws exception when user does not exist")))
+                .andReturn();
     }
 
     @Test
@@ -219,14 +223,12 @@ class UserControllerTest {
         when(userService.getUser(any())).thenReturn(user);
         when(userService.deleteUser(any())).thenReturn(json);
 
-        MvcResult deleteAUser = mockMvc.perform(RestDocumentationRequestBuilders.delete("/api/v1/ht/user/{userId}", userId).contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(RestDocumentationRequestBuilders.delete("/api/v1/ht/user/{userId}", userId).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(content().json(json))
                 .andDo(document("delete-user",
                         resource("Delete a user")))
                 .andReturn();
-
-        deleteAUser.getResponse().getContentAsString();
     }
 
     @Test
@@ -243,7 +245,8 @@ class UserControllerTest {
                 .andExpect(status().is4xxClientError())
                 .andExpect(content().json(jsonError))
                 .andDo(document("delete-user-throws-exception",
-                        resource("Deleting a user throws exception when user does not exist")));
+                        resource("Deleting a user throws exception when user does not exist")))
+                .andReturn();
     }
 
 }

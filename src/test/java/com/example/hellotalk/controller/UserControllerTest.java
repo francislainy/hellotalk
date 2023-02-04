@@ -234,7 +234,7 @@ class UserControllerTest {
     }
 
     @Test
-    void testDeleteUser_ThrowsExceptionWhenUserNotFound() throws Exception {
+    void testDeleteUser_ThrowsExceptionWhenUserNotFound() throws Exception { //todo: to find out why this gets printed before the delete exception on swagger - 04/02/2023
 
         doThrow(new UserNotFoundException(USER_NOT_FOUND_EXCEPTION)).when(userService).deleteUser(any());
 

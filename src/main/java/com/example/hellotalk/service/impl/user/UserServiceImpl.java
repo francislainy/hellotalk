@@ -127,12 +127,16 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void deleteUser(UUID userId) {
+    public String deleteUser(UUID userId) {
 
         Optional<UserEntity> optionalUserEntity = userRepository.findById(userId);
+        String json = """
+                {"message": "User Deleted"}
+                """;
 
         if (optionalUserEntity.isPresent()) {
             userRepository.deleteById(userId);
+            return json;
         } else {
             throw new UserNotFoundException(USER_NOT_FOUND_EXCEPTION);
         }

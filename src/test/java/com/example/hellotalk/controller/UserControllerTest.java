@@ -13,6 +13,7 @@ import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
@@ -21,6 +22,7 @@ import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.restdocs.cli.CliDocumentation;
 import org.springframework.restdocs.http.HttpDocumentation;
 import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation;
+import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -28,6 +30,7 @@ import org.springframework.web.context.WebApplicationContext;
 
 import java.util.*;
 
+import static com.epages.restdocs.apispec.ResourceDocumentation.resource;
 import static com.example.hellotalk.exception.AppExceptionHandler.USER_NOT_FOUND_EXCEPTION;
 import static com.example.hellotalk.util.Utils.convertToNewObject;
 import static com.example.hellotalk.util.Utils.jsonStringFromObject;
@@ -36,14 +39,13 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
-import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(controllers = UserController.class)
 @ExtendWith(MockitoExtension.class)
+@AutoConfigureMockMvc
 @ExtendWith({RestDocumentationExtension.class, SpringExtension.class})
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class UserControllerTest {
@@ -106,8 +108,6 @@ class UserControllerTest {
     void setUp(WebApplicationContext webApplicationContext, RestDocumentationContextProvider restDocumentation) {
         this.mockMvc = MockMvcBuilders
                 .webAppContextSetup(webApplicationContext)
-                .apply(documentationConfiguration(restDocumentation)).alwaysDo(document("{method-name}",
-                        preprocessRequest(prettyPrint()), preprocessResponse(prettyPrint())))
                 .apply(MockMvcRestDocumentation.documentationConfiguration(restDocumentation)
                         .uris()
                         .withScheme("http")
@@ -135,9 +135,12 @@ class UserControllerTest {
         User user = this.userResponse;
         when(userService.getUser(userId)).thenReturn(user);
 
-        mockMvc.perform(get("/api/v1/ht/user/{userId}", userId))
+        mockMvc.perform(RestDocumentationRequestBuilders.get("/api/v1/ht/user/{userId}", userId))
                 .andExpect(status().is2xxSuccessful())
-                .andExpect(content().json(jsonResponse));
+                .andExpect(content().json(jsonResponse))
+                .andDo(document("get-user",
+                        resource("Get a user's details")))
+                .andReturn();
     }
 
     @Test
@@ -151,9 +154,12 @@ class UserControllerTest {
 
         String jsonResponse = jsonStringFromObject(userList);
 
-        mockMvc.perform(get("/api/v1/ht/user/"))
+        mockMvc.perform(RestDocumentationRequestBuilders.get("/api/v1/ht/user/"))
                 .andExpect(status().is2xxSuccessful())
-                .andExpect(content().json(jsonResponse));
+                .andExpect(content().json(jsonResponse))
+                .andDo(document("get-users",
+                        resource("Get a list of users")))
+                .andReturn();
     }
 
     @Test
@@ -162,9 +168,12 @@ class UserControllerTest {
         User user = userResponse;
         when(userService.createUser(any())).thenReturn(user);
 
-        mockMvc.perform(post("/api/v1/ht/user").content(jsonRequest).contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(RestDocumentationRequestBuilders.post("/api/v1/ht/user").content(jsonRequest).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is2xxSuccessful())
-                .andExpect(content().json(jsonResponse));
+                .andExpect(content().json(jsonResponse))
+                .andDo(document("create-user",
+                        resource("Create a user")))
+                .andReturn();
     }
 
     @Test
@@ -173,11 +182,14 @@ class UserControllerTest {
         User user = userResponse;
         when(userService.updateUser(any(), any())).thenReturn(user);
 
-        mockMvc.perform(put("/api/v1/ht/user/{userId}", userId)
-                .content(jsonRequest)
-                .contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(RestDocumentationRequestBuilders.put("/api/v1/ht/user/{userId}", userId)
+                        .content(jsonRequest)
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is2xxSuccessful())
-                .andExpect(content().json(jsonResponse));
+                .andExpect(content().json(jsonResponse))
+                .andDo(document("update-user",
+                        resource("Update a user's details")))
+                .andReturn();
     }
 
     @Test
@@ -190,21 +202,35 @@ class UserControllerTest {
                 """;
         jsonError = jsonError.replace("jsonError", USER_NOT_FOUND_EXCEPTION);
 
-        mockMvc.perform(put("/api/v1/ht/user/{userId}", userId)
+        mockMvc.perform(RestDocumentationRequestBuilders.put("/api/v1/ht/user/{userId}", userId)
                         .content(jsonRequest)
-                        .contentType(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .param("userId", String.valueOf(userId)))
                 .andExpect(status().is(404))
-                .andExpect(content().json(jsonError));
+                .andExpect(content().json(jsonError))
+                .andDo(document("update-user-throws-exception",
+                        resource("Updating a user's details throws exception when user does not exist")))
+                .andReturn();
     }
 
     @Test
     void testDeleteUser() throws Exception {
 
+        String json = """
+                {"message": "User Deleted"}
+                """;
         User user = userResponse;
         when(userService.getUser(any())).thenReturn(user);
+        when(userService.deleteUser(any())).thenReturn(json);
 
-        mockMvc.perform(delete("/api/v1/ht/user/{userId}", userId).contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().is2xxSuccessful());
+        mockMvc.perform(RestDocumentationRequestBuilders.delete("/api/v1/ht/user/{userId}", userId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .param("userId", String.valueOf(userId)))
+                .andExpect(status().is2xxSuccessful())
+                .andExpect(content().json(json))
+                .andDo(document("delete-user",
+                        resource("Delete a user")))
+                .andReturn();
     }
 
     @Test
@@ -217,10 +243,12 @@ class UserControllerTest {
                 """;
         jsonError = jsonError.replace("jsonError", USER_NOT_FOUND_EXCEPTION);
 
-        mockMvc.perform(delete("/api/v1/ht/user/{userId}", userId).contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(RestDocumentationRequestBuilders.delete("/api/v1/ht/user/{userId}", userId).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is4xxClientError())
-                .andExpect(content().json(jsonError
-                ));
+                .andExpect(content().json(jsonError))
+                .andDo(document("delete-user-throws-exception",
+                        resource("Deleting a user throws exception when user does not exist")))
+                .andReturn();
     }
 
 }

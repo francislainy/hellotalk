@@ -243,8 +243,11 @@ class UserServiceTest {
     @Test
     void testDeleteUser() {
 
+        String json = """
+                {"message": "User Deleted"}
+                """;
         when(userRepository.findById(any())).thenReturn(Optional.of(getUserEntity()));
-        assertDoesNotThrow(() -> userService.deleteUser(userId));
+        assertEquals(json, assertDoesNotThrow(() -> userService.deleteUser(userId)));
     }
 
     @Test

@@ -110,8 +110,6 @@ class UserControllerTest {
     void setUp(WebApplicationContext webApplicationContext, RestDocumentationContextProvider restDocumentation) {
         this.mockMvc = MockMvcBuilders
                 .webAppContextSetup(webApplicationContext)
-                .apply(documentationConfiguration(restDocumentation)).alwaysDo(document("{method-name}",
-                        preprocessRequest(prettyPrint()), preprocessResponse(prettyPrint())))
                 .apply(MockMvcRestDocumentation.documentationConfiguration(restDocumentation)
                         .uris()
                         .withScheme("http")
@@ -142,23 +140,6 @@ class UserControllerTest {
         mockMvc.perform(get("/api/v1/ht/user/{userId}", userId))
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(content().json(jsonResponse));
-
-//                .andDo(document("cart-add-product",
-//                        resource("Add products to a cart")));
-
-//                                .pathParameters(
-//                                        parameterWithName("id").description("the cart id"))
-//                                .responseFields(
-//                                        fieldWithPath("total").description("Total amount of the cart."),
-//                                        fieldWithPath("products").description("The product line item of the cart."),
-//                                        subsectionWithPath("products[]._links.product").description("Link to the product."),
-//                                        fieldWithPath("products[].quantity").description("The quantity of the line item."),
-//                                        subsectionWithPath("products[].product").description("The product the line item relates to."),
-//                                        subsectionWithPath("_links").description("Links section."))
-//                                .links(
-//                                        linkWithRel("self").ignored(),
-//                                        linkWithRel("order").description("Link to order the cart."))
-//                                .build())));
     }
 
     @Test
@@ -175,9 +156,8 @@ class UserControllerTest {
         mockMvc.perform(RestDocumentationRequestBuilders.get("/api/v1/ht/user/"))
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(content().json(jsonResponse))
-
-                .andDo(document("cart-add-product",
-                        resource("Add products to a cart")));
+                .andDo(document("get-user",
+                        resource("Get a user's details")));
     }
 
     @Test

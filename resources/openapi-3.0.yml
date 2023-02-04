@@ -11,9 +11,9 @@ paths:
     get:
       tags:
       - api
-      summary: Add products to a cart
-      description: Add products to a cart
-      operationId: cart-add-product
+      summary: Get a user's details
+      description: Get a user's details
+      operationId: get-user
       responses:
         "200":
           description: "200"
@@ -22,7 +22,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/api-v1-ht-user-486549215'
               examples:
-                cart-add-product:
+                get-user:
                   value: "[{\"id\":\"1bfff94a-b70e-4b39-bd2a-be1c0f898589\",\"name\"\
                     :\"anyName\",\"dob\":\"anyDob\",\"gender\":\"anyGender\",\"selfIntroduction\"\
                     :\"anySelfIntroduction\",\"creationDate\":\"anyCreationDate\"\
@@ -30,9 +30,9 @@ paths:
                     :\"anyNativeLanguage\",\"targetLanguage\":\"anyTargetLanguage\"\
                     ,\"occupation\":\"anyOccupation\",\"placesToVisit\":\"anyPlacesToVisit\"\
                     ,\"subscriptionType\":\"anySubscriptionType\",\"hometown\":{\"\
-                    id\":\"8a2e3bc0-beb8-4034-b693-e32335bce37a\",\"city\":\"anyCity\"\
+                    id\":\"be4ec235-f425-4514-bb2c-119c5956fe15\",\"city\":\"anyCity\"\
                     ,\"country\":\"anyCountry\"},\"hobbyAndInterests\":[{\"id\":\"\
-                    7016db27-79ce-4b5a-b9ae-2f9d2e9a6a60\",\"title\":\"anyInterest\"\
+                    af3b0fba-2f5a-456e-9b08-c0e4b6f16da2\",\"title\":\"anyInterest\"\
                     }]}]"
 components:
   schemas:

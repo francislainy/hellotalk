@@ -34,9 +34,7 @@
         <springdoc-openapi-ui.version>1.6.14</springdoc-openapi-ui.version>
         <asciidoctor-maven-plugin.version>2.1.0</asciidoctor-maven-plugin.version>
         <asciidoctorj.version>2.4.2</asciidoctorj.version>
-        <restdocs-api-spec-webtestclient.version>0.16.2</restdocs-api-spec-webtestclient.version>
         <springdoc-openapi-maven-plugin.version>0.2</springdoc-openapi-maven-plugin.version>
-        <restdocs-spec-generator.version>0.21</restdocs-spec-generator.version>
         <restdocs-spec.version>0.21</restdocs-spec.version>
         <restdocs-api-spec.version>0.16.4</restdocs-api-spec.version>
     </properties>
@@ -374,12 +372,11 @@
                             <goal>generate</goal>
                         </goals>
                         <configuration>
-                            <format>JSON</format>
                             <!--suppress MavenModelInspection -->
                             <skip>${skipTests}</skip>
                             <host>localhost:8081</host>
                             <specification>OPENAPI_V3</specification>
-                            <outputDirectory>${project.build.directory}/classes/static/docs</outputDirectory>
+                            <outputDirectory>${project.build.directory}/classes/static</outputDirectory>
                         </configuration>
                     </execution>
                 </executions>

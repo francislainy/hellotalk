@@ -20,7 +20,6 @@
         <maven-resources-plugin.version>3.3.0</maven-resources-plugin.version>
         <snippetsDirectory>${project.build.directory}/generated-snippets</snippetsDirectory>
         <jakarta.persistence-api.version>3.1.0</jakarta.persistence-api.version>
-        <spring-restdocs-mockmvc.version>2.0.5.RELEASE</spring-restdocs-mockmvc.version>
         <spotless-plugin.version>2.27.2</spotless-plugin.version>
         <spotless-eclipse.version>4.13.0</spotless-eclipse.version>
         <jacoco-maven-plugin.version>0.8.7</jacoco-maven-plugin.version>
@@ -30,6 +29,7 @@
         <pact.version>4.3.15</pact.version>
         <pact.plugin.version>4.0.10</pact.plugin.version>
         <http.client.version>5.2</http.client.version>
+        <spring-restdocs-mockmvc.version>2.0.5.RELEASE</spring-restdocs-mockmvc.version>
         <spring-auto-restdocs-core.version>2.0.11</spring-auto-restdocs-core.version>
         <springdoc-openapi-ui.version>1.6.14</springdoc-openapi-ui.version>
         <asciidoctor-maven-plugin.version>2.1.0</asciidoctor-maven-plugin.version>
@@ -221,6 +221,38 @@
                 </executions>
             </plugin>
             <plugin>
+                <groupId>org.springdoc</groupId>
+                <artifactId>springdoc-openapi-maven-plugin</artifactId>
+                <version>${springdoc-openapi-maven-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <phase>integration-test</phase>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>io.github.berkleytechnologyservices</groupId>
+                <artifactId>restdocs-spec-maven-plugin</artifactId>
+                <version>${restdocs-spec.version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <!--suppress MavenModelInspection -->
+                            <skip>${skipTests}</skip>
+                            <host>localhost:8081</host>
+                            <specification>OPENAPI_V3</specification>
+                            <outputDirectory>${project.build.directory}/classes/static</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <artifactId>maven-resources-plugin</artifactId>
                 <executions>
                     <execution>
@@ -348,38 +380,6 @@
                     <projectVersion>${project.version}</projectVersion>
                     <trimSnapshot>true</trimSnapshot>
                 </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.springdoc</groupId>
-                <artifactId>springdoc-openapi-maven-plugin</artifactId>
-                <version>${springdoc-openapi-maven-plugin.version}</version>
-                <executions>
-                    <execution>
-                        <phase>integration-test</phase>
-                        <goals>
-                            <goal>generate</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>io.github.berkleytechnologyservices</groupId>
-                <artifactId>restdocs-spec-maven-plugin</artifactId>
-                <version>${restdocs-spec.version}</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>generate</goal>
-                        </goals>
-                        <configuration>
-                            <!--suppress MavenModelInspection -->
-                            <skip>${skipTests}</skip>
-                            <host>localhost:8081</host>
-                            <specification>OPENAPI_V3</specification>
-                            <outputDirectory>${project.build.directory}/classes/static</outputDirectory>
-                        </configuration>
-                    </execution>
-                </executions>
             </plugin>
         </plugins>
     </build>

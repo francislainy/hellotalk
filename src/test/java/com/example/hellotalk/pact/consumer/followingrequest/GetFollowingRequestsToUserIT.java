@@ -1,4 +1,4 @@
-package com.example.hellotalk.pact.consumer;
+package com.example.hellotalk.pact.consumer.followingrequest;
 
 import au.com.dius.pact.consumer.dsl.DslPart;
 import au.com.dius.pact.consumer.dsl.PactDslJsonArray;
@@ -21,11 +21,11 @@ import static com.example.hellotalk.utils.Utils.getMockRequest;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ExtendWith(PactConsumerTestExt.class)
-class GetFollowingRequestsFromUserIT {
+class GetFollowingRequestsToUserIT {
 
     Map<String, String> headers = new HashMap<>();
 
-    String path = "/api/v1/ht/follow/from/user/";
+    String path = "/api/v1/ht/follow/to/user/";
     UUID userId = UUID.fromString("1bfff94a-b70e-4b39-bd2a-be1c0f898589");
 
     @Pact(provider = PACT_PROVIDER, consumer = PACT_CONSUMER)
@@ -39,8 +39,8 @@ class GetFollowingRequestsFromUserIT {
                 .closeObject();
 
         return builder
-                .given("A request to retrieve a list of following requests sent from a given user")
-                .uponReceiving("A request to retrieve a list of following requests sent from a given user")
+                .given("A request to retrieve a list of following requests sent to a given user")
+                .uponReceiving("A request to retrieve a list of following requests sent to a given user")
                 .pathFromProviderState(path + "${userId}", path + userId)
                 .method("GET")
                 .headers(headers)

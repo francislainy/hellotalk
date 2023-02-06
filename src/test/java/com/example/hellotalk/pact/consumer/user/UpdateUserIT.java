@@ -1,4 +1,4 @@
-package com.example.hellotalk.pact.consumer;
+package com.example.hellotalk.pact.consumer.user;
 
 import au.com.dius.pact.consumer.dsl.DslPart;
 import au.com.dius.pact.consumer.dsl.PactDslJsonBody;
@@ -8,8 +8,8 @@ import au.com.dius.pact.consumer.junit5.PactTestFor;
 import au.com.dius.pact.core.model.PactSpecVersion;
 import au.com.dius.pact.core.model.RequestResponsePact;
 import au.com.dius.pact.core.model.annotations.Pact;
-import com.example.hellotalk.model.user.HobbyAndInterest;
-import com.example.hellotalk.model.user.Hometown;
+import com.example.hellotalk.model.HobbyAndInterest;
+import com.example.hellotalk.model.Hometown;
 import com.example.hellotalk.model.user.User;
 import io.restassured.response.Response;
 import org.junit.jupiter.api.Test;

@@ -1,6 +1,6 @@
-package com.example.hellotalk.service.user;
+package com.example.hellotalk.service;
 
-import com.example.hellotalk.model.user.FollowingRequest;
+import com.example.hellotalk.model.FollowingRequest;
 
 import java.util.List;
 import java.util.UUID;

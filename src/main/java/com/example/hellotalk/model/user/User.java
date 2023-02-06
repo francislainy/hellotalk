@@ -1,6 +1,8 @@
 package com.example.hellotalk.model.user;
 
 import com.example.hellotalk.entity.user.UserEntity;
+import com.example.hellotalk.model.HobbyAndInterest;
+import com.example.hellotalk.model.Hometown;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,7 +13,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
-import static com.example.hellotalk.model.user.Hometown.buildHometownFromEntity;
+import static com.example.hellotalk.model.Hometown.buildHometownFromEntity;
 
 @Data
 @Builder

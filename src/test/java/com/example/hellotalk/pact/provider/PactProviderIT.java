@@ -80,4 +80,18 @@ class PactProviderIT {
         map.put("userId", "ca3569ee-cb62-4f45-b1c2-199028ba5562");
         return map;
     }
+
+    @State("A request to retrieve a moment")
+    Map<String, Object> getMoment() {
+        Map<String, Object> map = new HashMap<>();
+        map.put("momentId", "d3256c76-62d7-4481-9d1c-a0ccc4da380f");
+        return map;
+    }
+
+    @State("A request to update a moment")
+    Map<String, Object> updateMoment() {
+        Map<String, Object> map = new HashMap<>();
+        map.put("momentId", "d3256c76-62d7-4481-9d1c-a0ccc4da380f");
+        return map;
+    }
 }

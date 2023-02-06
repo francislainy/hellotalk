@@ -1,5 +1,6 @@
 package com.example.hellotalk.entity.moment;
 
+import com.example.hellotalk.model.moment.Moment;
 import lombok.*;
 
 import javax.persistence.*;
@@ -19,6 +20,14 @@ public class MomentEntity {
     @Column(name = "id")
     private UUID id;
 
-    @Column(name = "name")
+    @Column(name = "text")
     private String text;
+
+    public static MomentEntity buildMomentEntityFromModel(Moment moment) {
+
+        return MomentEntity.builder()
+                .id(moment.getId())
+                .text(moment.getText())
+                .build();
+    }
 }

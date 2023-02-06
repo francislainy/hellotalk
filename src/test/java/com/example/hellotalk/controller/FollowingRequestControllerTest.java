@@ -2,9 +2,9 @@ package com.example.hellotalk.controller;
 
 import capital.scalable.restdocs.AutoDocumentation;
 import com.example.hellotalk.entity.user.UserEntity;
-import com.example.hellotalk.model.user.FollowingRequest;
+import com.example.hellotalk.model.FollowingRequest;
 import com.example.hellotalk.repository.UserRepository;
-import com.example.hellotalk.service.user.FollowingRequestService;
+import com.example.hellotalk.service.FollowingRequestService;
 import com.example.hellotalk.service.user.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

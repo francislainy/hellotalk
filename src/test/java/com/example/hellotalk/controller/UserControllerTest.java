@@ -2,8 +2,8 @@ package com.example.hellotalk.controller;
 
 import capital.scalable.restdocs.AutoDocumentation;
 import com.example.hellotalk.exception.UserNotFoundException;
-import com.example.hellotalk.model.user.HobbyAndInterest;
-import com.example.hellotalk.model.user.Hometown;
+import com.example.hellotalk.model.HobbyAndInterest;
+import com.example.hellotalk.model.Hometown;
 import com.example.hellotalk.model.user.User;
 import com.example.hellotalk.service.user.UserService;
 import org.junit.jupiter.api.BeforeAll;

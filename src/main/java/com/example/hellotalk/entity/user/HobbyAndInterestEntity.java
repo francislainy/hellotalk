@@ -1,6 +1,6 @@
 package com.example.hellotalk.entity.user;
 
-import com.example.hellotalk.model.user.HobbyAndInterest;
+import com.example.hellotalk.model.HobbyAndInterest;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

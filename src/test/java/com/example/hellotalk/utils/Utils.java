@@ -75,27 +75,11 @@ public class Utils {
             headersString = headersString + "--header " + "'" + s.getName() + ": " + s.getValue() + "'" + "\\" + "\n";
         }
 
-        String curl = "" +
-                "curl " +
-                "--request " +
-                method +
-                " " +
-                "'" +
-                url +
-                "' \\" +
-                "\n" +
-                headersString +
-                "--data-binary " +
-                "'" +
-                bodyParam +
-                "' \\" +
-                "\n" +
-                "--compressed \\" +
-                "\n" +
-                "--insecure \\" +
-                "\n" +
-                "--verbose" +
-                "";
+        String curl = """
+                curl --request $method $url $headersString
+                --data-binary $bodyParam
+                --compressed --insecure --verbose
+                """;
 
         // log.debug(curl + "\n\n " + bodyResponse + "\n ---- \n\n");
         System.out.println((curl + "\n\n " + bodyResponse + "\n ---- \n\n"));

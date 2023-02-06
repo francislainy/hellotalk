@@ -1,4 +1,4 @@
-package com.example.hellotalk.model.user;
+package com.example.hellotalk.model;
 
 import com.example.hellotalk.entity.user.HometownEntity;
 import com.fasterxml.jackson.annotation.JsonInclude;

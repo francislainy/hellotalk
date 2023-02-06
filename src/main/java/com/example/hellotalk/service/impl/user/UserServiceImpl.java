@@ -6,7 +6,7 @@ import com.example.hellotalk.entity.user.HometownEntity;
 import com.example.hellotalk.entity.user.UserEntity;
 import com.example.hellotalk.exception.FollowingRelationshipNotCreatedException;
 import com.example.hellotalk.exception.UserNotFoundException;
-import com.example.hellotalk.model.user.HobbyAndInterest;
+import com.example.hellotalk.model.HobbyAndInterest;
 import com.example.hellotalk.model.user.User;
 import com.example.hellotalk.repository.HobbyAndInterestRepository;
 import com.example.hellotalk.repository.HometownRepository;
@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 
 import static com.example.hellotalk.entity.user.UserEntity.buildUserEntityFromModel;
 import static com.example.hellotalk.exception.AppExceptionHandler.USER_NOT_FOUND_EXCEPTION;
-import static com.example.hellotalk.model.user.Hometown.buildHometownFromEntity;
+import static com.example.hellotalk.model.Hometown.buildHometownFromEntity;
 import static com.example.hellotalk.model.user.User.buildUserFromEntity;
 
 @Service

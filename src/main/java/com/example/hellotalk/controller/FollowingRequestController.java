@@ -1,7 +1,7 @@
 package com.example.hellotalk.controller;
 
-import com.example.hellotalk.model.user.FollowingRequest;
-import com.example.hellotalk.service.user.FollowingRequestService;
+import com.example.hellotalk.model.FollowingRequest;
+import com.example.hellotalk.service.FollowingRequestService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

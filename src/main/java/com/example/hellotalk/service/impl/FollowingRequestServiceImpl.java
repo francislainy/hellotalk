@@ -1,13 +1,13 @@
-package com.example.hellotalk.service.impl.user;
+package com.example.hellotalk.service.impl;
 
 import com.example.hellotalk.entity.user.FollowingRequestEntity;
 import com.example.hellotalk.entity.user.UserEntity;
 import com.example.hellotalk.exception.FollowingRelationshipNotCreatedException;
 import com.example.hellotalk.exception.UserNotFoundException;
-import com.example.hellotalk.model.user.FollowingRequest;
+import com.example.hellotalk.model.FollowingRequest;
 import com.example.hellotalk.repository.FollowingRequestRepository;
 import com.example.hellotalk.repository.UserRepository;
-import com.example.hellotalk.service.user.FollowingRequestService;
+import com.example.hellotalk.service.FollowingRequestService;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -16,7 +16,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static com.example.hellotalk.exception.AppExceptionHandler.*;
-import static com.example.hellotalk.model.user.FollowingRequest.buildFollowingRequestFromEntity;
+import static com.example.hellotalk.model.FollowingRequest.buildFollowingRequestFromEntity;
 
 @Service
 public class FollowingRequestServiceImpl implements FollowingRequestService {

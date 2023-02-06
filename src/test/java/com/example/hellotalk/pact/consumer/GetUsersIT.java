@@ -24,7 +24,7 @@ class GetUsersIT {
 
     Map<String, String> headers = new HashMap<>();
 
-    String path = "/api/v1/ht/user";
+    String path = "/api/v1/ht/users/";
 
     @Pact(provider = PACT_PROVIDER, consumer = PACT_CONSUMER)
     public RequestResponsePact createPact(PactDslWithProvider builder) {

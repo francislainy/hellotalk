@@ -25,7 +25,7 @@ class GetUserIT {
 
     Map<String, String> headers = new HashMap<>();
 
-    String path = "/api/v1/ht/user/";
+    String path = "/api/v1/ht/users/";
     UUID userId = UUID.fromString("1bfff94a-b70e-4b39-bd2a-be1c0f898589");
 
     @Pact(provider = PACT_PROVIDER, consumer = PACT_CONSUMER)

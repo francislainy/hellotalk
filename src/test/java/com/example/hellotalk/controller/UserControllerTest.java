@@ -135,7 +135,7 @@ class UserControllerTest {
         User user = this.userResponse;
         when(userService.getUser(userId)).thenReturn(user);
 
-        mockMvc.perform(RestDocumentationRequestBuilders.get("/api/v1/ht/user/{userId}", userId))
+        mockMvc.perform(RestDocumentationRequestBuilders.get("/api/v1/ht/users/{userId}", userId))
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(content().json(jsonResponse))
                 .andDo(document("get-user",
@@ -154,7 +154,7 @@ class UserControllerTest {
 
         String jsonResponse = jsonStringFromObject(userList);
 
-        mockMvc.perform(RestDocumentationRequestBuilders.get("/api/v1/ht/user/"))
+        mockMvc.perform(RestDocumentationRequestBuilders.get("/api/v1/ht/users"))
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(content().json(jsonResponse))
                 .andDo(document("get-users",
@@ -168,7 +168,7 @@ class UserControllerTest {
         User user = userResponse;
         when(userService.createUser(any())).thenReturn(user);
 
-        mockMvc.perform(RestDocumentationRequestBuilders.post("/api/v1/ht/user").content(jsonRequest).contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(RestDocumentationRequestBuilders.post("/api/v1/ht/users").content(jsonRequest).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(content().json(jsonResponse))
                 .andDo(document("create-user",
@@ -182,7 +182,7 @@ class UserControllerTest {
         User user = userResponse;
         when(userService.updateUser(any(), any())).thenReturn(user);
 
-        mockMvc.perform(RestDocumentationRequestBuilders.put("/api/v1/ht/user/{userId}", userId)
+        mockMvc.perform(RestDocumentationRequestBuilders.put("/api/v1/ht/users/{userId}", userId)
                 .content(jsonRequest)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is2xxSuccessful())
@@ -202,7 +202,7 @@ class UserControllerTest {
                 """;
         jsonError = jsonError.replace("jsonError", USER_NOT_FOUND_EXCEPTION);
 
-        mockMvc.perform(RestDocumentationRequestBuilders.put("/api/v1/ht/user/{userId}", userId)
+        mockMvc.perform(RestDocumentationRequestBuilders.put("/api/v1/ht/users/{userId}", userId)
                         .content(jsonRequest)
                         .contentType(MediaType.APPLICATION_JSON)
                         .param("userId", String.valueOf(userId)))
@@ -223,7 +223,7 @@ class UserControllerTest {
         when(userService.getUser(any())).thenReturn(user);
         when(userService.deleteUser(any())).thenReturn(json);
 
-        mockMvc.perform(RestDocumentationRequestBuilders.delete("/api/v1/ht/user/{userId}", userId)
+        mockMvc.perform(RestDocumentationRequestBuilders.delete("/api/v1/ht/users/{userId}", userId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .param("userId", String.valueOf(userId)))
                 .andExpect(status().is2xxSuccessful())
@@ -243,7 +243,7 @@ class UserControllerTest {
                 """;
         jsonError = jsonError.replace("jsonError", USER_NOT_FOUND_EXCEPTION);
 
-        mockMvc.perform(RestDocumentationRequestBuilders.delete("/api/v1/ht/user/{userId}", userId).contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(RestDocumentationRequestBuilders.delete("/api/v1/ht/users/{userId}", userId).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is4xxClientError())
                 .andExpect(content().json(jsonError))
                 .andDo(document("delete-user-throws-exception",

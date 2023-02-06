@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/v1/ht/user")
+@RequestMapping("/api/v1/ht/users")
 public class UserController {
 
     final UserService userService;
@@ -42,5 +42,4 @@ public class UserController {
     public ResponseEntity<Object> deleteUser(@PathVariable UUID userId) throws Exception {
         return new ResponseEntity<>(userService.deleteUser(userId), HttpStatus.PARTIAL_CONTENT);
     }
-
 }

@@ -5,6 +5,7 @@ import com.example.hellotalk.exception.MomentNotFoundException;
 import com.example.hellotalk.model.moment.Moment;
 import com.example.hellotalk.repository.moment.MomentRepository;
 import com.example.hellotalk.service.moment.MomentService;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,6 +16,7 @@ import static com.example.hellotalk.entity.moment.MomentEntity.buildMomentEntity
 import static com.example.hellotalk.exception.AppExceptionHandler.MOMENT_NOT_FOUND_EXCEPTION;
 import static com.example.hellotalk.model.moment.Moment.buildMomentFromEntity;
 
+@Service
 public class MomentServiceImpl implements MomentService {
 
     final MomentRepository momentRepository;
@@ -78,12 +80,12 @@ public class MomentServiceImpl implements MomentService {
     @Override
     public String deleteMoment(UUID momentId) {
 
-        Optional<MomentEntity> optionalUserEntity = momentRepository.findById(momentId);
+        Optional<MomentEntity> optionalMomentEntity = momentRepository.findById(momentId);
         String json = """
                 {"message": "Moment Deleted"}
                 """;
 
-        if (optionalUserEntity.isPresent()) {
+        if (optionalMomentEntity.isPresent()) {
             momentRepository.deleteById(momentId);
             return json;
         } else {

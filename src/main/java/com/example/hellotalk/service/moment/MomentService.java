@@ -15,5 +15,5 @@ public interface MomentService {
 
     Moment updateMoment(UUID momentId, Moment moment);
 
-    String deleteMoment(UUID momentId) throws Exception;
+    String deleteMoment(UUID momentId);
 }

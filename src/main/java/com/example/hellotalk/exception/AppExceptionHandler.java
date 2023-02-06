@@ -34,6 +34,12 @@ public class AppExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(new ApiError(ex.getMessage(), NOT_FOUND, LocalDateTime.now()), NOT_FOUND);
     }
 
+    @ExceptionHandler(MomentNotFoundException.class)
+    @ResponseStatus(NOT_FOUND)
+    public ResponseEntity<Object> handleMomentNotFoundException(MomentNotFoundException ex, WebRequest webRequest) {
+        return new ResponseEntity<>(new ApiError(ex.getMessage(), NOT_FOUND, LocalDateTime.now()), NOT_FOUND);
+    }
+
     @Override
     protected ResponseEntity<Object> handleNoHandlerFoundException(NoHandlerFoundException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
 

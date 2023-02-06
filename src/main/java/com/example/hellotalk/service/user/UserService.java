@@ -15,7 +15,7 @@ public interface UserService {
 
     User updateUser(UUID userId, User user);
 
-    String deleteUser(UUID userId) throws Exception;
+    String deleteUser(UUID userId);
 
     void followUser(UUID fromId, UUID toId) throws Exception;
 }

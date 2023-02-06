@@ -39,7 +39,7 @@ public class UserController {
     }
 
     @DeleteMapping({"/{userId}", "/{userId}/"})
-    public ResponseEntity<Object> deleteUser(@PathVariable UUID userId) throws Exception {
+    public ResponseEntity<Object> deleteUser(@PathVariable UUID userId) {
         return new ResponseEntity<>(userService.deleteUser(userId), HttpStatus.PARTIAL_CONTENT);
     }
 }

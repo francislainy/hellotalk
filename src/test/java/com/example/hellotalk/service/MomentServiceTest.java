@@ -139,7 +139,7 @@ class MomentServiceTest {
                 {"message": "Moment Deleted"}
                 """;
         UUID momentId = randomUUID();
-        when(momentRepository.findById(any())).thenReturn(Optional.of(MomentEntity.builder().id(momentId).text("anyText").build()));
+        when(momentRepository.findById(momentId)).thenReturn(Optional.of(MomentEntity.builder().id(momentId).text("anyText").build()));
         assertEquals(json, assertDoesNotThrow(() -> momentService.deleteMoment(momentId)));
     }
 

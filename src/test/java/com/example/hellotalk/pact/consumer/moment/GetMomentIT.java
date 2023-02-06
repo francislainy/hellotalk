@@ -26,7 +26,7 @@ class GetMomentIT {
     Map<String, String> headers = new HashMap<>();
 
     String path = "/api/v1/ht/moments/";
-    UUID momentId = UUID.fromString("1bfff94a-b70e-4b39-bd2a-be1c0f898589");
+    UUID momentId = UUID.fromString("e1f6bea6-4684-403e-9c41-8704fb0600c0");
 
     @Pact(provider = PACT_PROVIDER, consumer = PACT_CONSUMER)
     public RequestResponsePact createPact(PactDslWithProvider builder) {

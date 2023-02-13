@@ -13,6 +13,8 @@ import io.restassured.response.Response;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -35,6 +37,10 @@ class UpdateMomentIT {
         headers.put("Content-Type", "application/json");
         headers.put("Accept", "application/json");
 
+        DateTimeFormatter formatter = DateTimeFormatter.ISO_ZONED_DATE_TIME;
+        ZonedDateTime creationDate = ZonedDateTime.parse("2022-12-31T23:59:59Z", formatter);
+        ZonedDateTime lastUpdatedDate = ZonedDateTime.parse("2023-12-31T23:59:59Z", formatter);
+
         DslPart bodyReceived = new PactDslJsonBody()
                 .stringType("text", "anyText")
                 .close();
@@ -42,12 +48,14 @@ class UpdateMomentIT {
         DslPart bodyReturned = new PactDslJsonBody()
                 .uuid("id", momentId)
                 .stringType("text", "anyText")
+                .stringType("creationDate", creationDate.format(formatter))
+                .stringType("lastUpdatedDate", lastUpdatedDate.format(formatter))
                 .close();
 
         return builder
                 .given("A request to update a moment")
                 .uponReceiving("A request to update a moment")
-                .pathFromProviderState(path + "${userId}", path + momentId)
+                .pathFromProviderState(path + "${momentId}", path + momentId)
                 .body(Objects.requireNonNull(bodyReceived))
                 .method("PUT")
                 .headers(headers)

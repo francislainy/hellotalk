@@ -7,6 +7,8 @@ import com.example.hellotalk.repository.moment.MomentRepository;
 import com.example.hellotalk.service.moment.MomentService;
 import org.springframework.stereotype.Service;
 
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -25,6 +27,8 @@ public class MomentServiceImpl implements MomentService {
         this.momentRepository = momentRepository;
     }
 
+    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
+
     @Override
     public Moment getMoment(UUID momentId) {
 
@@ -32,10 +36,7 @@ public class MomentServiceImpl implements MomentService {
 
         if (momentEntityOptional.isPresent()) {
             MomentEntity momentEntity = momentEntityOptional.get();
-            return Moment.builder()
-                    .id(momentEntity.getId())
-                    .text(momentEntity.getText())
-                    .build();
+            return buildMomentFromEntity(momentEntity);
         } else {
             throw new MomentNotFoundException(MOMENT_NOT_FOUND_EXCEPTION);
         }
@@ -58,6 +59,9 @@ public class MomentServiceImpl implements MomentService {
     public Moment createMoment(Moment moment) {
 
         MomentEntity momentEntity = buildMomentEntityFromModel(moment);
+        ZonedDateTime now = ZonedDateTime.now();
+        ZonedDateTime formattedDate = ZonedDateTime.parse(now.format(formatter));
+        momentEntity.setCreationDate(formattedDate);
         momentEntity = momentRepository.save(momentEntity);
 
         return buildMomentFromEntity(momentEntity);
@@ -68,8 +72,10 @@ public class MomentServiceImpl implements MomentService {
 
         Optional<MomentEntity> momentEntityOptional = momentRepository.findById(momentId);
         if (momentEntityOptional.isPresent()) {
-            MomentEntity momentEntity = buildMomentEntityFromModel(moment);
-            momentEntity.setId(momentId);
+            MomentEntity momentEntity = momentEntityOptional.get();
+            ZonedDateTime now = ZonedDateTime.now();
+            ZonedDateTime formattedDate = ZonedDateTime.parse(now.format(formatter));
+            momentEntity.setLastUpdatedDate(formattedDate);
             momentEntity = momentRepository.save(momentEntity);
             return buildMomentFromEntity(momentEntity);
         } else {

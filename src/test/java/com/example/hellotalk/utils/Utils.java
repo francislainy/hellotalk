@@ -76,10 +76,11 @@ public class Utils {
         }
 
         String curl = """
-                curl --request $method $url $headersString
-                --data-binary $bodyParam
+                curl --request %s '%s' \
+                %s --data-binary '%s' \
                 --compressed --insecure --verbose
-                """;
+                """.formatted(method, url, headersString, bodyParam);
+
 
         // log.debug(curl + "\n\n " + bodyResponse + "\n ---- \n\n");
         System.out.println((curl + "\n\n " + bodyResponse + "\n ---- \n\n"));

@@ -12,6 +12,8 @@ import io.restassured.response.Response;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -31,9 +33,14 @@ class GetMomentsIT {
     public RequestResponsePact createPact(PactDslWithProvider builder) {
         headers.put("Content-Type", "application/json");
         headers.put("Accept", "application/json");
+
+        DateTimeFormatter formatter = DateTimeFormatter.ISO_ZONED_DATE_TIME;
+        ZonedDateTime creationDate = ZonedDateTime.parse("2022-12-31T23:59:59Z", formatter);
+
         DslPart bodyReturned = PactDslJsonArray.arrayEachLike()
                 .uuid("id", "d3256c76-62d7-4481-9d1c-a0ccc4da380f")
                 .stringType("text", "anyText")
+                .stringType("creationDate", creationDate.format(formatter))
                 .closeObject();
 
         return builder
@@ -44,7 +51,6 @@ class GetMomentsIT {
                 .willRespondWith()
                 .body(Objects.requireNonNull(bodyReturned))
                 .toPact();
-
     }
 
     @Test

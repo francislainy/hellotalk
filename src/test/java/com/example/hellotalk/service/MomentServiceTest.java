@@ -11,6 +11,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -32,14 +34,15 @@ class MomentServiceTest {
     @Mock
     MomentRepository momentRepository;
 
+    ZonedDateTime now = ZonedDateTime.now();
+    ZonedDateTime creationDate = ZonedDateTime.parse(now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")));
+    ZonedDateTime lastUpdatedDate = ZonedDateTime.parse(now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")));
+
     @Test
     void testGetMoment() {
 
         UUID momentId = randomUUID();
-        MomentEntity momentEntity = MomentEntity.builder()
-                .id(momentId)
-                .text("anyMoment")
-                .build();
+        MomentEntity momentEntity = getMomentEntity(momentId);
 
         when(momentRepository.findById(momentId)).thenReturn(Optional.of(momentEntity));
         Moment moment = momentService.getMoment(momentId);
@@ -48,7 +51,9 @@ class MomentServiceTest {
 
         assertAll(
                 () -> assertEquals(momentId, moment.getId()),
-                () -> assertEquals("anyMoment", moment.getText()));
+                () -> assertEquals("anyText", moment.getText()),
+                () -> assertEquals(String.valueOf(creationDate), String.valueOf(moment.getCreationDate())),
+                () -> assertEquals(String.valueOf(lastUpdatedDate), String.valueOf(moment.getLastUpdatedDate())));
     }
 
     @Test
@@ -65,7 +70,7 @@ class MomentServiceTest {
     void testGetAllMoments() {
 
         UUID momentId = randomUUID();
-        MomentEntity momentEntity = MomentEntity.builder().id(momentId).text("anyText").build();
+        MomentEntity momentEntity = getMomentEntity(momentId);
         List<MomentEntity> momentEntityList = new ArrayList<>();
         momentEntityList.add(momentEntity);
         when(momentRepository.findAll()).thenReturn(momentEntityList);
@@ -76,7 +81,9 @@ class MomentServiceTest {
         Moment moment = allMoments.get(0);
         assertAll(
                 () -> assertEquals(momentId, moment.getId()),
-                () -> assertEquals("anyText", moment.getText()));
+                () -> assertEquals("anyText", moment.getText()),
+                () -> assertEquals(String.valueOf(creationDate), String.valueOf(moment.getCreationDate())),
+                () -> assertEquals(String.valueOf(lastUpdatedDate), String.valueOf(moment.getLastUpdatedDate())));
     }
 
     @Test
@@ -89,43 +96,50 @@ class MomentServiceTest {
     @Test
     void testCreateMoment() {
 
-        MomentEntity momentEntity = MomentEntity.builder().id(randomUUID()).text("anyText").build();
+        UUID momentId = randomUUID();
+        MomentEntity momentEntity = getMomentEntity(momentId);
         when(momentRepository.save(any())).thenReturn(momentEntity);
 
         Moment moment = momentService.createMoment(buildMomentFromEntity(momentEntity));
         assertAll(
                 () -> assertNotNull(moment.getId()),
-                () -> assertEquals("anyText", moment.getText()));
+                () -> assertEquals("anyText", moment.getText()),
+                () -> assertEquals(String.valueOf(creationDate), String.valueOf(moment.getCreationDate())),
+                () -> assertEquals(String.valueOf(lastUpdatedDate), String.valueOf(moment.getLastUpdatedDate())));
     }
 
     @Test
     void testUpdateMomentDetails() {
 
         UUID momentId = randomUUID();
-        MomentEntity momentEntity = MomentEntity.builder().id(momentId).text("anyText").build();
+        MomentEntity momentEntity = getMomentEntity(momentId);
 
         MomentEntity momentEntityUpdated = MomentEntity.builder()
                 .id(momentId)
                 .text("anyUpdatedText")
+                .creationDate(creationDate)
+                .lastUpdatedDate(lastUpdatedDate)
                 .build();
 
         when(momentRepository.findById(any())).thenReturn(Optional.of(momentEntity));
         when(momentRepository.save(any())).thenReturn(momentEntityUpdated);
 
-        Moment moment = Moment.buildMomentFromEntity(momentEntity);
+        Moment moment = buildMomentFromEntity(momentEntity);
         moment = momentService.updateMoment(momentId, moment);
 
         Moment finalMoment = moment;
         assertAll(
                 () -> assertEquals(momentId, finalMoment.getId()),
-                () -> assertEquals("anyUpdatedText", finalMoment.getText()));
+                () -> assertEquals("anyUpdatedText", finalMoment.getText()),
+                () -> assertEquals(String.valueOf(creationDate), String.valueOf(finalMoment.getCreationDate())),
+                () -> assertEquals(String.valueOf(lastUpdatedDate), String.valueOf(finalMoment.getLastUpdatedDate())));
     }
 
     @Test
     void testUpdateMomentDetails_ThrowsExceptionWhenMomentIsNotFound() {
 
         UUID momentId = randomUUID();
-        Moment moment = Moment.buildMomentFromEntity(MomentEntity.builder().id(momentId).text("anyText").build());
+        Moment moment = buildMomentFromEntity(getMomentEntity(momentId));
         MomentNotFoundException exception =
                 assertThrows(MomentNotFoundException.class, () -> momentService.updateMoment(momentId, moment));
 
@@ -139,7 +153,7 @@ class MomentServiceTest {
                 {"message": "Moment Deleted"}
                 """;
         UUID momentId = randomUUID();
-        when(momentRepository.findById(momentId)).thenReturn(Optional.of(MomentEntity.builder().id(momentId).text("anyText").build()));
+        when(momentRepository.findById(momentId)).thenReturn(Optional.of(MomentEntity.builder().id(momentId).build()));
         assertEquals(json, assertDoesNotThrow(() -> momentService.deleteMoment(momentId)));
     }
 
@@ -153,4 +167,18 @@ class MomentServiceTest {
 
         assertEquals(MOMENT_NOT_FOUND_EXCEPTION, exception.getMessage());
     }
+
+    private MomentEntity getMomentEntity(UUID momentId) {
+
+        ZonedDateTime now = ZonedDateTime.now();
+        creationDate = ZonedDateTime.parse(now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")));
+
+        return MomentEntity.builder()
+                .id(momentId)
+                .text("anyText")
+                .creationDate(creationDate)
+                .lastUpdatedDate(lastUpdatedDate)
+                .build();
+    }
+
 }

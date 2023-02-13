@@ -13,6 +13,8 @@ import io.restassured.response.Response;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -35,13 +37,18 @@ class CreateMomentIT {
         headers.put("Content-Type", "application/json");
         headers.put("Accept", "application/json");
 
+        DateTimeFormatter formatter = DateTimeFormatter.ISO_ZONED_DATE_TIME;
+        ZonedDateTime creationDate = ZonedDateTime.parse("2022-12-31T23:59:59Z", formatter);
+
         DslPart bodyReceived = new PactDslJsonBody()
                 .stringType("text", "anyText")
                 .close();
 
         DslPart bodyReturned = new PactDslJsonBody()
                 .uuid("id", momentId)
-                .stringType("anyText", "anyText")
+                .stringType("text", "anyText")
+                .stringType("creationDate", creationDate.format(formatter))
+                .nullValue("lastUpdatedDate")
                 .close();
 
         return builder

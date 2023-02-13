@@ -2,6 +2,7 @@ package com.example.hellotalk.model.moment;
 
 import com.example.hellotalk.entity.moment.MomentEntity;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -22,6 +23,7 @@ public class Moment {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     ZonedDateTime creationDate;
     @JsonInclude(JsonInclude.Include.NON_NULL)
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     ZonedDateTime lastUpdatedDate;
 
     public static Moment buildMomentFromEntity(MomentEntity momentEntity) {

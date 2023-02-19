@@ -9,6 +9,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.ZonedDateTime;
+import java.util.Set;
 import java.util.UUID;
 
 @Builder
@@ -25,14 +26,16 @@ public class Moment {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     ZonedDateTime lastUpdatedDate;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    Set<String> tags;
 
     public static Moment buildMomentFromEntity(MomentEntity momentEntity) {
-
         return Moment.builder()
                 .id(momentEntity.getId())
                 .text(momentEntity.getText())
                 .creationDate(momentEntity.getCreationDate())
                 .lastUpdatedDate(momentEntity.getLastUpdatedDate())
+                .tags(momentEntity.getTags())
                 .build();
     }
 }

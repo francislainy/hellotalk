@@ -73,6 +73,8 @@ public class MomentServiceImpl implements MomentService {
         Optional<MomentEntity> momentEntityOptional = momentRepository.findById(momentId);
         if (momentEntityOptional.isPresent()) {
             MomentEntity momentEntity = momentEntityOptional.get();
+            momentEntity.setText(moment.getText());
+            momentEntity.setTags(moment.getTags());
             ZonedDateTime now = ZonedDateTime.now();
             ZonedDateTime formattedDate = ZonedDateTime.parse(now.format(formatter));
             momentEntity.setLastUpdatedDate(formattedDate);

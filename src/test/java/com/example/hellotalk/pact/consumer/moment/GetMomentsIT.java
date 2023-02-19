@@ -41,6 +41,9 @@ class GetMomentsIT {
                 .uuid("id", "d3256c76-62d7-4481-9d1c-a0ccc4da380f")
                 .stringType("text", "anyText")
                 .stringType("creationDate", creationDate.format(formatter))
+                .eachLike("tags")
+                .stringType("anyTag1")
+                .closeArray()
                 .closeObject();
 
         return builder

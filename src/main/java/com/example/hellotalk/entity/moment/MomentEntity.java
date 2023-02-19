@@ -5,6 +5,8 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.time.ZonedDateTime;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -30,6 +32,12 @@ public class MomentEntity {
     @Column(name = "last_updated_date")
     private ZonedDateTime lastUpdatedDate;
 
+    @ElementCollection
+    @CollectionTable(name = "moment_tags",
+            joinColumns = @JoinColumn(name = "moment_id"))
+    @Column(name = "tag")
+    private Set<String> tags = new HashSet<>();
+
     public static MomentEntity buildMomentEntityFromModel(Moment moment) {
 
         return MomentEntity.builder()
@@ -37,6 +45,7 @@ public class MomentEntity {
                 .text(moment.getText())
                 .creationDate(moment.getCreationDate())
                 .lastUpdatedDate(moment.getLastUpdatedDate())
+                .tags(moment.getTags())
                 .build();
     }
 }

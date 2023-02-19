@@ -48,7 +48,6 @@ class CreateMomentIT {
                 .uuid("id", momentId)
                 .stringType("text", "anyText")
                 .stringType("creationDate", creationDate.format(formatter))
-                .nullValue("lastUpdatedDate")
                 .close();
 
         return builder

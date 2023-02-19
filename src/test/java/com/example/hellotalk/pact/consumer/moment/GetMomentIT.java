@@ -45,6 +45,9 @@ class GetMomentIT {
                 .stringType("text", "anyText")
                 .stringType("creationDate", creationDate.format(formatter))
                 .stringType("lastUpdatedDate", lastUpdatedDate.format(formatter))
+                .eachLike("tags")
+                .stringType("anyTag1")
+                .closeArray()
                 .close();
 
         return builder

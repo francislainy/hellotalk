@@ -25,7 +25,7 @@ To clone the repository and run the project, follow these steps:
 
 # Feedback
 
-I welcome feedback and suggestions for improving this project. Feel free to open an issue or pull request on the project's Github repository. 
+I welcome feedback and suggestions for improving this project. Feel free to open an issue or pull request on the project's Github repository.
 
 # Disclaimer
 

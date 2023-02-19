@@ -50,11 +50,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class UserControllerTest {
 
-    private UUID userId;
-    private User userRequest;
-    private User userResponse;
-    private String jsonRequest;
-    private String jsonResponse;
+    UUID userId;
+    User userRequest;
+    User userResponse;
+    String jsonRequest;
+    String jsonResponse;
 
     @Autowired
     MockMvc mockMvc;
@@ -234,7 +234,7 @@ class UserControllerTest {
     }
 
     @Test
-    void testDeleteUser_ThrowsExceptionWhenUserNotFound() throws Exception { //todo: to find out why this gets printed before the delete exception on swagger - 04/02/2023
+    void testDeleteUser_ThrowsExceptionWhenUserNotFound() throws Exception { //todo: need to find out why this gets printed before the delete exception on swagger - 04/02/2023
 
         doThrow(new UserNotFoundException(USER_NOT_FOUND_EXCEPTION)).when(userService).deleteUser(any());
 

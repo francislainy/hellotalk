@@ -65,8 +65,7 @@ class MomentServiceTest {
                 () -> assertEquals("anyUpdatedText", finalMoment.getText()),
                 () -> assertEquals(String.valueOf(creationDate), String.valueOf(finalMoment.getCreationDate())),
                 () -> assertEquals(String.valueOf(lastUpdatedDate), String.valueOf(finalMoment.getLastUpdatedDate())),
-                () -> assertEquals(tagsSet, finalMoment.getTags())
-        );
+                () -> assertEquals(tagsSet, finalMoment.getTags()));
     }
 
     @Test

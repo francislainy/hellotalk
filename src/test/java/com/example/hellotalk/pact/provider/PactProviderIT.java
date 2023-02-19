@@ -7,17 +7,21 @@ import au.com.dius.pact.provider.junitsupport.Provider;
 import au.com.dius.pact.provider.junitsupport.State;
 import au.com.dius.pact.provider.junitsupport.VerificationReports;
 import au.com.dius.pact.provider.junitsupport.loader.PactFolder;
+import com.example.hellotalk.repository.BasePostgresConfig;
 import org.apache.hc.core5.http.HttpRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.TestTemplate;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.test.context.jdbc.Sql;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import static com.example.hellotalk.utils.Utils.logCurlFromPact;
+import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TEST_METHOD;
+import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.BEFORE_TEST_METHOD;
 
 @Provider("MY_PROVIDER")
 /* Uncomment this and comment @PactBroker instead to test locally by pasting a .json file for the contract under
@@ -26,7 +30,9 @@ import static com.example.hellotalk.utils.Utils.logCurlFromPact;
 // @PactBroker(host = BROKER_PACT_URL, consumers = {"MY_CONSUMER"})
 @VerificationReports(value = {"markdown"}, reportDir = "target/pacts")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class PactProviderIT {
+@Sql(scripts = "classpath:init.sql", executionPhase = BEFORE_TEST_METHOD)
+@Sql(scripts = "classpath:clean-up.sql", executionPhase = AFTER_TEST_METHOD)
+class PactProviderIT extends BasePostgresConfig {
 
     @LocalServerPort
     int port;

@@ -5,7 +5,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.testcontainers.junit.jupiter.Container;
 
 @ActiveProfiles("test")
-public class BaseIntegrationTest {
+public class BasePostgresConfig {
 
     @Container
     public static PostgresSqlContainer postgres = PostgresSqlContainer.getInstance();

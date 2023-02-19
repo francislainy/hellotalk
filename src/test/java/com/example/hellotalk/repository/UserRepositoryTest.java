@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-class UserRepositoryTest extends BaseIntegrationTest {
+class UserRepositoryTest extends BasePostgresConfig {
 
     @Autowired
     UserRepository userRepository;

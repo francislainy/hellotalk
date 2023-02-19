@@ -1,11 +1,11 @@
 package com.example.hellotalk;
 
-import com.example.hellotalk.repository.BaseIntegrationTest;
+import com.example.hellotalk.repository.BasePostgresConfig;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class HelloTalkApplicationTests extends BaseIntegrationTest {
+class HelloTalkApplicationTests extends BasePostgresConfig {
 
     @Test
     void contextLoads() {}

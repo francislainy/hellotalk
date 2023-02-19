@@ -1,7 +1,7 @@
 package com.example.hellotalk.functionaltests;
 
 import com.example.hellotalk.model.user.User;
-import com.example.hellotalk.repository.BaseIntegrationTest;
+import com.example.hellotalk.repository.BasePostgresConfig;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.restassured.response.Response;
@@ -30,7 +30,7 @@ import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.BEFORE_TE
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @Sql(scripts = "classpath:init.sql", executionPhase = BEFORE_TEST_METHOD)
 @Sql(scripts = "classpath:clean-up.sql", executionPhase = AFTER_TEST_METHOD)
-class FunctionalIT extends BaseIntegrationTest {
+class FunctionalIT extends BasePostgresConfig {
 
     @LocalServerPort
     int port;

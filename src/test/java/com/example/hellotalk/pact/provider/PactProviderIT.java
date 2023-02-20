@@ -23,6 +23,11 @@ import static com.example.hellotalk.utils.Utils.logCurlFromPact;
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TEST_METHOD;
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.BEFORE_TEST_METHOD;
 
+/*
+ * mvn -Dtest=pact.provider.PactProviderIT integration-test
+ * mvn -Dtest="pact.provider.*IT" integration-test
+ */
+
 @Provider("MY_PROVIDER")
 /* Uncomment this and comment @PactBroker instead to test locally by pasting a .json file for the contract under
  the target/pacts folder */

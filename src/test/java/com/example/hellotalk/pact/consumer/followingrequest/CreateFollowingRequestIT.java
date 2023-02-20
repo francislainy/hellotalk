@@ -22,6 +22,12 @@ import static com.example.hellotalk.utils.Utils.getMockRequest;
 import static java.util.UUID.fromString;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+/*
+ * mvn -Dtest=pact.consumer.followingrequest.CreateFollowingRequestIT integration-test
+ * mvn -Dtest="pact.consumer.followingrequest.*IT" integration-test
+ * mvn -Dtest="pact.consumer.**.*IT" integration-test
+ */
+
 @ExtendWith(PactConsumerTestExt.class)
 class CreateFollowingRequestIT {
 

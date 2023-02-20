@@ -19,9 +19,34 @@ To clone the repository and run the project, follow these steps:
 
 - Navigate to the project root directory: cd HelloTalk
 
-- Build the project: mvn clean install
+- Build the project: `mvn clean install`
 
-- Run the project: mvn spring-boot:run
+- Run the project: `mvn spring-boot:run
+
+# Tests and Static Analysis
+
+## Unit Tests:
+`mvn test`
+
+## Functional tests:
+
+`mvn -Dtest="functionaltests.*IT" integration-test`
+
+## Pact:
+
+### Consumer:
+`mvn -Dtest="pact.consumer.*IT" integration-test`
+
+### Provider:
+`mvn -Dtest="pact.provider.*IT" integration-test`
+
+## Sonarqube
+
+`mvn clean sonar:sonar`
+
+## Spotless
+
+`mvn spotless:apply`
 
 # Feedback
 

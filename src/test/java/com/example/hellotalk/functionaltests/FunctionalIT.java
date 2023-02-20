@@ -23,6 +23,10 @@ import static com.example.hellotalk.utils.Utils.getRequestSpecification;
 import static java.util.UUID.randomUUID;
 import static org.junit.jupiter.api.Assertions.*;
 
+/*
+ * mvn -Dtest="functionaltests.*IT" integration-test
+ */
+
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -129,6 +133,19 @@ class FunctionalIT extends BasePostgresConfig {
                 () -> assertEquals("anyCountry", user.getHometown().getCountry()));
 
         user.getHobbyAndInterests().forEach(h -> assertEquals("anyInterest", h.getTitle()));
+    }
+
+    @Test
+    void testDeleteUser() {
+
+        Response response = createUserResponse();
+        UUID userId = response.as(User.class).getId();
+
+        response = rq.delete("/api/v1/ht/users/" + userId);
+        assertEquals(206, response.getStatusCode());
+
+        response = rq.get("/api/v1/ht/users/" + userId);
+        assertEquals(404, response.getStatusCode()); // Deleted item no longer found
     }
 
     private Response createUserResponse() {

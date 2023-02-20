@@ -21,7 +21,7 @@ To clone the repository and run the project, follow these steps:
 
 - Build the project: `mvn clean install`
 
-- Run the project: `mvn spring-boot:run
+- Run the project: `mvn spring-boot:run`
 
 # Tests and Static Analysis
 
@@ -50,7 +50,7 @@ To clone the repository and run the project, follow these steps:
 
 # Feedback
 
-I welcome feedback and suggestions for improving this project. Feel free to open an issue or pull request on the project's Github repository.
+Feedback and suggestions for improving this project are very welcome. Feel free to open an issue or pull request on the project's Github repository.
 
 # Disclaimer
 

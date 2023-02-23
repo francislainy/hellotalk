@@ -1,32 +1,19 @@
 package com.example.hellotalk.controller;
 
-import capital.scalable.restdocs.AutoDocumentation;
 import com.example.hellotalk.exception.UserNotFoundException;
 import com.example.hellotalk.model.HobbyAndInterest;
 import com.example.hellotalk.model.Hometown;
 import com.example.hellotalk.model.user.User;
 import com.example.hellotalk.service.user.UserService;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.restdocs.RestDocumentationContextProvider;
-import org.springframework.restdocs.RestDocumentationExtension;
-import org.springframework.restdocs.cli.CliDocumentation;
-import org.springframework.restdocs.http.HttpDocumentation;
-import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.context.WebApplicationContext;
 
 import java.util.*;
 
@@ -39,25 +26,19 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(controllers = UserController.class)
 @ExtendWith(MockitoExtension.class)
-@AutoConfigureMockMvc
-@ExtendWith({RestDocumentationExtension.class, SpringExtension.class})
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class UserControllerTest {
+class UserControllerTest extends BaseTestConfig {
 
     UUID userId;
     User userRequest;
     User userResponse;
     String jsonRequest;
     String jsonResponse;
-
-    @Autowired
-    MockMvc mockMvc;
 
     @MockBean
     UserService userService;
@@ -102,31 +83,6 @@ class UserControllerTest {
         userResponse.setHobbyAndInterests(hobbyAndInterestsResponse);
 
         jsonResponse = jsonStringFromObject(userResponse);
-    }
-
-    @BeforeEach
-    void setUp(WebApplicationContext webApplicationContext, RestDocumentationContextProvider restDocumentation) {
-        this.mockMvc = MockMvcBuilders
-                .webAppContextSetup(webApplicationContext)
-                .apply(MockMvcRestDocumentation.documentationConfiguration(restDocumentation)
-                        .uris()
-                        .withScheme("http")
-                        .withHost("localhost")
-                        .withPort(8080)
-                        .and().snippets()
-                        .withDefaults(CliDocumentation.curlRequest(),
-                                HttpDocumentation.httpRequest(),
-                                HttpDocumentation.httpResponse(),
-                                AutoDocumentation.requestFields(),
-                                AutoDocumentation.responseFields(),
-                                AutoDocumentation.pathParameters(),
-                                AutoDocumentation.requestParameters(),
-                                AutoDocumentation.description(),
-                                AutoDocumentation.methodAndPath(),
-                                AutoDocumentation.section()))
-                .alwaysDo(document("{class-name}/{method-name}",
-                        preprocessRequest(prettyPrint()), preprocessResponse(prettyPrint())))
-                .build();
     }
 
     @Test
@@ -183,8 +139,8 @@ class UserControllerTest {
         when(userService.updateUser(any(), any())).thenReturn(user);
 
         mockMvc.perform(RestDocumentationRequestBuilders.put("/api/v1/ht/users/{userId}", userId)
-                .content(jsonRequest)
-                .contentType(MediaType.APPLICATION_JSON))
+                        .content(jsonRequest)
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(content().json(jsonResponse))
                 .andDo(document("update-user",
@@ -208,7 +164,7 @@ class UserControllerTest {
                         .param("userId", String.valueOf(userId)))
                 .andExpect(status().is(404))
                 .andExpect(content().json(jsonError))
-                .andDo(document("update-user-throws-exception",
+                .andDo(document("update-user-throws-exception-when-user-does-not-exist",
                         resource("Updating a user's details throws exception when user does not exist")))
                 .andReturn();
     }
@@ -246,9 +202,8 @@ class UserControllerTest {
         mockMvc.perform(RestDocumentationRequestBuilders.delete("/api/v1/ht/users/{userId}", userId).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is4xxClientError())
                 .andExpect(content().json(jsonError))
-                .andDo(document("delete-user-throws-exception",
-                        resource("Deleting a user throws exception when user does not exist")))
+                .andDo(document("delete-user-throws-exception-when-user-not-found",
+                        resource("Deleting a user throws exception when user is not found")))
                 .andReturn();
     }
-
 }

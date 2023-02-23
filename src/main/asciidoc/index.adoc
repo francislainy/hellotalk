@@ -5,79 +5,79 @@ This is an example output for a service running at http://localhost:8080:
 Get User
 
 .curl
-include::{snippets}/test-get-user/curl-request.adoc[]
+include::{snippets}/get-user/curl-request.adoc[]
 
 .request
-include::{snippets}/test-get-user/http-request.adoc[]
+include::{snippets}/get-user/http-request.adoc[]
 
 .response
-include::{snippets}/test-get-user/http-response.adoc[]
+include::{snippets}/get-user/http-response.adoc[]
 
 Get Users
 
 .curl
-include::{snippets}/test-get-all-users/curl-request.adoc[]
+include::{snippets}/get-users/curl-request.adoc[]
 
 .request
-include::{snippets}/test-get-all-users/http-request.adoc[]
+include::{snippets}/get-users/http-request.adoc[]
 
 .response
-include::{snippets}/test-get-all-users/http-response.adoc[]
+include::{snippets}/get-users/http-response.adoc[]
 
 Create User
 
 .curl
-include::{snippets}/test-create-user/curl-request.adoc[]
+include::{snippets}/create-user/curl-request.adoc[]
 
 .request
-include::{snippets}/test-create-user/http-request.adoc[]
+include::{snippets}/create-user/http-request.adoc[]
 
 .response
-include::{snippets}/test-create-user/http-response.adoc[]
+include::{snippets}/create-user/http-response.adoc[]
 
 Update User
 
 .curl
-include::{snippets}/test-update-user/curl-request.adoc[]
+include::{snippets}/update-user/curl-request.adoc[]
 
 .request
-include::{snippets}/test-update-user/http-request.adoc[]
+include::{snippets}/update-user/http-request.adoc[]
 
 .response
-include::{snippets}/test-update-user/http-response.adoc[]
+include::{snippets}/update-user/http-response.adoc[]
 
 Update User Throws Exception When User Not Found
 
 .curl
-include::{snippets}/test-update-user_-throws-exception-when-user-does-not-exist/curl-request.adoc[]
+include::{snippets}/update-user-throws-exception-when-user-does-not-exist/curl-request.adoc[]
 
 .request
-include::{snippets}/test-update-user_-throws-exception-when-user-does-not-exist/http-request.adoc[]
+include::{snippets}/update-user-throws-exception-when-user-does-not-exist/http-request.adoc[]
 
 .response
-include::{snippets}/test-update-user_-throws-exception-when-user-does-not-exist/http-response.adoc[]
+include::{snippets}/update-user-throws-exception-when-user-does-not-exist/http-response.adoc[]
 
 Delete User
 
 .curl
-include::{snippets}/test-delete-user/curl-request.adoc[]
+include::{snippets}/delete-user/curl-request.adoc[]
 
 .request
-include::{snippets}/test-delete-user/http-request.adoc[]
+include::{snippets}/delete-user/http-request.adoc[]
 
 .response
-include::{snippets}/test-delete-user/http-response.adoc[]
+include::{snippets}/delete-user/http-response.adoc[]
 
 Delete User Throws Exception When User Not Found
 
 .curl
-include::{snippets}/test-delete-user_-throws-exception-when-user-not-found/curl-request.adoc[]
+include::{snippets}/delete-user-throws-exception-when-user-not-found/curl-request.adoc[]
 
 .request
-include::{snippets}/test-delete-user_-throws-exception-when-user-not-found/http-request.adoc[]
+include::{snippets}/delete-user-throws-exception-when-user-not-found/http-request.adoc[]
 
 .response
-include::{snippets}/test-delete-user_-throws-exception-when-user-not-found/http-response.adoc[]
+include::{snippets}/delete-user-throws-exception-when-user-not-found/http-response.adoc[]
 
 Get Following Requests Sent To User
 

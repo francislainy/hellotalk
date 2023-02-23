@@ -15,9 +15,9 @@ To clone the repository and run the project, follow these steps:
 
 - Make sure you have Java 17 installed.
 
-- Clone the repository: git clone https://github.com/francislainy/HelloTalk.git
+- Clone the repository: `git clone https://github.com/francislainy/HelloTalk.git`
 
-- Navigate to the project root directory: cd HelloTalk
+- Navigate to the project root directory: `cd HelloTalk`
 
 - Build the project: `mvn clean install`
 

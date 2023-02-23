@@ -26,7 +26,7 @@ import static org.springframework.restdocs.operation.preprocess.Preprocessors.pr
 @ExtendWith(MockitoExtension.class)
 @ExtendWith({RestDocumentationExtension.class, SpringExtension.class})
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class BaseTestConfig {
+public abstract class BaseTestConfig {
 
     @Autowired
     MockMvc mockMvc;

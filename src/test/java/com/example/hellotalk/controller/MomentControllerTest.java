@@ -111,8 +111,8 @@ class MomentControllerTest extends BaseTestConfig {
         when(momentService.updateMoment(any(), any())).thenReturn(moment);
 
         mockMvc.perform(RestDocumentationRequestBuilders.put("/api/v1/ht/moments/{momentId}", momentId)
-                        .content(jsonRequest)
-                        .contentType(MediaType.APPLICATION_JSON))
+                .content(jsonRequest)
+                .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(content().json(jsonResponse))
                 .andDo(document("update-moment",

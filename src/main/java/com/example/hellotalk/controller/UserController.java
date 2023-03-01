@@ -10,7 +10,7 @@ import java.util.UUID;
 
 @CrossOrigin
 @RestController
-@RequestMapping("/api/v1/ht/users")
+@RequestMapping("/api/v1/ht/users/")
 public class UserController {
 
     final UserService userService;
@@ -19,12 +19,12 @@ public class UserController {
         this.userService = userService;
     }
 
-    @GetMapping({"/{userId}", "/{userId}/"})
+    @GetMapping({"/{userId}"})
     public ResponseEntity<Object> getUser(@PathVariable UUID userId) {
         return new ResponseEntity<>(userService.getUser(userId), HttpStatus.OK);
     }
 
-    @GetMapping({"", "/"})
+    @GetMapping
     public ResponseEntity<Object> getAllUsers() {
         return new ResponseEntity<>(userService.getAllUsers(), HttpStatus.OK);
     }

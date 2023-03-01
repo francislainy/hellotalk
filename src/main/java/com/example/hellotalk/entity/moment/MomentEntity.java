@@ -39,7 +39,6 @@ public class MomentEntity {
     private Set<String> tags = new HashSet<>();
 
     public static MomentEntity buildMomentEntityFromModel(Moment moment) {
-
         return MomentEntity.builder()
                 .id(moment.getId())
                 .text(moment.getText())

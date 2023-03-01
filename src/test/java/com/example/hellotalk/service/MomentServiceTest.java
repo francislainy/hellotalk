@@ -35,6 +35,95 @@ class MomentServiceTest {
     ZonedDateTime creationDate = ZonedDateTime.parse(now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")));
     ZonedDateTime lastUpdatedDate = ZonedDateTime.parse(now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")));
 
+
+    @Test
+    void testGetMoment() {
+
+        UUID momentId = UUID.randomUUID();
+        MomentEntity momentEntity = getMomentEntity(momentId);
+
+        when(momentRepository.findById(any())).thenReturn(Optional.of(momentEntity));
+
+        Set<String> tagsSet = new HashSet<>();
+        tagsSet.add("anyTag1");
+        tagsSet.add("anyTag2");
+
+        Moment moment = momentService.getMoment(momentId);
+
+        assertAll(
+                () -> assertEquals(momentId, moment.getId()),
+                () -> assertEquals("anyText", moment.getText()),
+                () -> assertEquals(String.valueOf(creationDate), String.valueOf(moment.getCreationDate())),
+                () -> assertEquals(String.valueOf(lastUpdatedDate), String.valueOf(moment.getLastUpdatedDate())),
+                () -> assertEquals(tagsSet, moment.getTags()));
+    }
+
+    @Test
+    void testGetMoments() {
+
+        UUID momentId = UUID.randomUUID();
+        MomentEntity momentEntity = getMomentEntity(momentId);
+
+        when(momentRepository.findById(any())).thenReturn(Optional.of(momentEntity));
+
+        Set<String> tagsSet = new HashSet<>();
+        tagsSet.add("anyTag1");
+        tagsSet.add("anyTag2");
+
+        Moment moment = momentService.getMoment(momentId);
+
+        assertAll(
+                () -> assertEquals(momentId, moment.getId()),
+                () -> assertEquals("anyText", moment.getText()),
+                () -> assertEquals(String.valueOf(creationDate), String.valueOf(moment.getCreationDate())),
+                () -> assertEquals(String.valueOf(lastUpdatedDate), String.valueOf(moment.getLastUpdatedDate())),
+                () -> assertEquals(tagsSet, moment.getTags()));
+    }
+
+    @Test
+    void testGetAllMoments() {
+
+        UUID momentId = UUID.randomUUID();
+        MomentEntity momentEntity = getMomentEntity(momentId);
+
+        when(momentRepository.findAll()).thenReturn(List.of((momentEntity)));
+
+        Set<String> tagsSet = new HashSet<>();
+        tagsSet.add("anyTag1");
+        tagsSet.add("anyTag2");
+
+        Moment moment = momentService.getAllMoments().get(0);
+
+        assertAll(
+                () -> assertEquals(momentId, moment.getId()),
+                () -> assertEquals("anyText", moment.getText()),
+                () -> assertEquals(String.valueOf(creationDate), String.valueOf(moment.getCreationDate())),
+                () -> assertEquals(String.valueOf(lastUpdatedDate), String.valueOf(moment.getLastUpdatedDate())),
+                () -> assertEquals(tagsSet, moment.getTags()));
+    }
+
+    @Test
+    void testCreateMoment() {
+
+        UUID momentId = UUID.randomUUID();
+        MomentEntity momentEntity = getMomentEntity(momentId);
+
+        when(momentRepository.save(any())).thenReturn(momentEntity);
+
+        Set<String> tagsSet = new HashSet<>();
+        tagsSet.add("anyTag1");
+        tagsSet.add("anyTag2");
+
+        Moment moment = momentService.createMoment(Moment.buildMomentFromEntity(momentEntity));
+
+        assertAll(
+                () -> assertEquals(momentId, moment.getId()),
+                () -> assertEquals("anyText", moment.getText()),
+                () -> assertEquals(String.valueOf(creationDate), String.valueOf(moment.getCreationDate())),
+                () -> assertEquals(String.valueOf(lastUpdatedDate), String.valueOf(moment.getLastUpdatedDate())),
+                () -> assertEquals(tagsSet, moment.getTags()));
+    }
+
     @Test
     void testUpdateMomentDetails() {
 

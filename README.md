@@ -8,7 +8,7 @@ This project is for anyone interested in checking my skills in Java and Spring B
 
 # Technology Stack
 
-The API is built using Java and follows the Spring MVC approach. It was built using Maven and uses a Test-Driven Development (TDD) approach, with Pact tests being written before new functionality is added.
+The API is built using Java and follows the Spring MVC approach. It was built using Maven and uses a Test-Driven Development (TDD) approach, with unit and Pact tests being written before new functionality is added.
 
 # Getting Started
 To clone the repository and run the project, follow these steps:

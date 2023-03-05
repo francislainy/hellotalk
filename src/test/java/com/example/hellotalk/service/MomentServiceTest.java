@@ -35,7 +35,6 @@ class MomentServiceTest {
     ZonedDateTime creationDate = ZonedDateTime.parse(now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")));
     ZonedDateTime lastUpdatedDate = ZonedDateTime.parse(now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")));
 
-
     @Test
     void testGetMoment() {
 

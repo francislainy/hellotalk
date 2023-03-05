@@ -1,5 +1,6 @@
 package com.example.hellotalk.controller;
 
+import com.example.hellotalk.config.WebConfig;
 import com.example.hellotalk.exception.UserNotFoundException;
 import com.example.hellotalk.model.HobbyAndInterest;
 import com.example.hellotalk.model.Hometown;
@@ -12,6 +13,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 
@@ -30,6 +32,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(controllers = UserController.class)
+@Import(WebConfig.class)
 @ExtendWith(MockitoExtension.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class UserControllerTest extends BaseTestConfig {
@@ -110,7 +113,7 @@ class UserControllerTest extends BaseTestConfig {
 
         String jsonResponse = jsonStringFromObject(userList);
 
-        mockMvc.perform(RestDocumentationRequestBuilders.get("/api/v1/ht/users"))
+        mockMvc.perform(RestDocumentationRequestBuilders.get("/api/v1/ht/users/"))
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(content().json(jsonResponse))
                 .andDo(document("get-users",
@@ -124,7 +127,7 @@ class UserControllerTest extends BaseTestConfig {
         User user = userResponse;
         when(userService.createUser(any())).thenReturn(user);
 
-        mockMvc.perform(RestDocumentationRequestBuilders.post("/api/v1/ht/users").content(jsonRequest).contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(RestDocumentationRequestBuilders.post("/api/v1/ht/users/").content(jsonRequest).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(content().json(jsonResponse))
                 .andDo(document("create-user",
@@ -139,8 +142,8 @@ class UserControllerTest extends BaseTestConfig {
         when(userService.updateUser(any(), any())).thenReturn(user);
 
         mockMvc.perform(RestDocumentationRequestBuilders.put("/api/v1/ht/users/{userId}", userId)
-                .content(jsonRequest)
-                .contentType(MediaType.APPLICATION_JSON))
+                        .content(jsonRequest)
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(content().json(jsonResponse))
                 .andDo(document("update-user",

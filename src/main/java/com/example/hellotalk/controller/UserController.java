@@ -19,7 +19,7 @@ public class UserController {
         this.userService = userService;
     }
 
-    @GetMapping({"/{userId}"})
+    @GetMapping("/{userId}")
     public ResponseEntity<Object> getUser(@PathVariable UUID userId) {
         return new ResponseEntity<>(userService.getUser(userId), HttpStatus.OK);
     }
@@ -29,17 +29,17 @@ public class UserController {
         return new ResponseEntity<>(userService.getAllUsers(), HttpStatus.OK);
     }
 
-    @PostMapping({"", "/"})
+    @PostMapping
     public ResponseEntity<Object> createUser(@RequestBody User user) {
         return new ResponseEntity<>(userService.createUser(user), HttpStatus.CREATED);
     }
 
-    @PutMapping({"/{userId}", "/{userId}/"})
+    @PutMapping("/{userId}")
     public ResponseEntity<Object> updateUser(@PathVariable UUID userId, @RequestBody User user) {
         return new ResponseEntity<>(userService.updateUser(userId, user), HttpStatus.OK);
     }
 
-    @DeleteMapping({"/{userId}", "/{userId}/"})
+    @DeleteMapping("/{userId}")
     public ResponseEntity<Object> deleteUser(@PathVariable UUID userId) {
         return new ResponseEntity<>(userService.deleteUser(userId), HttpStatus.PARTIAL_CONTENT);
     }

@@ -10,7 +10,7 @@ import java.util.UUID;
 
 @CrossOrigin
 @RestController
-@RequestMapping("/api/v1/ht/moments")
+@RequestMapping("/api/v1/ht/moments/")
 public class MomentController {
 
     final MomentService momentService;
@@ -19,27 +19,27 @@ public class MomentController {
         this.momentService = momentService;
     }
 
-    @GetMapping({"/{momentId}", "/{momentId}/"})
+    @GetMapping("/{momentId}")
     public ResponseEntity<Object> getMoment(@PathVariable UUID momentId) {
         return new ResponseEntity<>(momentService.getMoment(momentId), HttpStatus.OK);
     }
 
-    @GetMapping({"", "/"})
+    @GetMapping
     public ResponseEntity<Object> getAllMoments() {
         return new ResponseEntity<>(momentService.getAllMoments(), HttpStatus.OK);
     }
 
-    @PostMapping({"", "/"})
+    @PostMapping
     public ResponseEntity<Object> createMoment(@RequestBody Moment moment) {
         return new ResponseEntity<>(momentService.createMoment(moment), HttpStatus.CREATED);
     }
 
-    @PutMapping({"/{momentId}", "/{momentId}/"})
+    @PutMapping("/{momentId}")
     public ResponseEntity<Object> updateMoment(@PathVariable UUID momentId, @RequestBody Moment moment) {
         return new ResponseEntity<>(momentService.updateMoment(momentId, moment), HttpStatus.OK);
     }
 
-    @DeleteMapping({"/{momentId}", "/{momentId}/"})
+    @DeleteMapping("/{momentId}")
     public ResponseEntity<Object> deleteMoment(@PathVariable UUID momentId) {
         return new ResponseEntity<>(momentService.deleteMoment(momentId), HttpStatus.PARTIAL_CONTENT);
     }

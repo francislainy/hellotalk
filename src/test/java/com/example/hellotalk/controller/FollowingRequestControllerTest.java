@@ -154,7 +154,7 @@ class FollowingRequestControllerTest extends BaseTestConfig {
 
         String jsonRequest = jsonStringFromObject(followingRequest);
         String jsonResponse = jsonStringFromObject(followingResponse);
-        mockMvc.perform(RestDocumentationRequestBuilders.post("/api/v1/ht/follow").content(jsonRequest).contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(RestDocumentationRequestBuilders.post("/api/v1/ht/follow/").content(jsonRequest).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(content().json(jsonResponse))
                 .andDo(document("create-following-request-for-user",

@@ -10,7 +10,7 @@ import java.util.UUID;
 
 @CrossOrigin
 @RestController
-@RequestMapping("/api/v1/ht/follow")
+@RequestMapping("/api/v1/ht/follow/")
 public class FollowingRequestController {
 
     final FollowingRequestService followingRequestService;
@@ -19,27 +19,27 @@ public class FollowingRequestController {
         this.followingRequestService = followingRequestService;
     }
 
-    @GetMapping({"/{followingRequestId}", "/{followingRequestId}/"})
+    @GetMapping("/{followingRequestId}")
     public ResponseEntity<Object> getFollowingRequest(@PathVariable UUID followingRequestId) {
         return new ResponseEntity<>(followingRequestService.getFollowingRequest(followingRequestId), HttpStatus.OK);
     }
 
-    @GetMapping({"", "/"})
+    @GetMapping
     public ResponseEntity<Object> getAllFollowingRequests() {
         return new ResponseEntity<>(followingRequestService.getAllFollowingRequests(), HttpStatus.OK);
     }
 
-    @GetMapping({"/from/user/{userId}", "/from/user/{userId}/"})
+    @GetMapping("/from/user/{userId}")
     public ResponseEntity<Object> getAllFollowingRequestsFromUser(@PathVariable UUID userId) {
         return new ResponseEntity<>(followingRequestService.getAllFollowingRequestsFromUser(userId), HttpStatus.OK);
     }
 
-    @GetMapping({"/to/user/{userId}", "/to/user/{userId}/"})
+    @GetMapping("/to/user/{userId}")
     public ResponseEntity<Object> getAllFollowingRequestsToUser(@PathVariable UUID userId) {
         return new ResponseEntity<>(followingRequestService.getAllFollowingRequestsToUser(userId), HttpStatus.OK);
     }
 
-    @PostMapping({"", "/"})
+    @PostMapping
     public ResponseEntity<Object> createFollowingRequest(@RequestBody FollowingRequest followingRequest) {
 
         return new ResponseEntity<>(followingRequestService.createFollowingRequest(followingRequest), HttpStatus.CREATED);

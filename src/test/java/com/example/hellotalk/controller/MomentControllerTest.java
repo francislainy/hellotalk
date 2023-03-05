@@ -82,7 +82,7 @@ class MomentControllerTest extends BaseTestConfig {
 
         String jsonResponse = jsonStringFromObject(momentList);
 
-        mockMvc.perform(RestDocumentationRequestBuilders.get("/api/v1/ht/moments"))
+        mockMvc.perform(RestDocumentationRequestBuilders.get("/api/v1/ht/moments/"))
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(content().json(jsonResponse))
                 .andDo(document("get-moments",
@@ -96,7 +96,7 @@ class MomentControllerTest extends BaseTestConfig {
         Moment moment = momentResponse;
         when(momentService.createMoment(any())).thenReturn(moment);
 
-        mockMvc.perform(RestDocumentationRequestBuilders.post("/api/v1/ht/moments").content(jsonRequest).contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(RestDocumentationRequestBuilders.post("/api/v1/ht/moments/").content(jsonRequest).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(content().json(jsonResponse))
                 .andDo(document("create-moment",

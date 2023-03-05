@@ -22,10 +22,10 @@ public class FollowingRequestEntity {
     private UUID id;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
-    @JoinColumn(name = "userToId", referencedColumnName = "id")
+    @JoinColumn(name = "user_to_id", referencedColumnName = "id")
     private UserEntity userToEntity;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
-    @JoinColumn(name = "userFromId", referencedColumnName = "id")
+    @JoinColumn(name = "user_from_id", referencedColumnName = "id")
     private UserEntity userFromEntity;
 }

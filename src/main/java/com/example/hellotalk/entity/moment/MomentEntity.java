@@ -35,7 +35,7 @@ public class MomentEntity {
     @ElementCollection
     @CollectionTable(name = "moment_tags",
             joinColumns = @JoinColumn(name = "moment_id"))
-    @Column(name = "tag")
+    @Column(name = "tags")
     private Set<String> tags = new HashSet<>();
 
     public static MomentEntity buildMomentEntityFromModel(Moment moment) {

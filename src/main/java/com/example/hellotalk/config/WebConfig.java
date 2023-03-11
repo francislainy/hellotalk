@@ -12,4 +12,3 @@ public class WebConfig implements WebMvcConfigurer {
         configurer.setUseTrailingSlashMatch(true);
     }
 }
-

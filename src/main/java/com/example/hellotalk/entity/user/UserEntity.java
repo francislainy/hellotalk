@@ -1,5 +1,6 @@
 package com.example.hellotalk.entity.user;
 
+import com.example.hellotalk.entity.moment.MomentEntity;
 import com.example.hellotalk.model.user.User;
 import lombok.*;
 
@@ -74,6 +75,9 @@ public class UserEntity {
 
     @OneToMany(mappedBy = "userFromEntity", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = false)
     private Set<FollowingRequestEntity> followerOfEntity;
+
+    @OneToMany(mappedBy = "userEntity", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = false)
+    private Set<MomentEntity> momentEntitySet;
 
     public static UserEntity buildUserEntityFromModel(User user) {
 

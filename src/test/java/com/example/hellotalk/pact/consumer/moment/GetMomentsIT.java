@@ -43,6 +43,7 @@ class GetMomentsIT {
                 .stringType("creationDate", creationDate.format(formatter))
                 .eachLike("tags")
                 .stringType("anyTag1")
+                .uuid("userCreatorId", "caf6bea6-4684-403e-9c41-8704fb0600c0")
                 .closeArray()
                 .closeObject();
 

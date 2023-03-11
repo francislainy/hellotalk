@@ -19,9 +19,9 @@ public class MomentController {
         this.momentService = momentService;
     }
 
-    @GetMapping("/{momentId}")
-    public ResponseEntity<Object> getMoment(@PathVariable UUID momentId) {
-        return new ResponseEntity<>(momentService.getMoment(momentId), HttpStatus.OK);
+    @GetMapping(value = "/{momentId}")
+    public ResponseEntity<Object> getMomentForUser(@PathVariable UUID momentId, @RequestHeader("Authorization") String authorization) {
+        return new ResponseEntity<>(momentService.getMoment(momentId, authorization), HttpStatus.OK);
     }
 
     @GetMapping
@@ -29,14 +29,19 @@ public class MomentController {
         return new ResponseEntity<>(momentService.getAllMoments(), HttpStatus.OK);
     }
 
+    @GetMapping("/for-user")
+    public ResponseEntity<Object> getAllMomentsForUser(@RequestHeader("Authorization") String authorization) {
+        return new ResponseEntity<>(momentService.getAllMomentsForUser(authorization), HttpStatus.OK);
+    }
+
     @PostMapping
-    public ResponseEntity<Object> createMoment(@RequestBody Moment moment) {
-        return new ResponseEntity<>(momentService.createMoment(moment), HttpStatus.CREATED);
+    public ResponseEntity<Object> createMoment(@RequestBody Moment moment, @RequestHeader("Authorization") String authorization) {
+        return new ResponseEntity<>(momentService.createMoment(moment, authorization), HttpStatus.CREATED);
     }
 
     @PutMapping("/{momentId}")
-    public ResponseEntity<Object> updateMoment(@PathVariable UUID momentId, @RequestBody Moment moment) {
-        return new ResponseEntity<>(momentService.updateMoment(momentId, moment), HttpStatus.OK);
+    public ResponseEntity<Object> updateMoment(@PathVariable UUID momentId, @RequestBody Moment moment, @RequestHeader("Authorization") String authorization) {
+        return new ResponseEntity<>(momentService.updateMoment(momentId, moment, authorization), HttpStatus.OK);
     }
 
     @DeleteMapping("/{momentId}")

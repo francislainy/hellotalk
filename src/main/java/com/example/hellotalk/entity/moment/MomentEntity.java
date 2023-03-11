@@ -1,5 +1,6 @@
 package com.example.hellotalk.entity.moment;
 
+import com.example.hellotalk.entity.user.UserEntity;
 import com.example.hellotalk.model.moment.Moment;
 import lombok.*;
 
@@ -11,7 +12,7 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "moment")
-@Builder
+@Builder(toBuilder = true)
 @Getter
 @Setter
 @AllArgsConstructor
@@ -37,6 +38,10 @@ public class MomentEntity {
             joinColumns = @JoinColumn(name = "moment_id"))
     @Column(name = "tags")
     private Set<String> tags = new HashSet<>();
+
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    private UserEntity userEntity;
 
     public static MomentEntity buildMomentEntityFromModel(Moment moment) {
         return MomentEntity.builder()

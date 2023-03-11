@@ -19,20 +19,23 @@ import java.util.UUID;
 public class Moment {
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    UUID id;
-    String text;
+    private UUID id;
+    private String text;
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    ZonedDateTime creationDate;
+    private UUID userCreatorId;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private ZonedDateTime creationDate;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    ZonedDateTime lastUpdatedDate;
+    private ZonedDateTime lastUpdatedDate;
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    Set<String> tags;
+    private Set<String> tags;
 
     public static Moment buildMomentFromEntity(MomentEntity momentEntity) {
         return Moment.builder()
                 .id(momentEntity.getId())
                 .text(momentEntity.getText())
+                .userCreatorId(momentEntity.getUserEntity().getId())
                 .creationDate(momentEntity.getCreationDate())
                 .lastUpdatedDate(momentEntity.getLastUpdatedDate())
                 .tags(momentEntity.getTags())

@@ -48,6 +48,7 @@ class CreateMomentIT {
                 .uuid("id", momentId)
                 .stringType("text", "anyText")
                 .stringType("creationDate", creationDate.format(formatter))
+                .uuid("userCreatorId", "caf6bea6-4684-403e-9c41-8704fb0600c0")
                 .close();
 
         return builder

@@ -7,13 +7,15 @@ import java.util.UUID;
 
 public interface MomentService {
 
-    Moment getMoment(UUID momentId);
+    Moment getMoment(UUID momentId, String authorization);
 
     List<Moment> getAllMoments();
 
-    Moment createMoment(Moment moment);
+    List<Moment> getAllMomentsForUser(String authorization);
 
-    Moment updateMoment(UUID momentId, Moment moment);
+    Moment createMoment(Moment moment, String authorization);
+
+    Moment updateMoment(UUID momentId, Moment moment, String authorization);
 
     String deleteMoment(UUID momentId);
 }

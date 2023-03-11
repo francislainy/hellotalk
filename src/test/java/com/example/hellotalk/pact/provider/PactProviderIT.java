@@ -46,6 +46,8 @@ class PactProviderIT extends BasePostgresConfig {
     @ExtendWith(PactVerificationInvocationContextProvider.class)
     void pactTestTemplate(PactVerificationContext context, HttpRequest request) {
 
+        request.addHeader("authorization", "ca3569ee-cb62-4f45-b1c2-199028ba5562");
+
         logCurlFromPact(context, request, "http://localhost:" + port);
 
         context.verifyInteraction();

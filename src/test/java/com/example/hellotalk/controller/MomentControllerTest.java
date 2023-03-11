@@ -12,6 +12,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
+import org.springframework.test.web.servlet.MvcResult;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,6 +35,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class MomentControllerTest extends BaseTestConfig {
 
     private UUID momentId;
+    private UUID userCreatorId;
     private Moment momentRequest;
     private Moment momentResponse;
     private String jsonRequest;
@@ -45,6 +47,7 @@ class MomentControllerTest extends BaseTestConfig {
     @BeforeAll
     void initData() {
         momentId = UUID.fromString("1bfff94a-b70e-4b39-bd2a-be1c0f898589");
+        userCreatorId = UUID.fromString("2cfff94a-b70e-4b39-bd2a-be1c0f898541");
 
         momentRequest = Moment.builder()
                 .text("anyText")
@@ -53,6 +56,7 @@ class MomentControllerTest extends BaseTestConfig {
         jsonRequest = jsonStringFromObject(momentRequest);
         momentResponse = convertToNewObject(momentRequest, Moment.class);
         momentResponse.setId(momentId);
+        momentResponse.setUserCreatorId(userCreatorId);
 
         jsonResponse = jsonStringFromObject(momentResponse);
     }
@@ -61,11 +65,12 @@ class MomentControllerTest extends BaseTestConfig {
     void testGetMoment() throws Exception {
 
         Moment moment = this.momentResponse;
-        when(momentService.getMoment(momentId)).thenReturn(moment);
+        when(momentService.getMoment(any(), any())).thenReturn(moment);
 
-        mockMvc.perform(RestDocumentationRequestBuilders.get("/api/v1/ht/moments/{momentId}", momentId))
+        mockMvc.perform(RestDocumentationRequestBuilders.get("/api/v1/ht/moments/{momentId}/", momentId)
+                .header("authorization", "anyValidUUID"))
                 .andExpect(status().is2xxSuccessful())
-                .andExpect(content().json(jsonResponse))
+                .andExpect(content().string(jsonResponse))
                 .andDo(document("get-moment",
                         resource("Get a moment's details")))
                 .andReturn();
@@ -82,11 +87,33 @@ class MomentControllerTest extends BaseTestConfig {
 
         String jsonResponse = jsonStringFromObject(momentList);
 
-        mockMvc.perform(RestDocumentationRequestBuilders.get("/api/v1/ht/moments/"))
+        MvcResult getAListOfMoments = mockMvc.perform(RestDocumentationRequestBuilders.get("/api/v1/ht/moments/"))
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(content().json(jsonResponse))
                 .andDo(document("get-moments",
                         resource("Get a list of moments")))
+                .andReturn();
+
+        System.out.printf(jsonResponse);
+    }
+
+    @Test
+    void testGetAllMomentsForUser() throws Exception {
+
+        Moment moment = this.momentResponse;
+        when(momentService.getAllMomentsForUser(any())).thenReturn(List.of(moment));
+
+        List<Moment> momentList = new ArrayList<>();
+        momentList.add(momentResponse);
+
+        String jsonResponse = jsonStringFromObject(momentList);
+
+        mockMvc.perform(RestDocumentationRequestBuilders.get("/api/v1/ht/moments/for-user")
+                .header("authorization", "anyValidUUID"))
+                .andExpect(status().is2xxSuccessful())
+                .andExpect(content().json(jsonResponse))
+                .andDo(document("get-moments",
+                        resource("Get a list of moments for a user")))
                 .andReturn();
     }
 
@@ -94,9 +121,9 @@ class MomentControllerTest extends BaseTestConfig {
     void testCreateMoment() throws Exception {
 
         Moment moment = momentResponse;
-        when(momentService.createMoment(any())).thenReturn(moment);
+        when(momentService.createMoment(any(), any())).thenReturn(moment);
 
-        mockMvc.perform(RestDocumentationRequestBuilders.post("/api/v1/ht/moments/").content(jsonRequest).contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(RestDocumentationRequestBuilders.post("/api/v1/ht/moments/").header("authorization", "anyValidUUID").content(jsonRequest).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(content().json(jsonResponse))
                 .andDo(document("create-moment",
@@ -108,9 +135,10 @@ class MomentControllerTest extends BaseTestConfig {
     void testUpdateMoment() throws Exception {
 
         Moment moment = momentResponse;
-        when(momentService.updateMoment(any(), any())).thenReturn(moment);
+        when(momentService.updateMoment(any(), any(), any())).thenReturn(moment);
 
         mockMvc.perform(RestDocumentationRequestBuilders.put("/api/v1/ht/moments/{momentId}", momentId)
+                .header("authorization", "anyValidUUID")
                 .content(jsonRequest)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is2xxSuccessful())
@@ -123,7 +151,7 @@ class MomentControllerTest extends BaseTestConfig {
     @Test
     void testUpdateMoment_ThrowsExceptionWhenUserDoesNotExist() throws Exception {
 
-        when(momentService.updateMoment(any(), any())).thenThrow(new MomentNotFoundException(MOMENT_NOT_FOUND_EXCEPTION));
+        when(momentService.updateMoment(any(), any(), any())).thenThrow(new MomentNotFoundException(MOMENT_NOT_FOUND_EXCEPTION));
 
         String jsonError = """
                 {"message": "jsonError"}
@@ -131,6 +159,7 @@ class MomentControllerTest extends BaseTestConfig {
         jsonError = jsonError.replace("jsonError", MOMENT_NOT_FOUND_EXCEPTION);
 
         mockMvc.perform(RestDocumentationRequestBuilders.put("/api/v1/ht/moments/{momentId}", momentId)
+                        .header("authorization", "anyValidUUID")
                         .content(jsonRequest)
                         .contentType(MediaType.APPLICATION_JSON)
                         .param("momentId", String.valueOf(momentId)))
@@ -148,7 +177,7 @@ class MomentControllerTest extends BaseTestConfig {
                 {"message": "Moment Deleted"}
                 """;
         Moment moment = momentResponse;
-        when(momentService.getMoment(any())).thenReturn(moment);
+        when(momentService.getMoment(any(), any())).thenReturn(moment);
         when(momentService.deleteMoment(any())).thenReturn(json);
 
         mockMvc.perform(RestDocumentationRequestBuilders.delete("/api/v1/ht/moments/{momentId}", momentId)

@@ -12,7 +12,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
-import org.springframework.test.web.servlet.MvcResult;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,12 +33,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class MomentControllerTest extends BaseTestConfig {
 
-    private UUID momentId;
-    private UUID userCreatorId;
-    private Moment momentRequest;
-    private Moment momentResponse;
-    private String jsonRequest;
-    private String jsonResponse;
+    UUID momentId;
+    UUID userCreatorId;
+    Moment momentRequest;
+    Moment momentResponse;
+    String jsonRequest;
+    String jsonResponse;
 
     @MockBean
     MomentService momentService;
@@ -87,14 +86,12 @@ class MomentControllerTest extends BaseTestConfig {
 
         String jsonResponse = jsonStringFromObject(momentList);
 
-        MvcResult getAListOfMoments = mockMvc.perform(RestDocumentationRequestBuilders.get("/api/v1/ht/moments/"))
+        mockMvc.perform(RestDocumentationRequestBuilders.get("/api/v1/ht/moments/"))
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(content().json(jsonResponse))
                 .andDo(document("get-moments",
                         resource("Get a list of moments")))
                 .andReturn();
-
-        System.out.printf(jsonResponse);
     }
 
     @Test

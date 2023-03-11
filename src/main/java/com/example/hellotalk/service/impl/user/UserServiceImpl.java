@@ -1,10 +1,8 @@
 package com.example.hellotalk.service.impl.user;
 
-import com.example.hellotalk.entity.user.FollowingRequestEntity;
 import com.example.hellotalk.entity.user.HobbyAndInterestEntity;
 import com.example.hellotalk.entity.user.HometownEntity;
 import com.example.hellotalk.entity.user.UserEntity;
-import com.example.hellotalk.exception.FollowingRelationshipNotCreatedException;
 import com.example.hellotalk.exception.UserNotFoundException;
 import com.example.hellotalk.model.HobbyAndInterest;
 import com.example.hellotalk.model.user.User;
@@ -140,35 +138,5 @@ public class UserServiceImpl implements UserService {
         } else {
             throw new UserNotFoundException(USER_NOT_FOUND_EXCEPTION);
         }
-    }
-
-    @Override
-    public void followUser(UUID fromId, UUID toId) throws FollowingRelationshipNotCreatedException {
-
-        Optional<UserEntity> userEntityOptionalFrom = userRepository.findById(fromId);
-        Optional<UserEntity> userEntityOptionalTo = userRepository.findById(toId);
-
-        if (userEntityOptionalFrom.isEmpty() || userEntityOptionalTo.isEmpty()) {
-            throw new UserNotFoundException(USER_NOT_FOUND_EXCEPTION);
-        }
-
-        UserEntity userEntityTo = userEntityOptionalTo.get();
-        UserEntity userEntityFrom = userEntityOptionalFrom.get();
-        userEntityTo = userRepository.save(getUserWithFollowingRequest(userEntityTo, userEntityFrom));
-
-        if (userEntityTo.getId() == null) { // Not sure how to assert the follower was saved properly, so if there's a problem with the id for the original user it means the whole object has
-            // been compromised
-            throw new FollowingRelationshipNotCreatedException("Error saving follower");
-        }
-    }
-
-    private UserEntity getUserWithFollowingRequest(UserEntity userEntityTo, UserEntity userEntityFrom) {
-        Set<FollowingRequestEntity> followingRequestEntities = new HashSet<>();
-        FollowingRequestEntity followingRequestEntity = FollowingRequestEntity.builder().userFromEntity(userEntityFrom).userToEntity(userEntityTo).build();
-        followingRequestEntities.add(followingRequestEntity);
-
-        userEntityTo.setFollowedByEntity(followingRequestEntities);
-
-        return userEntityTo;
     }
 }

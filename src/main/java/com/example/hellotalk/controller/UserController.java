@@ -10,7 +10,7 @@ import java.util.UUID;
 
 @CrossOrigin
 @RestController
-@RequestMapping("/api/v1/ht/users/")
+@RequestMapping("/api/v1/ht/users")
 public class UserController {
 
     final UserService userService;
@@ -19,28 +19,29 @@ public class UserController {
         this.userService = userService;
     }
 
-    @GetMapping("/{userId}")
+    @GetMapping({"/{userId}", "/{userId}/"})
     public ResponseEntity<Object> getUser(@PathVariable UUID userId) {
         return new ResponseEntity<>(userService.getUser(userId), HttpStatus.OK);
     }
 
-    @GetMapping
+    @GetMapping({"", "/"})
     public ResponseEntity<Object> getAllUsers() {
         return new ResponseEntity<>(userService.getAllUsers(), HttpStatus.OK);
     }
 
-    @PostMapping
+    @PostMapping({"", "/"})
     public ResponseEntity<Object> createUser(@RequestBody User user) {
         return new ResponseEntity<>(userService.createUser(user), HttpStatus.CREATED);
     }
 
-    @PutMapping("/{userId}")
+    @PutMapping({"/{userId}", "/{userId}/"})
     public ResponseEntity<Object> updateUser(@PathVariable UUID userId, @RequestBody User user) {
         return new ResponseEntity<>(userService.updateUser(userId, user), HttpStatus.OK);
     }
 
-    @DeleteMapping("/{userId}")
+    @DeleteMapping({"/{userId}", "/{userId}/"})
     public ResponseEntity<Object> deleteUser(@PathVariable UUID userId) {
         return new ResponseEntity<>(userService.deleteUser(userId), HttpStatus.PARTIAL_CONTENT);
     }
+
 }

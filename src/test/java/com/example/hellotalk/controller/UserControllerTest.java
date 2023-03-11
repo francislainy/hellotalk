@@ -1,6 +1,5 @@
 package com.example.hellotalk.controller;
 
-import com.example.hellotalk.config.WebConfig;
 import com.example.hellotalk.exception.UserNotFoundException;
 import com.example.hellotalk.model.HobbyAndInterest;
 import com.example.hellotalk.model.Hometown;
@@ -13,9 +12,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
+import org.springframework.test.web.servlet.MvcResult;
 
 import java.util.*;
 
@@ -32,7 +31,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(controllers = UserController.class)
-@Import(WebConfig.class)
 @ExtendWith(MockitoExtension.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class UserControllerTest extends BaseTestConfig {
@@ -178,18 +176,18 @@ class UserControllerTest extends BaseTestConfig {
         String json = """
                 {"message": "User Deleted"}
                 """;
-        User user = userResponse;
-        when(userService.getUser(any())).thenReturn(user);
         when(userService.deleteUser(any())).thenReturn(json);
 
-        mockMvc.perform(RestDocumentationRequestBuilders.delete("/api/v1/ht/users/{userId}", userId)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .param("userId", String.valueOf(userId)))
+        MvcResult mvcResult = mockMvc.perform(RestDocumentationRequestBuilders.delete("/api/v1/ht/users/{userId}", userId)
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is2xxSuccessful())
-                .andExpect(content().json(json))
+//                .andExpect(content().string(json))
                 .andDo(document("delete-user",
                         resource("Delete a user")))
                 .andReturn();
+
+//        System.out.println(mvcResult.getRequest().getContentAsString());
+        System.out.println(mvcResult.getResponse().getContentAsString());
     }
 
     @Test

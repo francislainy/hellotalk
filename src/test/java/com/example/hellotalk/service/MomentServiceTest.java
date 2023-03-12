@@ -153,8 +153,7 @@ class MomentServiceTest {
         UUID momentId = UUID.randomUUID();
         MomentEntity momentEntity = getMomentEntity(momentId);
 
-        IllegalArgumentException exception =
-                assertThrows(IllegalArgumentException.class, () -> momentService.createMoment(buildMomentFromEntity(momentEntity), "invalidAuth"));
+        assertThrows(IllegalArgumentException.class, () -> momentService.createMoment(buildMomentFromEntity(momentEntity), "invalidAuth"));
     }
 
     @Test

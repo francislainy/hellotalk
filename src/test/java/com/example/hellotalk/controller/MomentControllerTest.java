@@ -64,7 +64,7 @@ class MomentControllerTest extends BaseTestConfig {
     void testGetMoment() throws Exception {
 
         Moment moment = this.momentResponse;
-        when(momentService.getMoment(any(), any())).thenReturn(moment);
+        when(momentService.getMoment(any())).thenReturn(moment);
 
         mockMvc.perform(RestDocumentationRequestBuilders.get("/api/v1/ht/moments/{momentId}/", momentId)
                 .header("authorization", "anyValidUUID"))
@@ -174,7 +174,7 @@ class MomentControllerTest extends BaseTestConfig {
                 {"message": "Moment Deleted"}
                 """;
         Moment moment = momentResponse;
-        when(momentService.getMoment(any(), any())).thenReturn(moment);
+        when(momentService.getMoment(any())).thenReturn(moment);
         when(momentService.deleteMoment(any())).thenReturn(json);
 
         mockMvc.perform(RestDocumentationRequestBuilders.delete("/api/v1/ht/moments/{momentId}", momentId)

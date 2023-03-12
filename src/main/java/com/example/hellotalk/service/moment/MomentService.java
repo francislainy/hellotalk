@@ -7,7 +7,7 @@ import java.util.UUID;
 
 public interface MomentService {
 
-    Moment getMoment(UUID momentId, String authorization);
+    Moment getMoment(UUID momentId);
 
     List<Moment> getAllMoments();
 

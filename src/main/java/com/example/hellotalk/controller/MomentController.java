@@ -20,8 +20,8 @@ public class MomentController {
     }
 
     @GetMapping({"{momentId}", "{momentId}/"})
-    public ResponseEntity<Object> getMomentForUser(@PathVariable UUID momentId, @RequestHeader("Authorization") String authorization) {
-        return new ResponseEntity<>(momentService.getMoment(momentId, authorization), HttpStatus.OK);
+    public ResponseEntity<Object> getMomentForUser(@PathVariable UUID momentId) {
+        return new ResponseEntity<>(momentService.getMoment(momentId), HttpStatus.OK);
     }
 
     @GetMapping({"", "/"})

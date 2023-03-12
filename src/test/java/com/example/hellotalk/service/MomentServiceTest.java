@@ -39,20 +39,6 @@ class MomentServiceTest {
     UUID userCreatorId = UUID.fromString("d3256c76-62d7-4481-9d1c-a0ccc4da380f");
 
     @Test
-    void testGetMoment_ThrowsExceptionWhenMomentDoesNotBelongToTheUser() {
-
-        UUID momentId = UUID.randomUUID();
-        MomentEntity momentEntity = getMomentEntity(momentId);
-
-        when(momentRepository.findById(any())).thenReturn(Optional.of(momentEntity));
-
-        EntityDoesNotBelongToUserException exception =
-                assertThrows(EntityDoesNotBelongToUserException.class, () -> momentService.getMoment(momentId, "invalidAuth"));
-
-        assertEquals(ENTITY_DOES_NOT_BELONG_TO_USER_EXCEPTION, exception.getMessage());
-    }
-
-    @Test
     void testGetMoment() {
 
         UUID momentId = UUID.randomUUID();
@@ -64,7 +50,7 @@ class MomentServiceTest {
         tagsSet.add("anyTag1");
         tagsSet.add("anyTag2");
 
-        Moment moment = momentService.getMoment(momentId, String.valueOf(userCreatorId));
+        Moment moment = momentService.getMoment(momentId);
 
         assertAll(
                 () -> assertEquals(momentId, moment.getId()),

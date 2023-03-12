@@ -33,13 +33,9 @@ public class MomentServiceImpl implements MomentService {
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
 
     @Override
-    public Moment getMoment(UUID momentId, String authorization) {
+    public Moment getMoment(UUID momentId) {
         MomentEntity momentEntity = momentRepository.findById(momentId)
                 .orElseThrow(() -> new MomentNotFoundException(MOMENT_NOT_FOUND_EXCEPTION));
-
-        if (!momentEntity.getUserEntity().getId().toString().equals(authorization)) {
-            throw new EntityDoesNotBelongToUserException(ENTITY_DOES_NOT_BELONG_TO_USER_EXCEPTION);
-        }
 
         return buildMomentFromEntity(momentEntity);
     }

@@ -1,5 +1,8 @@
 package com.example.hellotalk.service.user;
 
+import com.example.hellotalk.entity.LikeEntity;
+import com.example.hellotalk.entity.moment.MomentEntity;
+import com.example.hellotalk.entity.user.UserEntity;
 import com.example.hellotalk.model.user.User;
 
 import java.util.List;
@@ -16,4 +19,6 @@ public interface UserService {
     User updateUser(UUID userId, User user);
 
     String deleteUser(UUID userId);
+
+    LikeEntity likeMoment(UUID userId, UUID momentId);
 }

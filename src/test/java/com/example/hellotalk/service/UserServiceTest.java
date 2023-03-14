@@ -1,13 +1,18 @@
 package com.example.hellotalk.service;
 
+import com.example.hellotalk.entity.LikeEntity;
+import com.example.hellotalk.entity.moment.MomentEntity;
 import com.example.hellotalk.entity.user.HobbyAndInterestEntity;
 import com.example.hellotalk.entity.user.UserEntity;
+import com.example.hellotalk.exception.MomentNotFoundException;
 import com.example.hellotalk.exception.UserNotFoundException;
 import com.example.hellotalk.model.Hometown;
 import com.example.hellotalk.model.user.User;
 import com.example.hellotalk.repository.HobbyAndInterestRepository;
 import com.example.hellotalk.repository.HometownRepository;
+import com.example.hellotalk.repository.LikeRepository;
 import com.example.hellotalk.repository.UserRepository;
+import com.example.hellotalk.repository.moment.MomentRepository;
 import com.example.hellotalk.service.impl.user.UserServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,6 +26,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.*;
 
 import static com.example.hellotalk.entity.user.HometownEntity.buildHometownEntity;
+import static com.example.hellotalk.exception.AppExceptionHandler.MOMENT_NOT_FOUND_EXCEPTION;
 import static com.example.hellotalk.exception.AppExceptionHandler.USER_NOT_FOUND_EXCEPTION;
 import static java.util.UUID.randomUUID;
 import static org.junit.jupiter.api.Assertions.*;
@@ -33,6 +39,12 @@ class UserServiceTest {
 
     @Mock
     UserRepository userRepository;
+
+    @Mock
+    MomentRepository momentRepository;
+
+    @Mock
+    LikeRepository likeRepository;
 
     @Mock
     HobbyAndInterestRepository hobbyAndInterestRepository;
@@ -48,7 +60,8 @@ class UserServiceTest {
     @BeforeEach
     void setUp() {
         userRepository = Mockito.mock(UserRepository.class);
-        userService = new UserServiceImpl(userRepository, hobbyAndInterestRepository, hometownRepository);
+        likeRepository = Mockito.mock(LikeRepository.class);
+        userService = new UserServiceImpl(userRepository, hobbyAndInterestRepository, hometownRepository, likeRepository, momentRepository);
     }
 
     private UserEntity getUserEntity() {
@@ -261,4 +274,51 @@ class UserServiceTest {
         assertEquals(USER_NOT_FOUND_EXCEPTION, exception.getMessage());
     }
 
+    @Test
+    void testLikeMoment_ThrowsExceptionUserNotFound() {
+
+        UUID userId = randomUUID();
+        UUID momentId = randomUUID();
+
+        UserNotFoundException exception =
+                assertThrows(UserNotFoundException.class, () -> userService.likeMoment(userId, momentId));
+
+        assertEquals(USER_NOT_FOUND_EXCEPTION, exception.getMessage());
+    }
+
+    @Test
+    void testLikeMoment_ThrowsExceptionMomentNotFound() {
+
+        UUID userId = randomUUID();
+        UUID momentId = randomUUID();
+
+        when(userRepository.findById(any())).thenReturn(Optional.ofNullable(UserEntity.builder().id(userId).build()));
+
+        MomentNotFoundException exception =
+                assertThrows(MomentNotFoundException.class, () -> userService.likeMoment(userId, momentId));
+
+        assertEquals(MOMENT_NOT_FOUND_EXCEPTION, exception.getMessage());
+    }
+
+    @Test
+    void testLikeMoment() {
+
+        UUID userId = randomUUID();
+        UUID momentId = randomUUID();
+
+        UserEntity userEntity = UserEntity.builder().id(userId).build();
+        MomentEntity momentEntity = MomentEntity.builder().id(momentId).build();
+        LikeEntity likeEntity = LikeEntity.builder().userEntity(userEntity).momentEntity(momentEntity).build();
+
+        when(userRepository.findById(any())).thenReturn(Optional.ofNullable(userEntity));
+        when(momentRepository.findById(any())).thenReturn(Optional.ofNullable(momentEntity));
+        when(likeRepository.save(any())).thenReturn(likeEntity);
+
+        likeEntity = userService.likeMoment(userId, momentId);
+
+        LikeEntity finalLikeEntity = likeEntity;
+        assertAll("Like added",
+                () -> assertEquals(userEntity, finalLikeEntity.getUserEntity()),
+                () -> assertEquals(momentEntity, finalLikeEntity.getMomentEntity()));
+    }
 }

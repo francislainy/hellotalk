@@ -1,10 +1,12 @@
 package com.example.hellotalk.service.impl.moment;
 
+import com.example.hellotalk.entity.LikeEntity;
 import com.example.hellotalk.entity.moment.MomentEntity;
 import com.example.hellotalk.entity.user.UserEntity;
 import com.example.hellotalk.exception.EntityDoesNotBelongToUserException;
 import com.example.hellotalk.exception.MomentNotFoundException;
 import com.example.hellotalk.model.moment.Moment;
+import com.example.hellotalk.repository.LikeRepository;
 import com.example.hellotalk.repository.moment.MomentRepository;
 import com.example.hellotalk.service.moment.MomentService;
 import org.springframework.stereotype.Service;
@@ -24,10 +26,12 @@ import static com.example.hellotalk.model.moment.Moment.buildMomentFromEntity;
 @Service
 public class MomentServiceImpl implements MomentService {
 
-    final MomentRepository momentRepository;
+    private final MomentRepository momentRepository;
+    private final LikeRepository likeRepository;
 
-    public MomentServiceImpl(MomentRepository momentRepository) {
+    public MomentServiceImpl(MomentRepository momentRepository, LikeRepository likeRepository) {
         this.momentRepository = momentRepository;
+        this.likeRepository = likeRepository;
     }
 
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
@@ -111,6 +115,11 @@ public class MomentServiceImpl implements MomentService {
         } else {
             throw new MomentNotFoundException(MOMENT_NOT_FOUND_EXCEPTION);
         }
+    }
+
+    @Override
+    public List<LikeEntity> getLikesByMoment(UUID momentId) {
+        return likeRepository.findAllByMomentEntityIdContaining(momentId);
     }
 
     private UUID parseUUID(String uuidStr) {

@@ -1,5 +1,6 @@
 package com.example.hellotalk.service.moment;
 
+import com.example.hellotalk.entity.LikeEntity;
 import com.example.hellotalk.model.moment.Moment;
 
 import java.util.List;
@@ -18,4 +19,6 @@ public interface MomentService {
     Moment updateMoment(UUID momentId, Moment moment, String authorization);
 
     String deleteMoment(UUID momentId);
+
+    List<LikeEntity> getLikesByMoment(UUID momentId);
 }

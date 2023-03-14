@@ -1,5 +1,8 @@
 package com.example.hellotalk.controller;
 
+import com.example.hellotalk.entity.LikeEntity;
+import com.example.hellotalk.entity.moment.MomentEntity;
+import com.example.hellotalk.entity.user.UserEntity;
 import com.example.hellotalk.exception.UserNotFoundException;
 import com.example.hellotalk.model.HobbyAndInterest;
 import com.example.hellotalk.model.Hometown;
@@ -140,8 +143,8 @@ class UserControllerTest extends BaseTestConfig {
         when(userService.updateUser(any(), any())).thenReturn(user);
 
         mockMvc.perform(RestDocumentationRequestBuilders.put("/api/v1/ht/users/{userId}", userId)
-                .content(jsonRequest)
-                .contentType(MediaType.APPLICATION_JSON))
+                        .content(jsonRequest)
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(content().json(jsonResponse))
                 .andDo(document("update-user",
@@ -178,16 +181,13 @@ class UserControllerTest extends BaseTestConfig {
                 """;
         when(userService.deleteUser(any())).thenReturn(json);
 
-        MvcResult mvcResult = mockMvc.perform(RestDocumentationRequestBuilders.delete("/api/v1/ht/users/{userId}", userId)
+        mockMvc.perform(RestDocumentationRequestBuilders.delete("/api/v1/ht/users/{userId}", userId)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is2xxSuccessful())
-//                .andExpect(content().string(json))
+                .andExpect(content().string(json))
                 .andDo(document("delete-user",
                         resource("Delete a user")))
                 .andReturn();
-
-//        System.out.println(mvcResult.getRequest().getContentAsString());
-        System.out.println(mvcResult.getResponse().getContentAsString());
     }
 
     @Test
@@ -205,6 +205,26 @@ class UserControllerTest extends BaseTestConfig {
                 .andExpect(content().json(jsonError))
                 .andDo(document("delete-user-throws-exception-when-user-not-found",
                         resource("Deleting a user throws exception when user is not found")))
+                .andReturn();
+    }
+
+    @Test
+    void testLikeMoment() throws Exception {
+
+        MomentEntity momentEntity = MomentEntity.builder().id(randomUUID()).build();
+        UserEntity userEntity = UserEntity.builder().id(randomUUID()).build();
+        LikeEntity likeEntity = LikeEntity.builder()
+                .id(randomUUID())
+                .userEntity(userEntity)
+                .momentEntity(momentEntity)
+                .build();
+        when(userService.likeMoment(any(), any())).thenReturn(likeEntity);
+
+        mockMvc.perform(RestDocumentationRequestBuilders.post("/api/v1/ht/users/{userId}/like/{momentId}", userEntity.getId(), momentEntity.getId()).content(jsonRequest).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().is2xxSuccessful())
+//                .andExpect(content().json(jsonResponse))
+                .andDo(document("like-moment",
+                        resource("Like a moment")))
                 .andReturn();
     }
 }

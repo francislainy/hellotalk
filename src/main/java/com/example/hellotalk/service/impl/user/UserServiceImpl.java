@@ -1,14 +1,19 @@
 package com.example.hellotalk.service.impl.user;
 
+import com.example.hellotalk.entity.LikeEntity;
+import com.example.hellotalk.entity.moment.MomentEntity;
 import com.example.hellotalk.entity.user.HobbyAndInterestEntity;
 import com.example.hellotalk.entity.user.HometownEntity;
 import com.example.hellotalk.entity.user.UserEntity;
+import com.example.hellotalk.exception.MomentNotFoundException;
 import com.example.hellotalk.exception.UserNotFoundException;
 import com.example.hellotalk.model.HobbyAndInterest;
 import com.example.hellotalk.model.user.User;
 import com.example.hellotalk.repository.HobbyAndInterestRepository;
 import com.example.hellotalk.repository.HometownRepository;
+import com.example.hellotalk.repository.LikeRepository;
 import com.example.hellotalk.repository.UserRepository;
+import com.example.hellotalk.repository.moment.MomentRepository;
 import com.example.hellotalk.service.user.UserService;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +21,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.example.hellotalk.entity.user.UserEntity.buildUserEntityFromModel;
+import static com.example.hellotalk.exception.AppExceptionHandler.MOMENT_NOT_FOUND_EXCEPTION;
 import static com.example.hellotalk.exception.AppExceptionHandler.USER_NOT_FOUND_EXCEPTION;
 import static com.example.hellotalk.model.Hometown.buildHometownFromEntity;
 import static com.example.hellotalk.model.user.User.buildUserFromEntity;
@@ -26,11 +32,15 @@ public class UserServiceImpl implements UserService {
     final UserRepository userRepository;
     final HobbyAndInterestRepository hobbyAndInterestRepository;
     final HometownRepository hometownRepository;
+    final LikeRepository likeRepository;
+    final MomentRepository momentRepository;
 
-    public UserServiceImpl(UserRepository userRepository, HobbyAndInterestRepository hobbyAndInterestRepository, HometownRepository hometownRepository) {
+    public UserServiceImpl(UserRepository userRepository, HobbyAndInterestRepository hobbyAndInterestRepository, HometownRepository hometownRepository, LikeRepository likeRepository, MomentRepository momentRepository) {
         this.userRepository = userRepository;
         this.hobbyAndInterestRepository = hobbyAndInterestRepository;
         this.hometownRepository = hometownRepository;
+        this.likeRepository = likeRepository;
+        this.momentRepository = momentRepository;
     }
 
     @Override
@@ -138,5 +148,18 @@ public class UserServiceImpl implements UserService {
         } else {
             throw new UserNotFoundException(USER_NOT_FOUND_EXCEPTION);
         }
+    }
+
+    @Override
+    public LikeEntity likeMoment(UUID userId, UUID momentId) {
+
+        UserEntity userEntity = userRepository.findById(momentId)
+                .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND_EXCEPTION));
+
+        MomentEntity momentEntity = momentRepository.findById(momentId)
+                .orElseThrow(() -> new MomentNotFoundException(MOMENT_NOT_FOUND_EXCEPTION));
+
+        LikeEntity likeEntity = LikeEntity.builder().userEntity(userEntity).momentEntity(momentEntity).build();
+        return likeRepository.save(likeEntity);
     }
 }

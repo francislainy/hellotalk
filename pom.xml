@@ -166,6 +166,7 @@
             <scope>test</scope>
         </dependency>
 
+
     </dependencies>
     <dependencyManagement>
         <dependencies>
@@ -391,7 +392,28 @@
                     <trimSnapshot>true</trimSnapshot>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.openapitools</groupId>
+                <artifactId>openapi-generator-maven-plugin</artifactId>
+                <version>5.3.1</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <inputSpec>https://petstore.swagger.io/v2/swagger.json</inputSpec>
+                            <generatorName>spring</generatorName>
+                            <modelPackage>com.example.hellotalk.model</modelPackage>
+                            <generateApis>false</generateApis>
+                            <generateApiDocumentation>false</generateApiDocumentation>
+                            <generateModelDocumentation>false</generateModelDocumentation>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
+
     </build>
 
     <repositories>

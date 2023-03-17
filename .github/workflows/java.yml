@@ -22,6 +22,7 @@ jobs:
       uses: maven/setup-java@v2
       with:
         distribution: 'adopt@1.17'
+        maven-version: '3.8.4'
       run: mvn -B package --file pom.xml
 
     - name: Run unit tests

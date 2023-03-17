@@ -16,7 +16,6 @@
     <properties>
         <java.version>17</java.version>
         <maven.surefire.version>3.0.0-M5</maven.surefire.version>
-        <maven.surefire.version>3.0.0-M5</maven.surefire.version>
         <maven-resources-plugin.version>3.3.0</maven-resources-plugin.version>
         <testcontainers.version>1.17.4</testcontainers.version>
         <snippetsDirectory>${project.build.directory}/generated-snippets</snippetsDirectory>
@@ -372,11 +371,6 @@
                     <testSourceDirectory>src/test/java/com/example/hellotalk</testSourceDirectory>
                     <trimStackTrace>false</trimStackTrace>
                 </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-report-plugin</artifactId>
-                <version>${maven-surefire-plugin.version}</version>
             </plugin>
             <plugin>
                 <groupId>au.com.dius</groupId>

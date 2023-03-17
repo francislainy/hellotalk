@@ -1,10 +1,7 @@
 package com.example.hellotalk.service.impl.user;
 
 import com.example.hellotalk.entity.moment.MomentEntity;
-import com.example.hellotalk.entity.user.HobbyAndInterestEntity;
-import com.example.hellotalk.entity.user.HometownEntity;
-import com.example.hellotalk.entity.user.LikeEntity;
-import com.example.hellotalk.entity.user.UserEntity;
+import com.example.hellotalk.entity.user.*;
 import com.example.hellotalk.exception.MomentNotFoundException;
 import com.example.hellotalk.exception.UserNotFoundException;
 import com.example.hellotalk.model.HobbyAndInterest;
@@ -151,7 +148,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public LikeEntity likeMoment(UUID userId, UUID momentId) {
+    public Map<String, Object> likeMoment(UUID userId, UUID momentId) {
 
         UserEntity userEntity = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND_EXCEPTION));
@@ -160,6 +157,18 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new MomentNotFoundException(MOMENT_NOT_FOUND_EXCEPTION));
 
         LikeEntity likeEntity = LikeEntity.builder().userEntity(userEntity).momentEntity(momentEntity).build();
-        return likeRepository.save(likeEntity);
+        likeEntity = likeRepository.save(likeEntity);
+
+        ResultInfo resultInfo = ResultInfo.builder()
+                .id(likeEntity.getId())
+                .userId(likeEntity.getUserEntity().getId())
+                .momentId(likeEntity.getMomentEntity().getId())
+                .build();
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("data", resultInfo);
+        map.put("message", "Moment liked successfully");
+
+        return map;
     }
 }

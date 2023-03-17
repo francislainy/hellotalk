@@ -3,6 +3,7 @@ package com.example.hellotalk.service;
 import com.example.hellotalk.entity.moment.MomentEntity;
 import com.example.hellotalk.entity.user.HobbyAndInterestEntity;
 import com.example.hellotalk.entity.user.LikeEntity;
+import com.example.hellotalk.entity.user.ResultInfo;
 import com.example.hellotalk.entity.user.UserEntity;
 import com.example.hellotalk.exception.MomentNotFoundException;
 import com.example.hellotalk.exception.UserNotFoundException;
@@ -305,20 +306,23 @@ class UserServiceTest {
 
         UUID userId = randomUUID();
         UUID momentId = randomUUID();
+        UUID likeEntityId = UUID.fromString("8346e9cb-44b6-4366-b5f7-645d07541e8a");
 
         UserEntity userEntity = UserEntity.builder().id(userId).build();
         MomentEntity momentEntity = MomentEntity.builder().id(momentId).build();
-        LikeEntity likeEntity = LikeEntity.builder().userEntity(userEntity).momentEntity(momentEntity).build();
+        LikeEntity likeEntity = LikeEntity.builder().id(likeEntityId).userEntity(userEntity).momentEntity(momentEntity).build();
 
         when(userRepository.findById(any())).thenReturn(Optional.ofNullable(userEntity));
         when(momentRepository.findById(any())).thenReturn(Optional.ofNullable(momentEntity));
         when(likeRepository.save(any())).thenReturn(likeEntity);
 
-        likeEntity = userService.likeMoment(userId, momentId);
+        Map<String, Object> responseMap = userService.likeMoment(userId, momentId);
+        ResultInfo resultInfo = (ResultInfo) responseMap.get("data");
 
-        LikeEntity finalLikeEntity = likeEntity;
         assertAll("Like added",
-                () -> assertEquals(userEntity, finalLikeEntity.getUserEntity()),
-                () -> assertEquals(momentEntity, finalLikeEntity.getMomentEntity()));
+                () -> assertEquals(likeEntityId, resultInfo.getId()),
+                () -> assertEquals(userId, resultInfo.getUserId()),
+                () -> assertEquals(momentId, resultInfo.getMomentId()),
+                () -> assertEquals("Moment liked successfully", responseMap.get("message")));
     }
 }

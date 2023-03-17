@@ -218,7 +218,6 @@ class UserControllerTest extends BaseTestConfig {
                 .userEntity(userEntity)
                 .momentEntity(momentEntity)
                 .build();
-        when(userService.likeMoment(any(), any())).thenReturn(likeEntity);
 
         ResultInfo resultInfo = ResultInfo.builder()
                 .id(likeEntity.getId())
@@ -228,6 +227,8 @@ class UserControllerTest extends BaseTestConfig {
         HashMap<String, Object> map = new HashMap<>();
         map.put("message", "Moment liked successfully");
         map.put("data", resultInfo);
+
+        when(userService.likeMoment(any(), any())).thenReturn(map);
 
         String jsonResponse = jsonStringFromObject(map);
 

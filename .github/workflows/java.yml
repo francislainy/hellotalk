@@ -19,14 +19,10 @@ jobs:
         java-version: '17'
 
     - name: Build with Maven
-      uses: maven/setup-java@v2
-      with:
-        distribution: 'adopt@1.17'
-        maven-version: '3.8.4'
-      run: mvn -B package --file pom.xml
+      run: ./mvnw clean package
 
     - name: Run unit tests
-      run: mvn test --file pom.xml --fail-at-end -Dtest=*Test
+      run: ./mvnw test --fail-at-end -Dtest=*Test
 
     - name: Start PostgreSQL container
       run: docker run -d -p 5432:5432 -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=helloTalk postgres
@@ -36,4 +32,4 @@ jobs:
         SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/helloTalk
         SPRING_DATASOURCE_USERNAME: postgres
         SPRING_DATASOURCE_PASSWORD: postgres
-      run: mvn verify --file pom.xml --fail-at-end -Dspring.profiles.active=test
+      run: ./mvnw verify --fail-at-end -Dspring.profiles.active=test

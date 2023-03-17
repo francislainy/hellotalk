@@ -226,7 +226,7 @@
                 <version>${springdoc-openapi-maven-plugin.version}</version>
                 <executions>
                     <execution>
-                        <phase>integration-test</phase>
+                        <phase>generate-resources</phase>
                         <goals>
                             <goal>generate</goal>
                         </goals>

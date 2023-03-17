@@ -3,7 +3,7 @@ name: Java CI
 on:
   push:
     branches:
-      - master
+      - main
 
 jobs:
   build:
@@ -19,6 +19,9 @@ jobs:
         java-version: '17'
 
     - name: Build with Maven
+      uses: maven/setup-java@v2
+      with:
+        distribution: 'adopt@1.17'
       run: mvn -B package --file pom.xml
 
     - name: Run unit tests

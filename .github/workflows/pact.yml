@@ -1,0 +1,37 @@
+name: Java CI
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up JDK
+        uses: actions/setup-java@v2
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Build with Maven
+        run: ./mvnw clean package -DskipTests      
+          
+      - name: Generate pact contracts with Maven
+        run: ./mvnw -Dtest="pact.consumer.**.*IT" integration-test
+
+      - name: Start PostgreSQL container
+        run: docker run -d -p 5432:5432 -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=helloTalk postgres
+
+      - name: Run integration tests
+        env:
+          SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/helloTalk
+          SPRING_DATASOURCE_USERNAME: postgres
+          SPRING_DATASOURCE_PASSWORD: postgres
+        run: ./mvnw -Dtest="pact.provider.*IT" integration-test --fail-at-end -Dspring.profiles.active=test

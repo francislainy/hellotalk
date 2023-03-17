@@ -1,11 +1,18 @@
 package com.example.hellotalk.controller;
 
+import com.example.hellotalk.entity.user.LikeEntity;
+import com.example.hellotalk.entity.user.ResultInfo;
 import com.example.hellotalk.model.user.User;
 import com.example.hellotalk.service.user.UserService;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.UUID;
 
 @CrossOrigin
@@ -46,7 +53,17 @@ public class UserController {
 
     @PostMapping({"{userId}/like/{momentId}", "{userId}/like/{momentId}/"})
     public ResponseEntity<Object> likeMoment(@PathVariable UUID userId, @PathVariable UUID momentId) {
-        return new ResponseEntity<>(userService.likeMoment(userId, momentId), HttpStatus.CREATED);
-    }
 
+        LikeEntity likeEntity = userService.likeMoment(userId, momentId);
+        ResultInfo resultInfo = ResultInfo.builder()
+                .id(likeEntity.getId())
+                .userId(likeEntity.getUserEntity().getId())
+                .momentId(likeEntity.getMomentEntity().getId())
+                .build();
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("message", "Moment liked successfully");
+        map.put("data", resultInfo);
+
+        return new ResponseEntity<>(map, HttpStatus.CREATED);
+    }
 }

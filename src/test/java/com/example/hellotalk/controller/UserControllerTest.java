@@ -1,7 +1,8 @@
 package com.example.hellotalk.controller;
 
-import com.example.hellotalk.entity.LikeEntity;
 import com.example.hellotalk.entity.moment.MomentEntity;
+import com.example.hellotalk.entity.user.LikeEntity;
+import com.example.hellotalk.entity.user.ResultInfo;
 import com.example.hellotalk.entity.user.UserEntity;
 import com.example.hellotalk.exception.UserNotFoundException;
 import com.example.hellotalk.model.HobbyAndInterest;
@@ -17,7 +18,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
-import org.springframework.test.web.servlet.MvcResult;
 
 import java.util.*;
 
@@ -143,8 +143,8 @@ class UserControllerTest extends BaseTestConfig {
         when(userService.updateUser(any(), any())).thenReturn(user);
 
         mockMvc.perform(RestDocumentationRequestBuilders.put("/api/v1/ht/users/{userId}", userId)
-                        .content(jsonRequest)
-                        .contentType(MediaType.APPLICATION_JSON))
+                .content(jsonRequest)
+                .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(content().json(jsonResponse))
                 .andDo(document("update-user",
@@ -220,9 +220,20 @@ class UserControllerTest extends BaseTestConfig {
                 .build();
         when(userService.likeMoment(any(), any())).thenReturn(likeEntity);
 
+        ResultInfo resultInfo = ResultInfo.builder()
+                .id(likeEntity.getId())
+                .userId(likeEntity.getUserEntity().getId())
+                .momentId(likeEntity.getMomentEntity().getId())
+                .build();
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("message", "Moment liked successfully");
+        map.put("data", resultInfo);
+
+        String jsonResponse = jsonStringFromObject(map);
+
         mockMvc.perform(RestDocumentationRequestBuilders.post("/api/v1/ht/users/{userId}/like/{momentId}", userEntity.getId(), momentEntity.getId()).content(jsonRequest).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is2xxSuccessful())
-//                .andExpect(content().json(jsonResponse))
+                .andExpect(content().string(jsonResponse))
                 .andDo(document("like-moment",
                         resource("Like a moment")))
                 .andReturn();

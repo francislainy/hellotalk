@@ -1,9 +1,9 @@
 package com.example.hellotalk.service.impl.user;
 
-import com.example.hellotalk.entity.LikeEntity;
 import com.example.hellotalk.entity.moment.MomentEntity;
 import com.example.hellotalk.entity.user.HobbyAndInterestEntity;
 import com.example.hellotalk.entity.user.HometownEntity;
+import com.example.hellotalk.entity.user.LikeEntity;
 import com.example.hellotalk.entity.user.UserEntity;
 import com.example.hellotalk.exception.MomentNotFoundException;
 import com.example.hellotalk.exception.UserNotFoundException;
@@ -153,7 +153,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public LikeEntity likeMoment(UUID userId, UUID momentId) {
 
-        UserEntity userEntity = userRepository.findById(momentId)
+        UserEntity userEntity = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND_EXCEPTION));
 
         MomentEntity momentEntity = momentRepository.findById(momentId)

@@ -5,11 +5,8 @@ import com.example.hellotalk.entity.user.UserEntity;
 import com.example.hellotalk.exception.EntityDoesNotBelongToUserException;
 import com.example.hellotalk.exception.MomentNotFoundException;
 import com.example.hellotalk.model.moment.Moment;
-import com.example.hellotalk.entity.LikeEntity;
-import com.example.hellotalk.repository.LikeRepository;
 import com.example.hellotalk.repository.moment.MomentRepository;
 import com.example.hellotalk.service.impl.moment.MomentServiceImpl;
-import com.example.hellotalk.service.impl.user.UserServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -32,7 +29,7 @@ class MomentServiceTest {
 
     @InjectMocks
     MomentServiceImpl momentService;
-    
+
     @Mock
     MomentRepository momentRepository;
 

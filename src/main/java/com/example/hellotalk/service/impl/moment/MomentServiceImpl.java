@@ -1,7 +1,7 @@
 package com.example.hellotalk.service.impl.moment;
 
-import com.example.hellotalk.entity.LikeEntity;
 import com.example.hellotalk.entity.moment.MomentEntity;
+import com.example.hellotalk.entity.user.LikeEntity;
 import com.example.hellotalk.entity.user.UserEntity;
 import com.example.hellotalk.exception.EntityDoesNotBelongToUserException;
 import com.example.hellotalk.exception.MomentNotFoundException;

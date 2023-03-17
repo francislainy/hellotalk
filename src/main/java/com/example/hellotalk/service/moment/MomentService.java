@@ -1,6 +1,6 @@
 package com.example.hellotalk.service.moment;
 
-import com.example.hellotalk.entity.LikeEntity;
+import com.example.hellotalk.entity.user.LikeEntity;
 import com.example.hellotalk.model.moment.Moment;
 
 import java.util.List;

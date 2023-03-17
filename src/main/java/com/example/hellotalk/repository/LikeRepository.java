@@ -1,6 +1,6 @@
 package com.example.hellotalk.repository;
 
-import com.example.hellotalk.entity.LikeEntity;
+import com.example.hellotalk.entity.user.LikeEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

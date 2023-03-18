@@ -25,17 +25,17 @@ jobs:
           distribution: 'temurin'
 
       - name: Build with Maven
-        run: ./mvnw -B clean package -DSkipTests
+        run: mvn -B clean package -DskipTests
       - name: SonarQube analysis
         uses: SonarSource/sonarqube-scan-action@v1
         with:
           projectBaseDir: ./
           entryPoint: com.example.hellotalk.HelloTalkApplication
-          args: -Dsonar.host.url=$SONAR_HOST_URL
           projectKey: com.example:HelloTalk
           projectName: HelloTalk
           sources: '.'
           extraProperties: |
             sonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
             sonar.java.binaries=target/classes
+          sonar.host.url: ${{ env.SONAR_HOST_URL }}
           sonar.login: ${{ secrets.SONAR_TOKEN }}

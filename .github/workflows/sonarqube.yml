@@ -17,7 +17,6 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
-
       - name: Build with Maven
         run: ./mvnw -B clean package
       - name: SonarQube analysis
@@ -29,4 +28,5 @@ jobs:
           extraProperties: |
             sonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
             sonar.java.binaries=target/classes
+            sonar.host.url: http://localhost:9000 # Replace with your SonarQube instance URL
           sonar.login: ${{ secrets.SONAR_TOKEN }}

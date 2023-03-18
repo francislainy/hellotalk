@@ -2,6 +2,7 @@ package com.example.hellotalk.service.impl.user;
 
 import com.example.hellotalk.entity.moment.MomentEntity;
 import com.example.hellotalk.entity.user.*;
+import com.example.hellotalk.exception.MomentAlreadyLikedException;
 import com.example.hellotalk.exception.MomentNotFoundException;
 import com.example.hellotalk.exception.UserNotFoundException;
 import com.example.hellotalk.model.HobbyAndInterest;
@@ -18,8 +19,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.example.hellotalk.entity.user.UserEntity.buildUserEntityFromModel;
-import static com.example.hellotalk.exception.AppExceptionHandler.MOMENT_NOT_FOUND_EXCEPTION;
-import static com.example.hellotalk.exception.AppExceptionHandler.USER_NOT_FOUND_EXCEPTION;
+import static com.example.hellotalk.exception.AppExceptionHandler.*;
 import static com.example.hellotalk.model.Hometown.buildHometownFromEntity;
 import static com.example.hellotalk.model.user.User.buildUserFromEntity;
 
@@ -155,6 +155,13 @@ public class UserServiceImpl implements UserService {
 
         MomentEntity momentEntity = momentRepository.findById(momentId)
                 .orElseThrow(() -> new MomentNotFoundException(MOMENT_NOT_FOUND_EXCEPTION));
+
+        likeRepository.findAllByUserEntity_IdAndMomentEntity_Id(userId, momentId)
+                .stream()
+                .findAny()
+                .ifPresent(likeEntity -> {
+                    throw new MomentAlreadyLikedException(MOMENT_ALREADY_LIKED_EXCEPTION);
+                });
 
         LikeEntity likeEntity = LikeEntity.builder().userEntity(userEntity).momentEntity(momentEntity).build();
         likeEntity = likeRepository.save(likeEntity);

@@ -5,6 +5,7 @@ import com.example.hellotalk.entity.user.HobbyAndInterestEntity;
 import com.example.hellotalk.entity.user.LikeEntity;
 import com.example.hellotalk.entity.user.ResultInfo;
 import com.example.hellotalk.entity.user.UserEntity;
+import com.example.hellotalk.exception.MomentAlreadyLikedException;
 import com.example.hellotalk.exception.MomentNotFoundException;
 import com.example.hellotalk.exception.UserNotFoundException;
 import com.example.hellotalk.model.Hometown;
@@ -27,8 +28,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.*;
 
 import static com.example.hellotalk.entity.user.HometownEntity.buildHometownEntity;
-import static com.example.hellotalk.exception.AppExceptionHandler.MOMENT_NOT_FOUND_EXCEPTION;
-import static com.example.hellotalk.exception.AppExceptionHandler.USER_NOT_FOUND_EXCEPTION;
+import static com.example.hellotalk.exception.AppExceptionHandler.*;
 import static java.util.UUID.randomUUID;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -302,6 +302,27 @@ class UserServiceTest {
     }
 
     @Test
+    void testLikeMoment_ThrowsExceptionIfMomentAlreadyLiked() {
+
+        UUID userId = randomUUID();
+        UUID momentId = randomUUID();
+        UUID likeId = randomUUID();
+
+        UserEntity userEntity = UserEntity.builder().id(userId).build();
+        MomentEntity momentEntity = MomentEntity.builder().id(momentId).build();
+        LikeEntity likeEntity = LikeEntity.builder().id(likeId).userEntity(userEntity).momentEntity(momentEntity).build();
+
+        when(userRepository.findById(any())).thenReturn(Optional.ofNullable(userEntity));
+        when(momentRepository.findById(any())).thenReturn(Optional.ofNullable(momentEntity));
+        when(likeRepository.findAllByUserEntity_IdAndMomentEntity_Id(any(), any())).thenReturn(List.of(likeEntity));
+
+        MomentAlreadyLikedException exception =
+                assertThrows(MomentAlreadyLikedException.class, () -> userService.likeMoment(userId, momentId));
+
+        assertEquals(MOMENT_ALREADY_LIKED_EXCEPTION, exception.getMessage());
+    }
+
+    @Test
     void testLikeMoment() {
 
         UUID userId = randomUUID();
@@ -314,6 +335,7 @@ class UserServiceTest {
 
         when(userRepository.findById(any())).thenReturn(Optional.ofNullable(userEntity));
         when(momentRepository.findById(any())).thenReturn(Optional.ofNullable(momentEntity));
+        when(likeRepository.findAllByUserEntity_IdAndMomentEntity_Id(any(),any())).thenReturn(List.of());
         when(likeRepository.save(any())).thenReturn(likeEntity);
 
         Map<String, Object> responseMap = userService.likeMoment(userId, momentId);

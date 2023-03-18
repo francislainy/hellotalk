@@ -9,4 +9,6 @@ import java.util.UUID;
 public interface LikeRepository extends JpaRepository<LikeEntity, UUID> {
 
     List<LikeEntity> findAllByMomentEntityIdContaining(UUID momentId);
+
+    List<LikeEntity> findAllByUserEntity_IdAndMomentEntity_Id(UUID momentId, UUID userId);
 }

@@ -4,6 +4,8 @@ import com.example.hellotalk.entity.moment.MomentEntity;
 import com.example.hellotalk.entity.user.LikeEntity;
 import com.example.hellotalk.entity.user.ResultInfo;
 import com.example.hellotalk.entity.user.UserEntity;
+import com.example.hellotalk.exception.MomentAlreadyLikedException;
+import com.example.hellotalk.exception.MomentNotFoundException;
 import com.example.hellotalk.exception.UserNotFoundException;
 import com.example.hellotalk.model.HobbyAndInterest;
 import com.example.hellotalk.model.Hometown;
@@ -237,6 +239,51 @@ class UserControllerTest extends BaseTestConfig {
                 .andExpect(content().string(jsonResponse))
                 .andDo(document("like-moment",
                         resource("Like a moment")))
+                .andReturn();
+    }
+
+    @Test
+    void testLikeMoment_Throws409ErrorWhenMomentAlreadyLiked() throws Exception {
+
+        UUID userId = randomUUID();
+        UUID momentId = randomUUID();
+
+        when(userService.likeMoment(any(), any())).thenThrow(MomentAlreadyLikedException.class);
+
+        mockMvc.perform(RestDocumentationRequestBuilders.post("/api/v1/ht/users/{userId}/like/{momentId}", userId, momentId).content(jsonRequest).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isConflict())
+                .andDo(document("like-moment-throws-409-error",
+                        resource("Liking a moment throws exception when a moment has already been liked before")))
+                .andReturn();
+    }
+
+    @Test
+    void testLikeMoment_ThrowsNotFoundErrorWhenMomentDoesNotExist() throws Exception {
+
+        UUID userId = randomUUID();
+        UUID momentId = randomUUID();
+
+        when(userService.likeMoment(any(), any())).thenThrow(MomentNotFoundException.class);
+
+        mockMvc.perform(RestDocumentationRequestBuilders.post("/api/v1/ht/users/{userId}/like/{momentId}", userId, momentId).content(jsonRequest).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound())
+                .andDo(document("like-moment-throws-not-found-error-when-moment-does-not-exist",
+                        resource("Liking a moment throws exception when the moment does not exist")))
+                .andReturn();
+    }
+
+    @Test
+    void testLikeMoment_ThrowsNotFoundErrorWhenUserDoesNotExist() throws Exception {
+
+        UUID userId = randomUUID();
+        UUID momentId = randomUUID();
+
+        when(userService.likeMoment(any(), any())).thenThrow(UserNotFoundException.class);
+
+        mockMvc.perform(RestDocumentationRequestBuilders.post("/api/v1/ht/users/{userId}/like/{momentId}", userId, momentId).content(jsonRequest).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound())
+                .andDo(document("like-moment-throws-not-found-error-when-user-does-not-exist",
+                        resource("Liking a moment throws exception when the user does not exist")))
                 .andReturn();
     }
 }

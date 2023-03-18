@@ -5,6 +5,7 @@ import com.example.hellotalk.entity.user.HobbyAndInterestEntity;
 import com.example.hellotalk.entity.user.LikeEntity;
 import com.example.hellotalk.entity.user.ResultInfo;
 import com.example.hellotalk.entity.user.UserEntity;
+import com.example.hellotalk.exception.EntityBelongsToUserException;
 import com.example.hellotalk.exception.MomentAlreadyLikedException;
 import com.example.hellotalk.exception.MomentNotFoundException;
 import com.example.hellotalk.exception.UserNotFoundException;
@@ -305,11 +306,13 @@ class UserServiceTest {
     void testLikeMoment_ThrowsExceptionIfMomentAlreadyLiked() {
 
         UUID userId = randomUUID();
+        UUID userIdMomentCreator = randomUUID();
         UUID momentId = randomUUID();
         UUID likeId = randomUUID();
 
         UserEntity userEntity = UserEntity.builder().id(userId).build();
-        MomentEntity momentEntity = MomentEntity.builder().id(momentId).build();
+        UserEntity userEntityMomentCreator = UserEntity.builder().id(userIdMomentCreator).build();
+        MomentEntity momentEntity = MomentEntity.builder().id(momentId).userEntity(userEntityMomentCreator).build();
         LikeEntity likeEntity = LikeEntity.builder().id(likeId).userEntity(userEntity).momentEntity(momentEntity).build();
 
         when(userRepository.findById(any())).thenReturn(Optional.ofNullable(userEntity));
@@ -323,19 +326,39 @@ class UserServiceTest {
     }
 
     @Test
+    void testLikeMoment_ThrowsExceptionIfMomentBelongsToTheSameUser() {
+
+        UUID userId = randomUUID();
+        UUID momentId = randomUUID();
+
+        UserEntity userEntity = UserEntity.builder().id(userId).build();
+        MomentEntity momentEntity = MomentEntity.builder().id(momentId).userEntity(userEntity).build();
+
+        when(userRepository.findById(any())).thenReturn(Optional.ofNullable(userEntity));
+        when(momentRepository.findById(any())).thenReturn(Optional.ofNullable(momentEntity));
+
+        EntityBelongsToUserException exception =
+                assertThrows(EntityBelongsToUserException.class, () -> userService.likeMoment(userId, momentId));
+
+        assertEquals(ENTITY_BELONG_TO_USER_EXCEPTION, exception.getMessage());
+    }
+
+    @Test
     void testLikeMoment() {
 
         UUID userId = randomUUID();
+        UUID userIdMomentCreator = randomUUID();
         UUID momentId = randomUUID();
         UUID likeEntityId = UUID.fromString("8346e9cb-44b6-4366-b5f7-645d07541e8a");
 
         UserEntity userEntity = UserEntity.builder().id(userId).build();
-        MomentEntity momentEntity = MomentEntity.builder().id(momentId).build();
+        UserEntity userEntityMomentCreator = UserEntity.builder().id(userIdMomentCreator).build();
+        MomentEntity momentEntity = MomentEntity.builder().id(momentId).userEntity(userEntityMomentCreator).build();
         LikeEntity likeEntity = LikeEntity.builder().id(likeEntityId).userEntity(userEntity).momentEntity(momentEntity).build();
 
         when(userRepository.findById(any())).thenReturn(Optional.ofNullable(userEntity));
         when(momentRepository.findById(any())).thenReturn(Optional.ofNullable(momentEntity));
-        when(likeRepository.findAllByUserEntity_IdAndMomentEntity_Id(any(),any())).thenReturn(List.of());
+        when(likeRepository.findAllByUserEntity_IdAndMomentEntity_Id(any(), any())).thenReturn(List.of());
         when(likeRepository.save(any())).thenReturn(likeEntity);
 
         Map<String, Object> responseMap = userService.likeMoment(userId, momentId);

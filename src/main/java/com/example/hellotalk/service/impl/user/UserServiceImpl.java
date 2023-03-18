@@ -2,6 +2,7 @@ package com.example.hellotalk.service.impl.user;
 
 import com.example.hellotalk.entity.moment.MomentEntity;
 import com.example.hellotalk.entity.user.*;
+import com.example.hellotalk.exception.EntityBelongsToUserException;
 import com.example.hellotalk.exception.MomentAlreadyLikedException;
 import com.example.hellotalk.exception.MomentNotFoundException;
 import com.example.hellotalk.exception.UserNotFoundException;
@@ -154,6 +155,12 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND_EXCEPTION));
 
         MomentEntity momentEntity = momentRepository.findById(momentId)
+                .map(mEntity -> {
+                    if (mEntity.getUserEntity().getId().equals(userId)) {
+                        throw new EntityBelongsToUserException(ENTITY_BELONG_TO_USER_EXCEPTION);
+                    }
+                    return mEntity;
+                })
                 .orElseThrow(() -> new MomentNotFoundException(MOMENT_NOT_FOUND_EXCEPTION));
 
         likeRepository.findAllByUserEntity_IdAndMomentEntity_Id(userId, momentId)

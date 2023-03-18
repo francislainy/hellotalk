@@ -20,6 +20,7 @@ public class AppExceptionHandler extends ResponseEntityExceptionHandler {
 
     public static final String USER_NOT_FOUND_EXCEPTION = "NO USER FOUND WITH THIS ID";
     public static final String ENTITY_DOES_NOT_BELONG_TO_USER_EXCEPTION = "ENTITY DOES NOT BELONG TO USER EXCEPTION";
+    public static final String ENTITY_BELONG_TO_USER_EXCEPTION = "ENTITY BELONGS TO USER EXCEPTION";
     public static final String MOMENT_NOT_FOUND_EXCEPTION = "NO MOMENT FOUND WITH THIS ID";
     public static final String MOMENT_ALREADY_LIKED_EXCEPTION = "MOMENT ALREADY LIKED";
     public static final String FOLLOWING_RELATIONSHIP_ALREADY_EXISTS_EXCEPTION = "FOLLOWING RELATIONSHIP ALREADY EXISTS";
@@ -46,6 +47,12 @@ public class AppExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(EntityDoesNotBelongToUserException.class)
     @ResponseStatus(FORBIDDEN)
     public ResponseEntity<Object> handleEntityDoesNotBelongToUserException(MomentNotFoundException ex, WebRequest webRequest) {
+        return new ResponseEntity<>(new ApiError(ex.getMessage(), FORBIDDEN, LocalDateTime.now()), FORBIDDEN);
+    }
+
+    @ExceptionHandler(EntityBelongsToUserException.class)
+    @ResponseStatus(FORBIDDEN)
+    public ResponseEntity<Object> handleEntityBelongsToUserException(EntityBelongsToUserException ex, WebRequest webRequest) {
         return new ResponseEntity<>(new ApiError(ex.getMessage(), FORBIDDEN, LocalDateTime.now()), FORBIDDEN);
     }
 

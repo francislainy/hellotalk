@@ -4,6 +4,7 @@ import com.example.hellotalk.entity.moment.MomentEntity;
 import com.example.hellotalk.entity.user.LikeEntity;
 import com.example.hellotalk.entity.user.ResultInfo;
 import com.example.hellotalk.entity.user.UserEntity;
+import com.example.hellotalk.exception.EntityBelongsToUserException;
 import com.example.hellotalk.exception.MomentAlreadyLikedException;
 import com.example.hellotalk.exception.MomentNotFoundException;
 import com.example.hellotalk.exception.UserNotFoundException;
@@ -145,8 +146,8 @@ class UserControllerTest extends BaseTestConfig {
         when(userService.updateUser(any(), any())).thenReturn(user);
 
         mockMvc.perform(RestDocumentationRequestBuilders.put("/api/v1/ht/users/{userId}", userId)
-                .content(jsonRequest)
-                .contentType(MediaType.APPLICATION_JSON))
+                        .content(jsonRequest)
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(content().json(jsonResponse))
                 .andDo(document("update-user",
@@ -252,7 +253,7 @@ class UserControllerTest extends BaseTestConfig {
 
         mockMvc.perform(RestDocumentationRequestBuilders.post("/api/v1/ht/users/{userId}/like/{momentId}", userId, momentId).content(jsonRequest).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isConflict())
-                .andDo(document("like-moment-throws-409-error",
+                .andDo(document("like-moment-throws-409-exception-when-moment-already-liked",
                         resource("Liking a moment throws exception when a moment has already been liked before")))
                 .andReturn();
     }
@@ -267,13 +268,13 @@ class UserControllerTest extends BaseTestConfig {
 
         mockMvc.perform(RestDocumentationRequestBuilders.post("/api/v1/ht/users/{userId}/like/{momentId}", userId, momentId).content(jsonRequest).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound())
-                .andDo(document("like-moment-throws-not-found-error-when-moment-does-not-exist",
+                .andDo(document("like-moment-throws-not-found-exception-when-moment-does-not-exist",
                         resource("Liking a moment throws exception when the moment does not exist")))
                 .andReturn();
     }
 
     @Test
-    void testLikeMoment_ThrowsNotFoundErrorWhenUserDoesNotExist() throws Exception {
+    void testLikeMoment_ThrowsNotFoundExceptionWhenUserDoesNotExist() throws Exception {
 
         UUID userId = randomUUID();
         UUID momentId = randomUUID();
@@ -282,8 +283,23 @@ class UserControllerTest extends BaseTestConfig {
 
         mockMvc.perform(RestDocumentationRequestBuilders.post("/api/v1/ht/users/{userId}/like/{momentId}", userId, momentId).content(jsonRequest).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound())
-                .andDo(document("like-moment-throws-not-found-error-when-user-does-not-exist",
+                .andDo(document("like-moment-throws-not-found-exception-when-user-does-not-exist",
                         resource("Liking a moment throws exception when the user does not exist")))
+                .andReturn();
+    }
+
+    @Test
+    void testLikeMoment_ThrowsNotFoundExceptionWhenUserIsTryingToLikeTheirOwnMoment() throws Exception {
+
+        UUID userId = randomUUID();
+        UUID momentId = randomUUID();
+
+        when(userService.likeMoment(any(), any())).thenThrow(EntityBelongsToUserException.class);
+
+        mockMvc.perform(RestDocumentationRequestBuilders.post("/api/v1/ht/users/{userId}/like/{momentId}", userId, momentId).content(jsonRequest).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isForbidden())
+                .andDo(document("like-moment-throws-exception-when-user-tries-to-like-their-own-moment",
+                        resource("Liking a moment throws exception when it belongs to the same user who is doing the liking")))
                 .andReturn();
     }
 }

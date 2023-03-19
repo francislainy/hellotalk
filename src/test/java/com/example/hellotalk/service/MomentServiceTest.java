@@ -33,10 +33,10 @@ class MomentServiceTest {
     @Mock
     MomentRepository momentRepository;
 
-    ZonedDateTime now = ZonedDateTime.now();
-    ZonedDateTime creationDate = ZonedDateTime.parse(now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")));
-    ZonedDateTime lastUpdatedDate = ZonedDateTime.parse(now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")));
-    UUID userCreatorId = UUID.fromString("d3256c76-62d7-4481-9d1c-a0ccc4da380f");
+    ZonedDateTime now = ZonedDateTime.parse(ZonedDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")));
+    ZonedDateTime creationDate = now;
+    ZonedDateTime lastUpdatedDate = now;
+    UUID userCreatorId = UUID.randomUUID();
 
     @Test
     void testGetMoment() {
@@ -96,13 +96,13 @@ class MomentServiceTest {
         MomentEntity momentEntityDoesNotBelongToUser = getMomentEntity(momentId);
         momentEntityDoesNotBelongToUser.setUserEntity(UserEntity.builder().id(UUID.randomUUID()).build());
 
-        when(momentRepository.findAllByUserEntity_IdContains(String.valueOf(userCreatorId))).thenReturn(List.of(momentEntityBelongsToUser));
+        when(momentRepository.findAllByUserEntity_IdContains((userCreatorId))).thenReturn(List.of(momentEntityBelongsToUser));
 
         Set<String> tagsSet = new HashSet<>();
         tagsSet.add("anyTag1");
         tagsSet.add("anyTag2");
 
-        List<Moment> allMoments = momentService.getAllMomentsForUser(String.valueOf(userCreatorId));
+        List<Moment> allMoments = momentService.getAllMomentsForUser(userCreatorId);
         assertEquals(1, allMoments.size());
 
         Moment moment = allMoments.get(0);
@@ -120,7 +120,8 @@ class MomentServiceTest {
     @Test
     void testGetAllMomentsForUser_ReturnsEmptyListForUserWithNoMoments() {
 
-        List<Moment> moments = momentService.getAllMomentsForUser("invalidAuth");
+        UUID userId = randomUUID();
+        List<Moment> moments = momentService.getAllMomentsForUser(randomUUID());
         assertTrue(moments.isEmpty());
     }
 

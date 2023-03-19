@@ -12,7 +12,7 @@ public interface MomentService {
 
     List<Moment> getAllMoments();
 
-    List<Moment> getAllMomentsForUser(String authorization);
+    List<Moment> getAllMomentsForUser(UUID userId);
 
     Moment createMoment(Moment moment, String authorization);
 

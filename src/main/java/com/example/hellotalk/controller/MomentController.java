@@ -29,9 +29,9 @@ public class MomentController {
         return new ResponseEntity<>(momentService.getAllMoments(), HttpStatus.OK);
     }
 
-    @GetMapping({"/for-user", "/for-user/"})
-    public ResponseEntity<Object> getAllMomentsForUser(@RequestHeader("Authorization") String authorization) {
-        return new ResponseEntity<>(momentService.getAllMomentsForUser(authorization), HttpStatus.OK);
+    @GetMapping("/user")
+    public ResponseEntity<Object> getAllMomentsForUser(@RequestParam("userId") UUID userId) {
+        return new ResponseEntity<>(momentService.getAllMomentsForUser(userId), HttpStatus.OK);
     }
 
     @PostMapping({"", "/"})

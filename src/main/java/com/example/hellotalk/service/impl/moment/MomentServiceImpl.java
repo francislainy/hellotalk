@@ -55,9 +55,9 @@ public class MomentServiceImpl implements MomentService {
     }
 
     @Override
-    public List<Moment> getAllMomentsForUser(String authorization) {
+    public List<Moment> getAllMomentsForUser(UUID userId) {
 
-        List<MomentEntity> momentEntityList = momentRepository.findAllByUserEntity_IdContains(authorization);
+        List<MomentEntity> momentEntityList = momentRepository.findAllByUserEntity_IdContains(userId);
 
         return momentEntityList.stream()
                 .map(Moment::buildMomentFromEntity)

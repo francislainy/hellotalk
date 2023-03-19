@@ -21,6 +21,7 @@ import static com.epages.restdocs.apispec.ResourceDocumentation.resource;
 import static com.example.hellotalk.exception.AppExceptionHandler.MOMENT_NOT_FOUND_EXCEPTION;
 import static com.example.hellotalk.util.Utils.convertToNewObject;
 import static com.example.hellotalk.util.Utils.jsonStringFromObject;
+import static java.util.UUID.randomUUID;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
@@ -98,6 +99,7 @@ class MomentControllerTest extends BaseTestConfig {
     void testGetAllMomentsForUser() throws Exception {
 
         Moment moment = this.momentResponse;
+        UUID userId = randomUUID();
         when(momentService.getAllMomentsForUser(any())).thenReturn(List.of(moment));
 
         List<Moment> momentList = new ArrayList<>();
@@ -105,11 +107,11 @@ class MomentControllerTest extends BaseTestConfig {
 
         String jsonResponse = jsonStringFromObject(momentList);
 
-        mockMvc.perform(RestDocumentationRequestBuilders.get("/api/v1/ht/moments/for-user")
-                .header("authorization", "anyValidUUID"))
+        mockMvc.perform(RestDocumentationRequestBuilders.get("/api/v1/ht/moments/user/")
+                .queryParam("userId", String.valueOf(userId)))
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(content().json(jsonResponse))
-                .andDo(document("get-moments",
+                .andDo(document("get-moments-for-user",
                         resource("Get a list of moments for a user")))
                 .andReturn();
     }

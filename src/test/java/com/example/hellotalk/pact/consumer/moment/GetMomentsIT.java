@@ -23,7 +23,7 @@ import static com.example.hellotalk.utils.Utils.getMockRequest;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ExtendWith(PactConsumerTestExt.class)
-class GetMomentsIT {
+class GetMomentsIT { // todo: add test for getting moments for specific user - 19/03/2023
 
     Map<String, String> headers = new HashMap<>();
 

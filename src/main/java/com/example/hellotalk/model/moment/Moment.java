@@ -30,6 +30,7 @@ public class Moment {
     private ZonedDateTime lastUpdatedDate;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private Set<String> tags;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private Integer numLikes = 0;
 
     public static Moment buildMomentFromEntity(MomentEntity momentEntity) {

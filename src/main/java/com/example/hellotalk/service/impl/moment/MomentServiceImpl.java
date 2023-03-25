@@ -41,6 +41,9 @@ public class MomentServiceImpl implements MomentService {
         MomentEntity momentEntity = momentRepository.findById(momentId)
                 .orElseThrow(() -> new MomentNotFoundException(MOMENT_NOT_FOUND_EXCEPTION));
 
+        Integer numLikes = likeRepository.countLikesByMomentId(momentId);
+        momentEntity.setNumLikes(numLikes);
+
         return buildMomentFromEntity(momentEntity);
     }
 

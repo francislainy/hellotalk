@@ -5,6 +5,7 @@ import com.example.hellotalk.entity.user.UserEntity;
 import com.example.hellotalk.exception.EntityDoesNotBelongToUserException;
 import com.example.hellotalk.exception.MomentNotFoundException;
 import com.example.hellotalk.model.moment.Moment;
+import com.example.hellotalk.repository.LikeRepository;
 import com.example.hellotalk.repository.moment.MomentRepository;
 import com.example.hellotalk.service.impl.moment.MomentServiceImpl;
 import org.junit.jupiter.api.Test;
@@ -33,6 +34,9 @@ class MomentServiceTest {
     @Mock
     MomentRepository momentRepository;
 
+    @Mock
+    LikeRepository likeRepository;
+
     ZonedDateTime now = ZonedDateTime.parse(ZonedDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")));
     ZonedDateTime creationDate = now;
     ZonedDateTime lastUpdatedDate = now;
@@ -45,6 +49,7 @@ class MomentServiceTest {
         MomentEntity momentEntity = getMomentEntity(momentId);
 
         when(momentRepository.findById(any())).thenReturn(Optional.of(momentEntity));
+        when(likeRepository.countLikesByMomentId(any())).thenReturn(10);
 
         Set<String> tagsSet = new HashSet<>();
         tagsSet.add("anyTag1");
@@ -56,6 +61,7 @@ class MomentServiceTest {
                 () -> assertEquals(momentId, moment.getId()),
                 () -> assertEquals("anyText", moment.getText()),
                 () -> assertEquals(userCreatorId, moment.getUserCreatorId()),
+                () -> assertEquals(10, moment.getNumLikes()),
                 () -> assertEquals(String.valueOf(creationDate), String.valueOf(moment.getCreationDate())),
                 () -> assertEquals(String.valueOf(lastUpdatedDate), String.valueOf(moment.getLastUpdatedDate())),
                 () -> assertEquals(tagsSet, moment.getTags()));
@@ -229,6 +235,7 @@ class MomentServiceTest {
                 .userEntity(UserEntity.builder().id(userCreatorId).build())
                 .creationDate(creationDate)
                 .lastUpdatedDate(lastUpdatedDate)
+                .numLikes(10)
                 .tags(tagsSet)
                 .build();
     }

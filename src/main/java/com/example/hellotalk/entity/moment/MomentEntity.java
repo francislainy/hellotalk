@@ -43,6 +43,9 @@ public class MomentEntity {
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private UserEntity userEntity;
 
+    @Transient
+    private Integer numLikes = 0;
+
     public static MomentEntity buildMomentEntityFromModel(Moment moment) {
         return MomentEntity.builder()
                 .id(moment.getId())
@@ -50,6 +53,7 @@ public class MomentEntity {
                 .creationDate(moment.getCreationDate())
                 .lastUpdatedDate(moment.getLastUpdatedDate())
                 .tags(moment.getTags())
+                .numLikes(moment.getNumLikes())
                 .build();
     }
 }

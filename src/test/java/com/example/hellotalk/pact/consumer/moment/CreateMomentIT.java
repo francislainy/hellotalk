@@ -49,6 +49,7 @@ class CreateMomentIT {
                 .stringType("text", "anyText")
                 .stringType("creationDate", creationDate.format(formatter))
                 .uuid("userCreatorId", "caf6bea6-4684-403e-9c41-8704fb0600c0")
+                .numberType("numLikes", 0)
                 .close();
 
         return builder

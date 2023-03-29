@@ -3,7 +3,6 @@ package com.example.hellotalk.service.impl.user;
 import com.example.hellotalk.entity.moment.MomentEntity;
 import com.example.hellotalk.entity.user.*;
 import com.example.hellotalk.exception.EntityBelongsToUserException;
-import com.example.hellotalk.exception.MomentAlreadyLikedException;
 import com.example.hellotalk.exception.MomentNotFoundException;
 import com.example.hellotalk.exception.UserNotFoundException;
 import com.example.hellotalk.model.HobbyAndInterest;
@@ -163,15 +162,20 @@ public class UserServiceImpl implements UserService {
                 })
                 .orElseThrow(() -> new MomentNotFoundException(MOMENT_NOT_FOUND_EXCEPTION));
 
-        likeRepository.findAllByUserEntity_IdAndMomentEntity_Id(userId, momentId)
-                .stream()
-                .findAny()
-                .ifPresent(likeEntity -> {
-                    throw new MomentAlreadyLikedException(MOMENT_ALREADY_LIKED_EXCEPTION);
-                });
+        Map<String, Object> map = new HashMap<>();
+        Optional<LikeEntity> likeEntityOptional = Optional.ofNullable(likeRepository.findByUserEntity_IdAndMomentEntity_Id(userId, momentId));
+        LikeEntity likeEntity;
+        String resultMessage;
 
-        LikeEntity likeEntity = LikeEntity.builder().userEntity(userEntity).momentEntity(momentEntity).build();
-        likeEntity = likeRepository.save(likeEntity);
+        if (likeEntityOptional.isPresent()) {
+            likeEntity = likeEntityOptional.get();
+            likeRepository.delete(likeEntity);
+            resultMessage = "Moment unliked successfully";
+        } else {
+            likeEntity = LikeEntity.builder().userEntity(userEntity).momentEntity(momentEntity).build();
+            likeEntity = likeRepository.save(likeEntity);
+            resultMessage = "Moment liked successfully";
+        }
 
         ResultInfo resultInfo = ResultInfo.builder()
                 .id(likeEntity.getId())
@@ -179,9 +183,8 @@ public class UserServiceImpl implements UserService {
                 .momentId(likeEntity.getMomentEntity().getId())
                 .build();
 
-        Map<String, Object> map = new HashMap<>();
         map.put("data", resultInfo);
-        map.put("message", "Moment liked successfully");
+        map.put("message", resultMessage);
 
         return map;
     }

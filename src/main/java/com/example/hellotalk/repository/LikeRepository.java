@@ -12,7 +12,7 @@ public interface LikeRepository extends JpaRepository<LikeEntity, UUID> {
 
     List<LikeEntity> findAllByMomentEntityIdContaining(UUID momentId);
 
-    List<LikeEntity> findAllByUserEntity_IdAndMomentEntity_Id(UUID momentId, UUID userId);
+    LikeEntity findByUserEntity_IdAndMomentEntity_Id(UUID momentId, UUID userId);
 
     @Query("SELECT COUNT(l) FROM LikeEntity l WHERE l.momentEntity.id = :momentId")
     int countLikesByMomentId(@Param("momentId") UUID momentId);

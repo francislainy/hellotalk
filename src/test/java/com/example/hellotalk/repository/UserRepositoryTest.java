@@ -128,7 +128,7 @@ class UserRepositoryTest extends BasePostgresConfig {
         userToEntity = userRepository.save(userToEntity);
 
         FollowingRequestEntity followingRequestEntity = FollowingRequestEntity.builder().userFromEntity(userFromEntity).userToEntity(userToEntity).build();
-        followingRequestEntity = followingRequestRepository.save(followingRequestEntity);
+        followingRequestRepository.save(followingRequestEntity);
 
         FollowingRequestEntity followerOfEntity = FollowingRequestEntity.builder().userToEntity(userToEntity).build();
         Set<FollowingRequestEntity> followerOfEntities = new HashSet<>();

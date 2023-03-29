@@ -22,7 +22,7 @@ import static com.example.hellotalk.utils.Utils.getMockRequest;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ExtendWith(PactConsumerTestExt.class)
-class LikeMomentIT {
+class UnlikeMomentIT {
 
     Map<String, String> headers = new HashMap<>();
 
@@ -36,7 +36,7 @@ class LikeMomentIT {
         headers.put("Accept", "application/json");
 
         DslPart bodyReturned = new PactDslJsonBody()
-                .stringValue("message", "Moment liked successfully")
+                .stringValue("message", "Moment unliked successfully")
                 .object("data")
                 .uuid("id", "3cfff94a-b70e-4b39-bd2a-be1c0f898532")
                 .uuid("userId", userId)
@@ -45,8 +45,8 @@ class LikeMomentIT {
                 .close();
 
         return builder
-                .given("A request to like a moment")
-                .uponReceiving("A request to like a moment")
+                .given("A request to remove a like for a moment")
+                .uponReceiving("A request to remove a like for a moment")
                 .pathFromProviderState(path + "${userId}" + "/like/" + "${momentId}", path + userId + "like/" + momentId)
                 .method("POST")
                 .headers(headers)

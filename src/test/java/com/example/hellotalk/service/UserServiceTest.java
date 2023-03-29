@@ -6,7 +6,6 @@ import com.example.hellotalk.entity.user.LikeEntity;
 import com.example.hellotalk.entity.user.ResultInfo;
 import com.example.hellotalk.entity.user.UserEntity;
 import com.example.hellotalk.exception.EntityBelongsToUserException;
-import com.example.hellotalk.exception.MomentAlreadyLikedException;
 import com.example.hellotalk.exception.MomentNotFoundException;
 import com.example.hellotalk.exception.UserNotFoundException;
 import com.example.hellotalk.model.Hometown;
@@ -16,6 +15,7 @@ import com.example.hellotalk.repository.HometownRepository;
 import com.example.hellotalk.repository.LikeRepository;
 import com.example.hellotalk.repository.UserRepository;
 import com.example.hellotalk.repository.moment.MomentRepository;
+import com.example.hellotalk.service.impl.moment.MomentServiceImpl;
 import com.example.hellotalk.service.impl.user.UserServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -56,6 +56,9 @@ class UserServiceTest {
 
     @InjectMocks
     UserServiceImpl userService;
+
+    @InjectMocks
+    MomentServiceImpl momentService;
 
     private final UUID userId = UUID.fromString("1bfff94a-b70e-4b39-bd2a-be1c0f898589");
 
@@ -303,7 +306,7 @@ class UserServiceTest {
     }
 
     @Test
-    void testLikeMoment_ThrowsExceptionIfMomentAlreadyLiked() {
+    void testLikeMoment_RemovesLikeIfMomentAlreadyLiked() {
 
         UUID userId = randomUUID();
         UUID userIdMomentCreator = randomUUID();
@@ -317,12 +320,18 @@ class UserServiceTest {
 
         when(userRepository.findById(any())).thenReturn(Optional.ofNullable(userEntity));
         when(momentRepository.findById(any())).thenReturn(Optional.ofNullable(momentEntity));
-        when(likeRepository.findAllByUserEntity_IdAndMomentEntity_Id(any(), any())).thenReturn(List.of(likeEntity));
+        when(likeRepository.findByUserEntity_IdAndMomentEntity_Id(any(), any())).thenReturn(likeEntity);
 
-        MomentAlreadyLikedException exception =
-                assertThrows(MomentAlreadyLikedException.class, () -> userService.likeMoment(userId, momentId));
-
-        assertEquals(MOMENT_ALREADY_LIKED_EXCEPTION, exception.getMessage());
+        assertDoesNotThrow(() -> {
+            Map<String, Object> responseMap = userService.likeMoment(userId, momentId);
+            ResultInfo resultInfo = (ResultInfo) responseMap.get("data");
+            assertAll(
+                    () -> assertTrue(momentService.getLikesByMoment(momentId).isEmpty()),
+                    () -> assertEquals(likeId, resultInfo.getId()),
+                    () -> assertEquals(userId, resultInfo.getUserId()),
+                    () -> assertEquals(momentId, resultInfo.getMomentId()),
+                    () -> assertEquals("Moment unliked successfully", responseMap.get("message")));
+        });
     }
 
     @Test
@@ -358,7 +367,6 @@ class UserServiceTest {
 
         when(userRepository.findById(any())).thenReturn(Optional.ofNullable(userEntity));
         when(momentRepository.findById(any())).thenReturn(Optional.ofNullable(momentEntity));
-        when(likeRepository.findAllByUserEntity_IdAndMomentEntity_Id(any(), any())).thenReturn(List.of());
         when(likeRepository.save(any())).thenReturn(likeEntity);
 
         Map<String, Object> responseMap = userService.likeMoment(userId, momentId);

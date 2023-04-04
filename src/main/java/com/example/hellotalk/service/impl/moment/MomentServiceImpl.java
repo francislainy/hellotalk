@@ -53,7 +53,11 @@ public class MomentServiceImpl implements MomentService {
         List<MomentEntity> momentEntityList = momentRepository.findAll();
 
         return momentEntityList.stream()
-                .map(Moment::buildMomentFromEntity)
+                .map(momentEntity -> {
+                    Integer numLikes = likeRepository.countLikesByMomentId(momentEntity.getId());
+                    momentEntity.setNumLikes(numLikes);
+                    return buildMomentFromEntity(momentEntity);
+                })
                 .toList();
     }
 
@@ -63,7 +67,11 @@ public class MomentServiceImpl implements MomentService {
         List<MomentEntity> momentEntityList = momentRepository.findAllByUserEntity_IdContains(userId);
 
         return momentEntityList.stream()
-                .map(Moment::buildMomentFromEntity)
+                .map(momentEntity -> {
+                    Integer numLikes = likeRepository.countLikesByMomentId(momentEntity.getId());
+                    momentEntity.setNumLikes(numLikes);
+                    return buildMomentFromEntity(momentEntity);
+                })
                 .toList();
     }
 
@@ -71,9 +79,10 @@ public class MomentServiceImpl implements MomentService {
     public Moment createMoment(Moment moment, String authorization) {
         UserEntity userEntity = UserEntity.builder().id(parseUUID(authorization)).build();
 
-        MomentEntity momentEntity = buildMomentEntityFromModel(moment);
-        momentEntity.setUserEntity(userEntity);
-        momentEntity.setCreationDate(ZonedDateTime.now().withZoneSameInstant(ZoneOffset.UTC));
+        MomentEntity momentEntity = buildMomentEntityFromModel(moment).toBuilder()
+                .userEntity(userEntity)
+                .creationDate(ZonedDateTime.now().withZoneSameInstant(ZoneOffset.UTC))
+                .build();
         momentEntity = momentRepository.save(momentEntity);
 
         return buildMomentFromEntity(momentEntity);

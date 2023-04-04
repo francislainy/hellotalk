@@ -1,6 +1,7 @@
 package com.example.hellotalk.service;
 
 import com.example.hellotalk.entity.moment.MomentEntity;
+import com.example.hellotalk.entity.user.LikeEntity;
 import com.example.hellotalk.entity.user.UserEntity;
 import com.example.hellotalk.exception.EntityDoesNotBelongToUserException;
 import com.example.hellotalk.exception.MomentNotFoundException;
@@ -74,6 +75,7 @@ class MomentServiceTest {
         MomentEntity momentEntity = getMomentEntity(momentId);
 
         when(momentRepository.findAll()).thenReturn(List.of(momentEntity));
+        when(likeRepository.countLikesByMomentId(any())).thenReturn(10);
 
         Set<String> tagsSet = new HashSet<>();
         tagsSet.add("anyTag1");
@@ -104,6 +106,7 @@ class MomentServiceTest {
         momentEntityDoesNotBelongToUser.setUserEntity(UserEntity.builder().id(UUID.randomUUID()).build());
 
         when(momentRepository.findAllByUserEntity_IdContains((userCreatorId))).thenReturn(List.of(momentEntityBelongsToUser));
+        when(likeRepository.countLikesByMomentId(any())).thenReturn(10);
 
         Set<String> tagsSet = new HashSet<>();
         tagsSet.add("anyTag1");

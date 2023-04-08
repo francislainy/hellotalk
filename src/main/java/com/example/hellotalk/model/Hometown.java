@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.modelmapper.ModelMapper;
 
 import java.util.UUID;
 
@@ -15,22 +16,14 @@ import java.util.UUID;
 @AllArgsConstructor
 public class Hometown {
 
+    private static final ModelMapper modelMapper = new ModelMapper();
+
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private UUID id;
     private String city;
     private String country;
 
     public static Hometown buildHometownFromEntity(HometownEntity hometownEntity) {
-
-        if (hometownEntity != null) {
-
-            return Hometown.builder()
-                    .id(hometownEntity.getId())
-                    .city(hometownEntity.getCity())
-                    .country(hometownEntity.getCountry())
-                    .build();
-        } else {
-            return null;
-        }
+        return new ModelMapper().map(hometownEntity, Hometown.class);
     }
 }

@@ -1,4 +1,4 @@
-package com.example.hellotalk.entity.user;
+package com.example.hellotalk.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

@@ -6,8 +6,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.modelmapper.ModelMapper;
 
-import java.util.*;
+import java.util.UUID;
 
 @Data
 @Builder
@@ -15,24 +16,13 @@ import java.util.*;
 @AllArgsConstructor
 public class HobbyAndInterest {
 
+    private static final ModelMapper modelMapper = new ModelMapper();
+
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private UUID id;
     private String title;
 
     public static HobbyAndInterest buildHobbyAndInterestFromEntity(HobbyAndInterestEntity hobbyAndInterestEntity) {
-        return HobbyAndInterest.builder()
-                .id(hobbyAndInterestEntity.getId())
-                .title(hobbyAndInterestEntity.getTitle())
-                .build();
+        return modelMapper.map(hobbyAndInterestEntity, HobbyAndInterest.class);
     }
-
-    public static Set<HobbyAndInterest> buildSetHobbyAndInterestFromEntity(Set<HobbyAndInterestEntity> hobbyAndInterestEntities) {
-
-        Set<HobbyAndInterest> hobbyAndInterests = new HashSet<>();
-        hobbyAndInterestEntities.forEach(
-                h -> hobbyAndInterests.add(buildHobbyAndInterestFromEntity(h)));
-
-        return hobbyAndInterests;
-    }
-
 }

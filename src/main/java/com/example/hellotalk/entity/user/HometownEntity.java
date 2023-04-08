@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.modelmapper.ModelMapper;
 
 import javax.persistence.*;
 import java.util.Set;
@@ -17,6 +18,8 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 public class HometownEntity {
+
+    private static final ModelMapper modelMapper = new ModelMapper();
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -33,9 +36,6 @@ public class HometownEntity {
     private Set<UserEntity> userEntitySet;
 
     public static HometownEntity buildHometownEntity(Hometown hometown) {
-        return HometownEntity.builder()
-                .city(hometown.getCity())
-                .country(hometown.getCountry())
-                .build();
+        return modelMapper.map(hometown, HometownEntity.class);
     }
 }

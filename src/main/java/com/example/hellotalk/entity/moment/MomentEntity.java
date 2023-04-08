@@ -3,6 +3,7 @@ package com.example.hellotalk.entity.moment;
 import com.example.hellotalk.entity.user.UserEntity;
 import com.example.hellotalk.model.moment.Moment;
 import lombok.*;
+import org.modelmapper.ModelMapper;
 
 import javax.persistence.*;
 import java.time.ZonedDateTime;
@@ -18,6 +19,8 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 public class MomentEntity {
+
+    private static final ModelMapper modelMapper = new ModelMapper();
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -52,14 +55,15 @@ public class MomentEntity {
     @Transient
     private Integer numLikes = 0;
 
+    static {
+        modelMapper.typeMap(Moment.class, MomentEntity.class)
+                .addMappings(mapper -> {
+                    mapper.map(Moment::getUserCreatorId, (dest, value) -> dest.setUserEntity(UserEntity.builder().id((UUID) value).build()));
+                    mapper.map(Moment::getLikedByIds, MomentEntity::setLikedBy);
+                });
+    }
+
     public static MomentEntity buildMomentEntityFromModel(Moment moment) {
-        return MomentEntity.builder()
-                .id(moment.getId())
-                .text(moment.getText())
-                .creationDate(moment.getCreationDate())
-                .lastUpdatedDate(moment.getLastUpdatedDate())
-                .tags(moment.getTags())
-                .numLikes(moment.getNumLikes())
-                .build();
+        return modelMapper.map(moment, MomentEntity.class);
     }
 }

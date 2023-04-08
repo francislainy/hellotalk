@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.modelmapper.ModelMapper;
 
 import java.time.ZonedDateTime;
 import java.util.Set;
@@ -17,6 +18,8 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Moment {
+
+    private static final ModelMapper modelMapper = new ModelMapper();
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private UUID id;
@@ -35,16 +38,15 @@ public class Moment {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private Set<UUID> likedByIds;
 
+    static {
+        modelMapper.typeMap(MomentEntity.class, Moment.class)
+                .addMappings(mapper -> {
+                    mapper.map(src -> src.getUserEntity().getId(), Moment::setUserCreatorId);
+                    mapper.map(MomentEntity::getLikedBy, Moment::setLikedByIds);
+                });
+    }
+
     public static Moment buildMomentFromEntity(MomentEntity momentEntity) {
-        return Moment.builder()
-                .id(momentEntity.getId())
-                .text(momentEntity.getText())
-                .userCreatorId(momentEntity.getUserEntity().getId())
-                .creationDate(momentEntity.getCreationDate())
-                .lastUpdatedDate(momentEntity.getLastUpdatedDate())
-                .tags(momentEntity.getTags())
-                .numLikes(momentEntity.getNumLikes())
-                .likedByIds(momentEntity.getLikedBy())
-                .build();
+        return modelMapper.map(momentEntity, Moment.class);
     }
 }

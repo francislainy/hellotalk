@@ -2,7 +2,7 @@ package com.example.hellotalk.controller;
 
 import com.example.hellotalk.entity.moment.MomentEntity;
 import com.example.hellotalk.entity.user.LikeEntity;
-import com.example.hellotalk.entity.user.ResultInfo;
+import com.example.hellotalk.model.ResultInfo;
 import com.example.hellotalk.entity.user.UserEntity;
 import com.example.hellotalk.exception.EntityBelongsToUserException;
 import com.example.hellotalk.exception.MomentAlreadyLikedException;

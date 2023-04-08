@@ -8,18 +8,19 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.modelmapper.ModelMapper;
 
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
-
-import static com.example.hellotalk.model.Hometown.buildHometownFromEntity;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class User {
+
+    private static final ModelMapper modelMapper = new ModelMapper();
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private UUID id;
@@ -44,29 +45,14 @@ public class User {
     private Set<User> followerOf;
 
     public static User buildUserFromEntity(UserEntity userEntity) {
+        User user = modelMapper.map(userEntity, User.class);
 
-        Set<HobbyAndInterest> hobbyAndInterests = new HashSet<>();
-        userEntity.getHobbyAndInterestEntities().forEach(h -> hobbyAndInterests.add(HobbyAndInterest.builder()
-                .id(h.getId())
-                .title(h.getTitle())
-                .build()));
+        if (userEntity.getHobbyAndInterestEntities() != null) {
+            Set<HobbyAndInterest> hobbyAndInterests = new HashSet<>();
+            userEntity.getHobbyAndInterestEntities().forEach(h -> hobbyAndInterests.add(modelMapper.map(h, HobbyAndInterest.class)));
+            user.setHobbyAndInterests(hobbyAndInterests);
+        }
 
-        return User.builder()
-                .id(userEntity.getId())
-                .name(userEntity.getName())
-                .dob(userEntity.getDob())
-                .gender(userEntity.getGender())
-                .subscriptionType(userEntity.getSubscriptionType())
-                .creationDate(userEntity.getCreationDate())
-                .handle(userEntity.getHandle())
-                .status(userEntity.getStatus())
-                .nativeLanguage(userEntity.getNativeLanguage())
-                .targetLanguage(userEntity.getTargetLanguage())
-                .occupation(userEntity.getOccupation())
-                .selfIntroduction(userEntity.getSelfIntroduction())
-                .placesToVisit(userEntity.getPlacesToVisit())
-                .hometown(buildHometownFromEntity(userEntity.getHometownEntity()))
-                .hobbyAndInterests(hobbyAndInterests)
-                .build();
+        return user;
     }
 }

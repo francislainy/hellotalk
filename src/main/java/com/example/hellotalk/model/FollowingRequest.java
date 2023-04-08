@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.modelmapper.ModelMapper;
 
 import java.util.UUID;
 
@@ -15,17 +16,14 @@ import java.util.UUID;
 @AllArgsConstructor
 public class FollowingRequest {
 
+    private static ModelMapper modelMapper = new ModelMapper();
+
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private UUID id;
     private UUID userToId;
     private UUID userFromId;
 
     public static FollowingRequest buildFollowingRequestFromEntity(FollowingRequestEntity followingRequestEntity) {
-
-        return FollowingRequest.builder()
-                .id(followingRequestEntity.getId())
-                .userFromId(followingRequestEntity.getUserFromEntity().getId())
-                .userToId(followingRequestEntity.getUserToEntity().getId())
-                .build();
+        return modelMapper.map(followingRequestEntity, FollowingRequest.class);
     }
 }

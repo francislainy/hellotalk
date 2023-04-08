@@ -37,6 +37,7 @@
         <springdoc-openapi-maven-plugin.version>0.2</springdoc-openapi-maven-plugin.version>
         <restdocs-spec.version>0.21</restdocs-spec.version>
         <restdocs-api-spec.version>0.16.4</restdocs-api-spec.version>
+        <modelmapper.version>3.1.1</modelmapper.version>
     </properties>
     <dependencies>
         <dependency>
@@ -62,6 +63,11 @@
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.modelmapper</groupId>
+            <artifactId>modelmapper</artifactId>
+            <version>${modelmapper.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.maven.plugins</groupId>
@@ -164,7 +170,6 @@
             <version>${restdocs-api-spec.version}</version>
             <scope>test</scope>
         </dependency>
-
     </dependencies>
     <dependencyManagement>
         <dependencies>

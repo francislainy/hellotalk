@@ -3,9 +3,9 @@ package com.example.hellotalk.entity.user;
 import com.example.hellotalk.entity.moment.MomentEntity;
 import com.example.hellotalk.model.user.User;
 import lombok.*;
+import org.modelmapper.ModelMapper;
 
 import javax.persistence.*;
-import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
@@ -17,6 +17,8 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserEntity {
+
+    private static final ModelMapper modelMapper = new ModelMapper();
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -79,32 +81,15 @@ public class UserEntity {
     @OneToMany(mappedBy = "userEntity", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = false)
     private Set<MomentEntity> momentEntitySet;
 
+    static {
+        modelMapper.createTypeMap(User.class, UserEntity.class)
+                .addMappings(mapper -> {
+                    mapper.map(User::getHometown, UserEntity::setHometownEntity);
+                    mapper.map(User::getHobbyAndInterests, UserEntity::setHobbyAndInterestEntities);
+                });
+    }
+
     public static UserEntity buildUserEntityFromModel(User user) {
-
-        Set<HobbyAndInterestEntity> hobbyAndInterestEntities = new HashSet<>();
-        user.getHobbyAndInterests().forEach(h -> hobbyAndInterestEntities.add(HobbyAndInterestEntity.builder()
-                .id(h.getId())
-                .title(h.getTitle())
-                .build()));
-
-        HometownEntity hometownEntity = HometownEntity.buildHometownEntity(user.getHometown());
-
-        return UserEntity.builder()
-                .id(user.getId())
-                .name(user.getName())
-                .dob(user.getDob())
-                .gender(user.getGender())
-                .subscriptionType(user.getSubscriptionType())
-                .selfIntroduction(user.getSelfIntroduction())
-                .creationDate(user.getCreationDate())
-                .status(user.getStatus())
-                .occupation(user.getOccupation())
-                .handle(user.getHandle())
-                .nativeLanguage(user.getNativeLanguage())
-                .targetLanguage(user.getTargetLanguage())
-                .placesToVisit(user.getPlacesToVisit())
-                .hometownEntity(hometownEntity)
-                .hobbyAndInterestEntities(hobbyAndInterestEntities)
-                .build();
+        return modelMapper.map(user, UserEntity.class);
     }
 }

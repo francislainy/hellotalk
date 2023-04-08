@@ -43,6 +43,12 @@ public class MomentEntity {
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private UserEntity userEntity;
 
+    @ElementCollection
+    @CollectionTable(name = "moment_like",
+            joinColumns = @JoinColumn(name = "moment_id"))
+    @Column(name = "liked_by")
+    private Set<UUID> likedBy = new HashSet<>();
+
     @Transient
     private Integer numLikes = 0;
 

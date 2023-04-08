@@ -19,6 +19,7 @@ import org.springframework.test.context.jdbc.Sql;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.example.hellotalk.Constants.USER_ID;
 import static com.example.hellotalk.utils.Utils.logCurlFromPact;
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TEST_METHOD;
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.BEFORE_TEST_METHOD;
@@ -46,7 +47,7 @@ class PactProviderIT extends BasePostgresConfig {
     @ExtendWith(PactVerificationInvocationContextProvider.class)
     void pactTestTemplate(PactVerificationContext context, HttpRequest request) {
 
-        request.addHeader("authorization", "d3256c76-62d7-4481-9d1c-a0ccc4da380f");
+        request.addHeader("authorization", USER_ID);
 
         logCurlFromPact(context, request, "http://localhost:" + port);
 

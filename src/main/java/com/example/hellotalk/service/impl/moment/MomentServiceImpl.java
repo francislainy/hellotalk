@@ -14,10 +14,9 @@ import org.springframework.stereotype.Service;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
+import static com.example.hellotalk.Constants.USER_ID;
 import static com.example.hellotalk.entity.moment.MomentEntity.buildMomentEntityFromModel;
 import static com.example.hellotalk.exception.AppExceptionHandler.ENTITY_DOES_NOT_BELONG_TO_USER_EXCEPTION;
 import static com.example.hellotalk.exception.AppExceptionHandler.MOMENT_NOT_FOUND_EXCEPTION;
@@ -41,8 +40,7 @@ public class MomentServiceImpl implements MomentService {
         MomentEntity momentEntity = momentRepository.findById(momentId)
                 .orElseThrow(() -> new MomentNotFoundException(MOMENT_NOT_FOUND_EXCEPTION));
 
-        Integer numLikes = likeRepository.countLikesByMomentId(momentId);
-        momentEntity.setNumLikes(numLikes);
+        setLikesInfo(momentEntity);
 
         return buildMomentFromEntity(momentEntity);
     }
@@ -54,8 +52,7 @@ public class MomentServiceImpl implements MomentService {
 
         return momentEntityList.stream()
                 .map(momentEntity -> {
-                    Integer numLikes = likeRepository.countLikesByMomentId(momentEntity.getId());
-                    momentEntity.setNumLikes(numLikes);
+                    setLikesInfo(momentEntity);
                     return buildMomentFromEntity(momentEntity);
                 })
                 .toList();
@@ -68,8 +65,7 @@ public class MomentServiceImpl implements MomentService {
 
         return momentEntityList.stream()
                 .map(momentEntity -> {
-                    Integer numLikes = likeRepository.countLikesByMomentId(momentEntity.getId());
-                    momentEntity.setNumLikes(numLikes);
+                    setLikesInfo(momentEntity);
                     return buildMomentFromEntity(momentEntity);
                 })
                 .toList();
@@ -85,21 +81,22 @@ public class MomentServiceImpl implements MomentService {
                 .build();
         momentEntity = momentRepository.save(momentEntity);
 
+        setLikesInfo(momentEntity);
+
         return buildMomentFromEntity(momentEntity);
     }
 
     @Override
-    public Moment updateMoment(UUID momentId, Moment moment, String authorization) {
+    public Moment updateMoment(UUID momentId, Moment moment) {
 
         MomentEntity momentEntity = momentRepository.findById(momentId)
                 .orElseThrow(() -> new MomentNotFoundException(MOMENT_NOT_FOUND_EXCEPTION));
 
-        if (!momentEntity.getUserEntity().getId().toString().equals(authorization)) {
+        if (!momentEntity.getUserEntity().getId().toString().equals(USER_ID.toString())) {
             throw new EntityDoesNotBelongToUserException(ENTITY_DOES_NOT_BELONG_TO_USER_EXCEPTION);
         }
 
-        ZonedDateTime now = ZonedDateTime.now();
-        ZonedDateTime formattedDate = ZonedDateTime.parse(now.format(formatter));
+        ZonedDateTime formattedDate = ZonedDateTime.parse(ZonedDateTime.now().format(formatter));
         UserEntity userEntity = UserEntity.builder().id(moment.getUserCreatorId()).build();
 
         momentEntity = momentEntity.toBuilder()
@@ -110,6 +107,9 @@ public class MomentServiceImpl implements MomentService {
                 .build();
 
         momentEntity = momentRepository.save(momentEntity);
+
+        setLikesInfo(momentEntity);
+
         return buildMomentFromEntity(momentEntity);
     }
 
@@ -132,6 +132,18 @@ public class MomentServiceImpl implements MomentService {
     @Override
     public List<LikeEntity> getLikesByMoment(UUID momentId) {
         return likeRepository.findAllByMomentEntityIdContaining(momentId);
+    }
+
+    private void setLikesInfo(MomentEntity momentEntity) {
+        Integer numLikes = likeRepository.countLikesByMomentId(momentEntity.getId());
+        momentEntity.setNumLikes(numLikes);
+
+        List<LikeEntity> likeEntityList = likeRepository.findAllByMomentEntity_Id(momentEntity.getId());
+        Set<UUID> likedByIds = new HashSet<>();
+        likeEntityList.forEach(
+                likeEntity -> likedByIds.add(likeEntity.getUserEntity().getId()));
+
+        momentEntity.setLikedBy(likedByIds);
     }
 
     private UUID parseUUID(String uuidStr) {

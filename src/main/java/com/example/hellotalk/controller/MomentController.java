@@ -40,8 +40,8 @@ public class MomentController {
     }
 
     @PutMapping("/{momentId}")
-    public ResponseEntity<Object> updateMoment(@PathVariable UUID momentId, @RequestBody Moment moment, @RequestHeader("Authorization") String authorization) {
-        return new ResponseEntity<>(momentService.updateMoment(momentId, moment, authorization), HttpStatus.OK);
+    public ResponseEntity<Object> updateMoment(@PathVariable UUID momentId, @RequestBody Moment moment) {
+        return new ResponseEntity<>(momentService.updateMoment(momentId, moment), HttpStatus.OK);
     }
 
     @DeleteMapping({"/{momentId}", "/{momentId}/"})

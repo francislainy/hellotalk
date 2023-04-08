@@ -20,6 +20,7 @@ import java.util.Objects;
 
 import static com.example.hellotalk.config.Constants.*;
 import static com.example.hellotalk.utils.Utils.getMockRequest;
+import static java.util.UUID.randomUUID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ExtendWith(PactConsumerTestExt.class)
@@ -44,7 +45,10 @@ class GetMomentsIT { // todo: add test for getting moments for specific user - 1
                 .uuid("userCreatorId", "caf6bea6-4684-403e-9c41-8704fb0600c0")
                 .eachLike("tags")
                 .stringType("anyTag1")
-                .numberType("numLikes", 10)
+                .numberType("numLikes", 2)
+                .array("likedBy")
+                .uuid(String.valueOf(randomUUID()))
+                .uuid(String.valueOf(randomUUID()))
                 .closeArray()
                 .closeObject();
 

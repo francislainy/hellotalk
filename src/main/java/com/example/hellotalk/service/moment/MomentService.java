@@ -16,7 +16,7 @@ public interface MomentService {
 
     Moment createMoment(Moment moment, String authorization);
 
-    Moment updateMoment(UUID momentId, Moment moment, String authorization);
+    Moment updateMoment(UUID momentId, Moment moment);
 
     String deleteMoment(UUID momentId);
 

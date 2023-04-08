@@ -46,7 +46,7 @@ public class AppExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(EntityDoesNotBelongToUserException.class)
     @ResponseStatus(FORBIDDEN)
-    public ResponseEntity<Object> handleEntityDoesNotBelongToUserException(MomentNotFoundException ex, WebRequest webRequest) {
+    public ResponseEntity<Object> handleEntityDoesNotBelongToUserException(EntityDoesNotBelongToUserException ex, WebRequest webRequest) {
         return new ResponseEntity<>(new ApiError(ex.getMessage(), FORBIDDEN, LocalDateTime.now()), FORBIDDEN);
     }
 
@@ -65,7 +65,6 @@ public class AppExceptionHandler extends ResponseEntityExceptionHandler {
     @Override
     @NonNull
     protected ResponseEntity<Object> handleNoHandlerFoundException(NoHandlerFoundException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
-
         return new ResponseEntity<>(new ApiError(ex.getMessage(), HttpStatus.NOT_FOUND, LocalDateTime.now()), HttpStatus.NOT_FOUND);
     }
 }

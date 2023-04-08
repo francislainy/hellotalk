@@ -29,4 +29,8 @@ VALUES ('c3f6bea6-4684-403e-9c41-8704fb0600c0', to_timestamp('1834147200'), to_t
 
 INSERT INTO moment_like(id, moment_id, user_id)
 VALUES ('a1f6bea6-4684-403e-9c41-8704fb0600c0', 'c3f6bea6-4684-403e-9c41-8704fb0600c0',
-        'ca3569ee-cb62-4f45-b1c2-199028ba5562')
+        'ca3569ee-cb62-4f45-b1c2-199028ba5562');
+
+INSERT INTO moment_like(id, moment_id, user_id)
+VALUES ('b1f6bea6-4684-403e-9c41-8704fb0600c0', 'e1f6bea6-4684-403e-9c41-8704fb0600c0',
+        'ca3569ee-cb62-4f45-b1c2-199028ba5562');

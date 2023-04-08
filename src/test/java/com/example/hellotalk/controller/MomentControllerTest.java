@@ -134,7 +134,7 @@ class MomentControllerTest extends BaseTestConfig {
     void testUpdateMoment() throws Exception {
 
         Moment moment = momentResponse;
-        when(momentService.updateMoment(any(), any(), any())).thenReturn(moment);
+        when(momentService.updateMoment(any(), any())).thenReturn(moment);
 
         mockMvc.perform(RestDocumentationRequestBuilders.put("/api/v1/ht/moments/{momentId}", momentId)
                 .header("authorization", "anyValidUUID")
@@ -150,7 +150,7 @@ class MomentControllerTest extends BaseTestConfig {
     @Test
     void testUpdateMoment_ThrowsExceptionWhenUserDoesNotExist() throws Exception {
 
-        when(momentService.updateMoment(any(), any(), any())).thenThrow(new MomentNotFoundException(MOMENT_NOT_FOUND_EXCEPTION));
+        when(momentService.updateMoment(any(), any())).thenThrow(new MomentNotFoundException(MOMENT_NOT_FOUND_EXCEPTION));
 
         String jsonError = """
                 {"message": "jsonError"}

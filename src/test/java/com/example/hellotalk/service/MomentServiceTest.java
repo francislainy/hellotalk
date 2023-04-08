@@ -19,6 +19,7 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
+import static com.example.hellotalk.Constants.USER_ID;
 import static com.example.hellotalk.exception.AppExceptionHandler.*;
 import static com.example.hellotalk.model.moment.Moment.buildMomentFromEntity;
 import static java.util.UUID.randomUUID;
@@ -41,16 +42,20 @@ class MomentServiceTest {
     ZonedDateTime now = ZonedDateTime.parse(ZonedDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")));
     ZonedDateTime creationDate = now;
     ZonedDateTime lastUpdatedDate = now;
-    UUID userCreatorId = UUID.randomUUID();
+    UUID userCreatorId = USER_ID;
 
     @Test
     void testGetMoment() {
 
-        UUID momentId = UUID.randomUUID();
+        UUID momentId = randomUUID();
+        UUID userId = randomUUID();
         MomentEntity momentEntity = getMomentEntity(momentId);
 
         when(momentRepository.findById(any())).thenReturn(Optional.of(momentEntity));
-        when(likeRepository.countLikesByMomentId(any())).thenReturn(10);
+        when(likeRepository.countLikesByMomentId(any())).thenReturn(1);
+
+        LikeEntity likeEntity = LikeEntity.builder().userEntity(UserEntity.builder().id(userId).build()).momentEntity(momentEntity).build();
+        when(likeRepository.findAllByMomentEntity_Id(any())).thenReturn(List.of(likeEntity));
 
         Set<String> tagsSet = new HashSet<>();
         tagsSet.add("anyTag1");
@@ -62,7 +67,8 @@ class MomentServiceTest {
                 () -> assertEquals(momentId, moment.getId()),
                 () -> assertEquals("anyText", moment.getText()),
                 () -> assertEquals(userCreatorId, moment.getUserCreatorId()),
-                () -> assertEquals(10, moment.getNumLikes()),
+                () -> assertEquals(1, moment.getNumLikes()),
+                () -> assertTrue(moment.getLikedByIds().contains(userId)),
                 () -> assertEquals(String.valueOf(creationDate), String.valueOf(moment.getCreationDate())),
                 () -> assertEquals(String.valueOf(lastUpdatedDate), String.valueOf(moment.getLastUpdatedDate())),
                 () -> assertEquals(tagsSet, moment.getTags()));
@@ -73,9 +79,13 @@ class MomentServiceTest {
 
         UUID momentId = UUID.randomUUID();
         MomentEntity momentEntity = getMomentEntity(momentId);
+        UUID userId = randomUUID();
 
         when(momentRepository.findAll()).thenReturn(List.of(momentEntity));
-        when(likeRepository.countLikesByMomentId(any())).thenReturn(10);
+        when(likeRepository.countLikesByMomentId(any())).thenReturn(1);
+
+        LikeEntity likeEntity = LikeEntity.builder().userEntity(UserEntity.builder().id(userId).build()).momentEntity(momentEntity).build();
+        when(likeRepository.findAllByMomentEntity_Id(any())).thenReturn(List.of(likeEntity));
 
         Set<String> tagsSet = new HashSet<>();
         tagsSet.add("anyTag1");
@@ -91,7 +101,8 @@ class MomentServiceTest {
                 () -> assertEquals(momentId, moment.getId()),
                 () -> assertEquals("anyText", moment.getText()),
                 () -> assertEquals(userCreatorId, moment.getUserCreatorId()),
-                () -> assertEquals(10, moment.getNumLikes()),
+                () -> assertEquals(1, moment.getNumLikes()),
+                () -> assertTrue(moment.getLikedByIds().contains(userId)),
                 () -> assertEquals(String.valueOf(creationDate), String.valueOf(moment.getCreationDate())),
                 () -> assertEquals(String.valueOf(lastUpdatedDate), String.valueOf(moment.getLastUpdatedDate())),
                 () -> assertEquals(tagsSet, moment.getTags()));
@@ -101,12 +112,16 @@ class MomentServiceTest {
     void testGetAllMomentsForUser_ReturnsOnlyMomentsThatBelongToTheAuthorizedUser() { // todo: refactor this test to check if we need the momentEntityDoesNotBelongToUser variable
 
         UUID momentId = UUID.randomUUID();
+        UUID momentIdDoesNotBelongToUser = UUID.randomUUID();
         MomentEntity momentEntityBelongsToUser = getMomentEntity(momentId);
-        MomentEntity momentEntityDoesNotBelongToUser = getMomentEntity(momentId);
-        momentEntityDoesNotBelongToUser.setUserEntity(UserEntity.builder().id(UUID.randomUUID()).build());
+        MomentEntity momentEntityDoesNotBelongToUser = getMomentEntity(momentIdDoesNotBelongToUser);
+        UUID userId = randomUUID();
+        momentEntityDoesNotBelongToUser.setUserEntity(UserEntity.builder().id(userId).build());
 
-        when(momentRepository.findAllByUserEntity_IdContains((userCreatorId))).thenReturn(List.of(momentEntityBelongsToUser));
-        when(likeRepository.countLikesByMomentId(any())).thenReturn(10);
+        when(momentRepository.findAllByUserEntity_IdContains((any()))).thenReturn(List.of(momentEntityBelongsToUser));
+        when(likeRepository.countLikesByMomentId(any())).thenReturn(1);
+        LikeEntity likeEntity = LikeEntity.builder().userEntity(UserEntity.builder().id(userId).build()).momentEntity(momentEntityDoesNotBelongToUser).build();
+        when(likeRepository.findAllByMomentEntity_Id(any())).thenReturn(List.of(likeEntity));
 
         Set<String> tagsSet = new HashSet<>();
         tagsSet.add("anyTag1");
@@ -116,12 +131,12 @@ class MomentServiceTest {
         assertEquals(1, allMoments.size());
 
         Moment moment = allMoments.get(0);
-
         assertAll(
                 () -> assertEquals(userCreatorId, moment.getUserCreatorId()),
                 () -> assertEquals(momentId, moment.getId()),
                 () -> assertEquals("anyText", moment.getText()),
-                () -> assertEquals(10, moment.getNumLikes()),
+                () -> assertEquals(1, moment.getNumLikes()),
+                () -> assertTrue(moment.getLikedByIds().contains(userId)),
                 () -> assertEquals(userCreatorId, moment.getUserCreatorId()),
                 () -> assertEquals(String.valueOf(creationDate), String.valueOf(moment.getCreationDate())),
                 () -> assertEquals(String.valueOf(lastUpdatedDate), String.valueOf(moment.getLastUpdatedDate())),
@@ -155,6 +170,7 @@ class MomentServiceTest {
                 () -> assertEquals("anyText", moment.getText()),
                 () -> assertEquals(userCreatorId, moment.getUserCreatorId()),
                 () -> assertEquals(0, moment.getNumLikes()),
+                () -> assertTrue(moment.getLikedByIds().isEmpty()),
                 () -> assertEquals(String.valueOf(creationDate), String.valueOf(moment.getCreationDate())),
                 () -> assertEquals(String.valueOf(lastUpdatedDate), String.valueOf(moment.getLastUpdatedDate())),
                 () -> assertEquals(tagsSet, moment.getTags()));
@@ -174,6 +190,7 @@ class MomentServiceTest {
 
         UUID momentId = UUID.randomUUID();
         MomentEntity momentEntity = getMomentEntity(momentId);
+        UUID userId = randomUUID();
 
         Set<String> tagsSet = new HashSet<>();
         tagsSet.add("updatedTag1");
@@ -185,22 +202,26 @@ class MomentServiceTest {
                 .userEntity(UserEntity.builder().id(userCreatorId).build())
                 .creationDate(creationDate)
                 .lastUpdatedDate(lastUpdatedDate)
-                .numLikes(10)
+                .numLikes(1)
                 .tags(tagsSet)
                 .build();
 
         when(momentRepository.findById(any())).thenReturn(Optional.of(momentEntity));
         when(momentRepository.save(any())).thenReturn(momentEntityUpdated);
+        when(likeRepository.countLikesByMomentId(any())).thenReturn(1);
+        LikeEntity likeEntity = LikeEntity.builder().userEntity(UserEntity.builder().id(userId).build()).momentEntity(momentEntity).build();
+        when(likeRepository.findAllByMomentEntity_Id(any())).thenReturn(List.of(likeEntity));
 
         Moment moment = buildMomentFromEntity(momentEntity);
-        moment = momentService.updateMoment(momentId, moment, String.valueOf(userCreatorId));
+        moment = momentService.updateMoment(momentId, moment);
 
         Moment finalMoment = moment;
         assertAll(
                 () -> assertEquals(momentId, finalMoment.getId()),
                 () -> assertEquals("anyUpdatedText", finalMoment.getText()),
                 () -> assertEquals(userCreatorId, finalMoment.getUserCreatorId()),
-                () -> assertEquals(10, finalMoment.getNumLikes()),
+                () -> assertEquals(1, finalMoment.getNumLikes()),
+                () -> assertTrue(finalMoment.getLikedByIds().contains(userId)),
                 () -> assertEquals(String.valueOf(creationDate), String.valueOf(finalMoment.getCreationDate())),
                 () -> assertEquals(String.valueOf(lastUpdatedDate), String.valueOf(finalMoment.getLastUpdatedDate())),
                 () -> assertEquals(tagsSet, finalMoment.getTags()));
@@ -212,7 +233,7 @@ class MomentServiceTest {
         UUID momentId = randomUUID();
         Moment moment = buildMomentFromEntity(getMomentEntity(momentId));
         MomentNotFoundException exception =
-                assertThrows(MomentNotFoundException.class, () -> momentService.updateMoment(momentId, moment, String.valueOf(randomUUID())));
+                assertThrows(MomentNotFoundException.class, () -> momentService.updateMoment(momentId, moment));
 
         assertEquals(MOMENT_NOT_FOUND_EXCEPTION, exception.getMessage());
     }
@@ -222,9 +243,13 @@ class MomentServiceTest {
 
         UUID momentId = randomUUID();
         Moment moment = buildMomentFromEntity(getMomentEntity(momentId));
-        when(momentRepository.findById(any())).thenReturn(Optional.of(getMomentEntity(momentId)));
+
+        MomentEntity momentEntity = getMomentEntity(momentId);
+        momentEntity.setUserEntity(UserEntity.builder().id(randomUUID()).build());
+
+        when(momentRepository.findById(any())).thenReturn(Optional.of(momentEntity));
         EntityDoesNotBelongToUserException exception =
-                assertThrows(EntityDoesNotBelongToUserException.class, () -> momentService.updateMoment(momentId, moment, String.valueOf(randomUUID())));
+                assertThrows(EntityDoesNotBelongToUserException.class, () -> momentService.updateMoment(momentId, moment));
 
         assertEquals(ENTITY_DOES_NOT_BELONG_TO_USER_EXCEPTION, exception.getMessage());
     }
@@ -240,7 +265,7 @@ class MomentServiceTest {
         return MomentEntity.builder()
                 .id(momentId)
                 .text("anyText")
-                .userEntity(UserEntity.builder().id(userCreatorId).build())
+                .userEntity(UserEntity.builder().id(USER_ID).build())
                 .creationDate(creationDate)
                 .lastUpdatedDate(lastUpdatedDate)
                 .numLikes(10)

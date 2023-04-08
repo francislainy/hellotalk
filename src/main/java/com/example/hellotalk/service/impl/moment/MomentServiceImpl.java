@@ -9,6 +9,7 @@ import com.example.hellotalk.model.moment.Moment;
 import com.example.hellotalk.repository.LikeRepository;
 import com.example.hellotalk.repository.moment.MomentRepository;
 import com.example.hellotalk.service.moment.MomentService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.ZoneOffset;
@@ -22,17 +23,12 @@ import static com.example.hellotalk.exception.AppExceptionHandler.ENTITY_DOES_NO
 import static com.example.hellotalk.exception.AppExceptionHandler.MOMENT_NOT_FOUND_EXCEPTION;
 import static com.example.hellotalk.model.moment.Moment.buildMomentFromEntity;
 
+@RequiredArgsConstructor
 @Service
 public class MomentServiceImpl implements MomentService {
 
     private final MomentRepository momentRepository;
     private final LikeRepository likeRepository;
-
-    public MomentServiceImpl(MomentRepository momentRepository, LikeRepository likeRepository) {
-        this.momentRepository = momentRepository;
-        this.likeRepository = likeRepository;
-    }
-
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
 
     @Override

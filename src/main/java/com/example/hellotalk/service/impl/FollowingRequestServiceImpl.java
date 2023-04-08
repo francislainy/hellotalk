@@ -8,6 +8,7 @@ import com.example.hellotalk.model.FollowingRequest;
 import com.example.hellotalk.repository.FollowingRequestRepository;
 import com.example.hellotalk.repository.UserRepository;
 import com.example.hellotalk.service.FollowingRequestService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -18,16 +19,12 @@ import java.util.UUID;
 import static com.example.hellotalk.exception.AppExceptionHandler.*;
 import static com.example.hellotalk.model.FollowingRequest.buildFollowingRequestFromEntity;
 
+@RequiredArgsConstructor
 @Service
 public class FollowingRequestServiceImpl implements FollowingRequestService {
 
     final UserRepository userRepository;
     final FollowingRequestRepository followingRequestRepository;
-
-    public FollowingRequestServiceImpl(UserRepository userRepository, FollowingRequestRepository followingRequestRepository) {
-        this.userRepository = userRepository;
-        this.followingRequestRepository = followingRequestRepository;
-    }
 
     @Override
     public FollowingRequest getFollowingRequest(UUID followingRequestId) {

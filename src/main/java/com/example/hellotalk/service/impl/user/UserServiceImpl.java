@@ -13,6 +13,7 @@ import com.example.hellotalk.repository.LikeRepository;
 import com.example.hellotalk.repository.UserRepository;
 import com.example.hellotalk.repository.moment.MomentRepository;
 import com.example.hellotalk.service.user.UserService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -23,6 +24,7 @@ import static com.example.hellotalk.exception.AppExceptionHandler.*;
 import static com.example.hellotalk.model.Hometown.buildHometownFromEntity;
 import static com.example.hellotalk.model.user.User.buildUserFromEntity;
 
+@RequiredArgsConstructor
 @Service
 public class UserServiceImpl implements UserService {
 
@@ -31,14 +33,6 @@ public class UserServiceImpl implements UserService {
     final HometownRepository hometownRepository;
     final LikeRepository likeRepository;
     final MomentRepository momentRepository;
-
-    public UserServiceImpl(UserRepository userRepository, HobbyAndInterestRepository hobbyAndInterestRepository, HometownRepository hometownRepository, LikeRepository likeRepository, MomentRepository momentRepository) {
-        this.userRepository = userRepository;
-        this.hobbyAndInterestRepository = hobbyAndInterestRepository;
-        this.hometownRepository = hometownRepository;
-        this.likeRepository = likeRepository;
-        this.momentRepository = momentRepository;
-    }
 
     @Override
     public User getUser(UUID userId) {

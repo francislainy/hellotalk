@@ -112,15 +112,15 @@ class PactProviderIT extends BasePostgresConfig {
     @State("A request to like a moment")
     Map<String, Object> likeMoment() {
         Map<String, Object> map = new HashMap<>();
-        map.put("userId", "ca3569ee-cb62-4f45-b1c2-199028ba5562");
-        map.put("momentId", "e1f6bea6-4684-403e-9c41-8704fb0600c0");
+        map.put("userId", USER_ID);
+        map.put("momentId", "b3f6bea6-4684-403e-9c41-8704fb0600c0");
         return map;
     }
 
     @State("A request to remove a like for a moment")
     Map<String, Object> unlikeMoment() {
         Map<String, Object> map = new HashMap<>();
-        map.put("userId", "ca3569ee-cb62-4f45-b1c2-199028ba5562");
+        map.put("userId", USER_ID);
         map.put("momentId", "c3f6bea6-4684-403e-9c41-8704fb0600c0");
         return map;
     }

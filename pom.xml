@@ -29,6 +29,7 @@
         <pact.version>4.3.15</pact.version>
         <pact.plugin.version>4.0.10</pact.plugin.version>
         <http.client.version>5.2</http.client.version>
+        <cucumber.version>7.11.1</cucumber.version>
         <spring-restdocs-mockmvc.version>2.0.5.RELEASE</spring-restdocs-mockmvc.version>
         <spring-auto-restdocs-core.version>2.0.11</spring-auto-restdocs-core.version>
         <springdoc-openapi-ui.version>1.6.14</springdoc-openapi-ui.version>
@@ -140,6 +141,26 @@
             <artifactId>json-schema-validator</artifactId>
             <version>${rest-assured.version}</version>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.cucumber</groupId>
+            <artifactId>cucumber-java</artifactId>
+            <version>${cucumber.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.cucumber</groupId>
+            <artifactId>cucumber-junit</artifactId>
+            <version>${cucumber.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.cucumber</groupId>
+            <artifactId>cucumber-junit-platform-engine</artifactId>
+            <version>${cucumber.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.cucumber</groupId>
+            <artifactId>cucumber-spring</artifactId>
+            <version>${cucumber.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.restdocs</groupId>

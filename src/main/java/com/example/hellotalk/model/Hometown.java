@@ -24,6 +24,6 @@ public class Hometown {
     private String country;
 
     public static Hometown buildHometownFromEntity(HometownEntity hometownEntity) {
-        return new ModelMapper().map(hometownEntity, Hometown.class);
+        return modelMapper.map(hometownEntity, Hometown.class);
     }
 }

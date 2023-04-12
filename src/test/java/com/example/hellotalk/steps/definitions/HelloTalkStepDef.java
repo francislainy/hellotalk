@@ -1,22 +1,35 @@
 package com.example.hellotalk.steps.definitions;
 
+import com.example.hellotalk.client.RestClient;
+import com.example.hellotalk.config.AppConfigProperties;
+import com.example.hellotalk.dbclient.DBClient;
 import com.example.hellotalk.entity.user.UserEntity;
 import com.example.hellotalk.model.user.User;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.restassured.response.Response;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Arrays;
 import java.util.List;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
-public class HelloTalkStepDef extends BaseClass {
+public class HelloTalkStepDef {
 
     private Response response;
     private final String BASE_PATH = "users/";
 
     private List<UserEntity> userDBList;
+
+    @Autowired
+    private RestClient restClient;
+
+    @Autowired
+    private DBClient dbClient;
+
+    @Autowired
+    private AppConfigProperties appConfigProperties;
 
     @Given("I access the users endpoint")
     public void iAccessTheUsersEndpoint() {

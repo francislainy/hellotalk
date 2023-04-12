@@ -2,7 +2,6 @@ package com.example.hellotalk.config;
 
 import com.example.hellotalk.client.RestClient;
 import com.example.hellotalk.dbclient.DBClient;
-import com.example.hellotalk.utils.ScenarioContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -50,8 +49,4 @@ public class ApiConfig {
         return new DBClient();
     }
 
-    @Bean
-    ScenarioContext scenarioContext(AppConfigProperties env) {
-        return new ScenarioContext(env);
-    }
 }

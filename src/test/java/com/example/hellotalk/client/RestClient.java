@@ -6,21 +6,19 @@ import io.restassured.config.HttpClientConfig;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpHeaders;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.Objects;
 
 @Slf4j
+@Component
+@RequiredArgsConstructor
 public class RestClient {
 
     private final AppConfigProperties appConfigProperties;
-
-    @Autowired
-    public RestClient(AppConfigProperties appConfigProperties) {
-        this.appConfigProperties = appConfigProperties;
-    }
 
     public RequestSpecification buildRequestHeader() {
         return RestAssured.given().header(HttpHeaders.CONTENT_TYPE, ContentType.JSON)

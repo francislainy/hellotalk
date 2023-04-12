@@ -24,11 +24,6 @@ public class ApiConfig {
     }
 
     @Bean
-    AppConfigProperties appConfigProperties() {
-        return new AppConfigProperties();
-    }
-
-    @Bean
     public DataSource dataSource(AppConfigProperties appConfigProperties) {
         SimpleDriverDataSource dataSource = new SimpleDriverDataSource();
         dataSource.setDriver(new org.postgresql.Driver());

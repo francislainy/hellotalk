@@ -1,15 +1,15 @@
 package com.example.hellotalk.utils;
 
-import com.example.hellotalk.config.Environment;
+import com.example.hellotalk.config.AppConfigProperties;
 import lombok.Data;
 
 @Data
 public class ScenarioContext {
 
-    private final Environment environment;
+    private final AppConfigProperties appConfigProperties;
 
-    public ScenarioContext(Environment environment) {
-        this.environment = environment;
+    public ScenarioContext(AppConfigProperties appConfigProperties) {
+        this.appConfigProperties = appConfigProperties;
     }
 
     public void setUpTestData() {

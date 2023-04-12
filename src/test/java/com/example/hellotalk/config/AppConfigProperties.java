@@ -4,7 +4,7 @@ import lombok.Data;
 import org.springframework.beans.factory.annotation.Value;
 
 @Data
-public class Environment {
+public class AppConfigProperties {
 
     @Value("${base.url}")
     private String baseUrl;

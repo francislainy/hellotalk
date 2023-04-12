@@ -1,7 +1,7 @@
 package com.example.hellotalk.steps.definitions;
 
 import com.example.hellotalk.client.RestClient;
-import com.example.hellotalk.config.DBClient;
+import com.example.hellotalk.dbclient.DBClient;
 import com.example.hellotalk.utils.ScenarioContext;
 import org.springframework.beans.factory.annotation.Autowired;
 

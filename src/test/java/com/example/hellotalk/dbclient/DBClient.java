@@ -1,4 +1,4 @@
-package com.example.hellotalk.config;
+package com.example.hellotalk.dbclient;
 
 import com.example.hellotalk.entity.user.UserEntity;
 import lombok.extern.slf4j.Slf4j;

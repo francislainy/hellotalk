@@ -1,6 +1,7 @@
 package com.example.hellotalk.config;
 
 import com.example.hellotalk.client.RestClient;
+import com.example.hellotalk.dbclient.DBClient;
 import com.example.hellotalk.utils.ScenarioContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -12,30 +13,30 @@ import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 import javax.sql.DataSource;
 
 @Configuration
-@PropertySource(value = {"classpath:environments/${env:dev}.properties"})
+@PropertySource(value = {"classpath:properties/${env:dev}.properties"})
 @ComponentScan(basePackages = {"com.example.hellotalk.config", "com.example.hellotalk.steps"})
-public class HelloTalkApiConfig {
+public class ApiConfig {
 
     JdbcTemplate jdbcTemplate;
 
     @Bean
-    RestClient restClient(Environment env) {
-        return new RestClient(env);
+    RestClient restClient(AppConfigProperties appConfigProperties) {
+        return new RestClient(appConfigProperties);
     }
 
     @Bean
-    Environment environment() {
-        return new Environment();
+    AppConfigProperties appConfigProperties() {
+        return new AppConfigProperties();
     }
 
     @Bean
-    public DataSource dataSource(Environment env) {
+    public DataSource dataSource(AppConfigProperties appConfigProperties) {
         SimpleDriverDataSource dataSource = new SimpleDriverDataSource();
         dataSource.setDriver(new org.postgresql.Driver());
-        dataSource.setUrl(env.getDatabaseUrl());
-        dataSource.setUsername(env.getDatabaseUser());
-        dataSource.setPassword(env.getDatabasePassword());
-        dataSource.setSchema(env.getDatabaseSchema());
+        dataSource.setUrl(appConfigProperties.getDatabaseUrl());
+        dataSource.setUsername(appConfigProperties.getDatabaseUser());
+        dataSource.setPassword(appConfigProperties.getDatabasePassword());
+        dataSource.setSchema(appConfigProperties.getDatabaseSchema());
         return dataSource;
     }
 
@@ -50,7 +51,7 @@ public class HelloTalkApiConfig {
     }
 
     @Bean
-    ScenarioContext scenarioContext(Environment env) {
+    ScenarioContext scenarioContext(AppConfigProperties env) {
         return new ScenarioContext(env);
     }
 }

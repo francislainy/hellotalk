@@ -3,9 +3,8 @@ package com.example.hellotalk.dbclient;
 import com.example.hellotalk.entity.user.UserEntity;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
-import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -15,8 +14,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class DBClient {
 
-    @Autowired
-    JdbcTemplate jdbcTemplate;
+    // @Autowired
+    private final NamedParameterJdbcTemplate jdbcTemplate;
 
     public List<UserEntity> getUserDBDataForList() {
         String sql = "SELECT * FROM users";
@@ -28,5 +27,4 @@ public class DBClient {
         }
         return users;
     }
-
 }

@@ -1,7 +1,6 @@
 package com.example.hellotalk.steps.definitions;
 
 import com.example.hellotalk.client.RestClient;
-import com.example.hellotalk.config.AppConfigProperties;
 import com.example.hellotalk.dbclient.DBClient;
 import com.example.hellotalk.entity.user.UserEntity;
 import com.example.hellotalk.model.user.User;
@@ -27,9 +26,6 @@ public class HelloTalkStepDef {
 
     @Autowired
     private DBClient dbClient;
-
-    @Autowired
-    private AppConfigProperties appConfigProperties;
 
     @Given("I access the users endpoint")
     public void iAccessTheUsersEndpoint() {

@@ -18,10 +18,11 @@ public class ApiConfig {
 
     JdbcTemplate jdbcTemplate;
 
-    @Bean
-    RestClient restClient(AppConfigProperties appConfigProperties) {
-        return new RestClient(appConfigProperties);
-    }
+    //todo: temporarily disabling this to enable ApplicationTests to run - 15/04/2023
+    //    @Bean
+    //    RestClient restClient(AppConfigProperties appConfigProperties) {
+    //        return new RestClient(appConfigProperties);
+    //    }
 
     @Bean
     public DataSource dataSource(AppConfigProperties appConfigProperties) {

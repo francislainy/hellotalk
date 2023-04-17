@@ -1,5 +1,5 @@
-#spring:
-#  datasource:
-#    type: com.zaxxer.hikari.HikariDataSource
-#    driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
-#    url: jdbc:tc:postgresql:13.5:///helloTalk
+spring:
+  datasource:
+    type: com.zaxxer.hikari.HikariDataSource
+    driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
+    url: jdbc:tc:postgresql:13.5:///helloTalk

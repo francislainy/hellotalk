@@ -7,6 +7,7 @@ import com.example.hellotalk.exception.EntityDoesNotBelongToUserException;
 import com.example.hellotalk.exception.MomentNotFoundException;
 import com.example.hellotalk.model.moment.Moment;
 import com.example.hellotalk.repository.LikeRepository;
+import com.example.hellotalk.repository.UserRepository;
 import com.example.hellotalk.repository.moment.MomentRepository;
 import com.example.hellotalk.service.impl.moment.MomentServiceImpl;
 import org.junit.jupiter.api.Test;
@@ -35,6 +36,9 @@ class MomentServiceTest {
 
     @Mock
     MomentRepository momentRepository;
+
+    @Mock
+    UserRepository userRepository;
 
     @Mock
     LikeRepository likeRepository;
@@ -72,6 +76,18 @@ class MomentServiceTest {
                 () -> assertEquals(String.valueOf(creationDate), String.valueOf(moment.getCreationDate())),
                 () -> assertEquals(String.valueOf(lastUpdatedDate), String.valueOf(moment.getLastUpdatedDate())),
                 () -> assertEquals(tagsSet, moment.getTags()));
+    }
+
+    @Test
+    void testGetMoment_ThrowsExceptionMomentDoesNotExist() {
+
+        UUID momentId = randomUUID();
+        when(momentRepository.findById(any())).thenReturn(Optional.empty());
+
+        MomentNotFoundException exception =
+                assertThrows(MomentNotFoundException.class, () -> momentService.getMoment(momentId));
+
+        assertEquals(MOMENT_NOT_FOUND_EXCEPTION, exception.getMessage());
     }
 
     @Test
@@ -158,6 +174,8 @@ class MomentServiceTest {
         momentEntity.setNumLikes(0);
 
         when(momentRepository.save(any())).thenReturn(momentEntity);
+        UserEntity userEntity = UserEntity.builder().id(userCreatorId).build();
+        when(userRepository.findById(any())).thenReturn(Optional.ofNullable(userEntity));
 
         Set<String> tagsSet = new HashSet<>();
         tagsSet.add("anyTag1");
@@ -252,6 +270,28 @@ class MomentServiceTest {
                 assertThrows(EntityDoesNotBelongToUserException.class, () -> momentService.updateMoment(momentId, moment));
 
         assertEquals(ENTITY_DOES_NOT_BELONG_TO_USER_EXCEPTION, exception.getMessage());
+    }
+
+    @Test
+    void testDeleteMoment() {
+
+        String json = """
+                {"message": "Moment Deleted"}
+                """;
+
+        UUID momentId = randomUUID();
+        when(momentRepository.findById(any())).thenReturn(Optional.of(getMomentEntity(momentId)));
+        assertEquals(json, assertDoesNotThrow(() -> momentService.deleteMoment(momentId)));
+    }
+
+    @Test
+    void testDeleteMoment_ThrowsExceptionWhenMomentIsNotFound() {
+
+        UUID momentId = randomUUID();
+        MomentNotFoundException exception =
+                assertThrows(MomentNotFoundException.class, () -> momentService.deleteMoment(momentId));
+
+        assertEquals(MOMENT_NOT_FOUND_EXCEPTION, exception.getMessage());
     }
 
     private MomentEntity getMomentEntity(UUID momentId) {

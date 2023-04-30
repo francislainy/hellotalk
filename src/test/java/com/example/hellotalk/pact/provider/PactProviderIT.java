@@ -124,4 +124,11 @@ class PactProviderIT extends BasePostgresConfig {
         map.put("momentId", "c3f6bea6-4684-403e-9c41-8704fb0600c0");
         return map;
     }
+
+    @State("A request to create a comment for a moment")
+    Map<String, Object> createComment() {
+        Map<String, Object> map = new HashMap<>();
+        map.put("momentId", "b3f6bea6-4684-403e-9c41-8704fb0600c0");
+        return map;
+    }
 }

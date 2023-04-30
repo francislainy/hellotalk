@@ -1,0 +1,169 @@
+package com.example.hellotalk.controller;
+
+import com.example.hellotalk.model.comment.Comment;
+import com.example.hellotalk.service.comment.CommentService;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
+import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
+import org.springframework.test.web.servlet.MvcResult;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
+import static com.epages.restdocs.apispec.ResourceDocumentation.resource;
+import static com.example.hellotalk.util.Utils.convertToNewObject;
+import static com.example.hellotalk.util.Utils.jsonStringFromObject;
+import static java.util.UUID.randomUUID;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+@WebMvcTest(controllers = CommentController.class)
+@ExtendWith(MockitoExtension.class)
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+class CommentControllerTest extends BaseTestConfig {
+
+    UUID commentId;
+    UUID userCreatorId;
+    Comment commentRequest;
+    Comment commentResponse;
+    String jsonRequest;
+    String jsonResponse;
+
+    @MockBean
+    CommentService commentService;
+
+    @BeforeAll
+    void initData() {
+        commentId = UUID.fromString("1bfff94a-b70e-4b39-bd2a-be1c0f898589");
+        userCreatorId = UUID.fromString("2cfff94a-b70e-4b39-bd2a-be1c0f898541");
+
+        commentRequest = Comment.builder()
+                .text("anyText")
+                .build();
+
+        jsonRequest = jsonStringFromObject(commentRequest);
+        commentResponse = convertToNewObject(commentRequest, Comment.class);
+        commentResponse.setId(commentId);
+        commentResponse.setUserCreatorId(userCreatorId);
+
+        jsonResponse = jsonStringFromObject(commentResponse);
+    }
+
+    @Test
+    void testGetComment() throws Exception {
+
+        UUID momentId = randomUUID();
+        Comment comment = this.commentResponse;
+        when(commentService.getComment(any())).thenReturn(comment);
+
+        mockMvc.perform(RestDocumentationRequestBuilders.get("/api/v1/ht/moments/{momentId}/comments/{commentId}", momentId, commentId))
+                .andExpect(status().is2xxSuccessful())
+                .andExpect(content().string(jsonResponse))
+                .andDo(document("get-comment",
+                        resource("Get a comment's details")))
+                .andReturn();
+    }
+
+    @Test
+    void testGetAllCommentsForMoment() throws Exception {
+
+        Comment comment = this.commentResponse;
+        when(commentService.getAllCommentsForMoment(any())).thenReturn(List.of(comment));
+        UUID momentId = randomUUID();
+
+        List<Comment> commentList = new ArrayList<>();
+        commentList.add(commentResponse);
+
+        String jsonResponse = jsonStringFromObject(commentList);
+
+        mockMvc.perform(RestDocumentationRequestBuilders.get("/api/v1/ht/moments/{momentId}/comments", momentId))
+                .andExpect(status().is2xxSuccessful())
+                .andExpect(content().json(jsonResponse))
+                .andDo(document("get-comments-for-moment",
+                        resource("Get a list of comments for a moment")))
+                .andReturn();
+    }
+
+    @Test
+    void testCreateComment() throws Exception {
+
+        Comment comment = commentResponse;
+        UUID momentId = randomUUID();
+        when(commentService.createComment(any(), any())).thenReturn(comment);
+
+        mockMvc.perform(RestDocumentationRequestBuilders.post("/api/v1/ht/moments/{momentId}/comments", momentId).content(jsonRequest).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().is2xxSuccessful())
+                .andExpect(content().json(jsonResponse))
+                .andDo(document("create-comment",
+                        resource("Create a comment for a moment")))
+                .andReturn();
+    }
+
+    @Test
+    void testUpdateComment() throws Exception {
+
+        Comment comment = commentResponse;
+        when(commentService.updateComment(any(), any())).thenReturn(comment);
+        UUID momentId = randomUUID();
+
+        MvcResult mvcResult = mockMvc.perform(RestDocumentationRequestBuilders.put("/api/v1/ht/moments/{momentId}/comments/{commentId}", momentId, commentId)
+                .content(jsonRequest)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().is2xxSuccessful())
+                .andExpect(content().json(jsonResponse))
+                .andDo(document("update-comment",
+                        resource("Update a comment's details")))
+                .andReturn();
+    }
+
+    @Test
+    void testDeleteMoment() throws Exception {
+
+        String json = """
+                {"message": "Comment Deleted"}
+                """;
+        Comment comment = commentResponse;
+        UUID momentId = randomUUID();
+        when(commentService.getComment(any())).thenReturn(comment);
+        when(commentService.deleteComment(any())).thenReturn(json);
+
+        mockMvc.perform(RestDocumentationRequestBuilders.delete("/api/v1/ht/moments/{momentId}/comments/{commentId}", momentId, commentId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .param("commentId", String.valueOf(commentId)))
+                .andExpect(status().is2xxSuccessful())
+                .andExpect(content().json(json))
+                .andDo(document("delete-comment",
+                        resource("Delete a comment")))
+                .andReturn();
+    }
+
+    // @Test
+    // void testDeleteMoment_ThrowsExceptionWhenMomentNotFound() throws Exception { //todo: to find out why this gets printed before the delete exception
+    // on swagger - 04/02/2023
+    //
+    // doThrow(new MomentNotFoundException(MOMENT_NOT_FOUND_EXCEPTION)).when(momentService).deleteMoment(any());
+    //
+    // String jsonError = """
+    // {"message": "jsonError"}
+    // """;
+    // jsonError = jsonError.replace("jsonError", MOMENT_NOT_FOUND_EXCEPTION);
+    //
+    // mockMvc.perform(RestDocumentationRequestBuilders.delete("/api/v1/ht/moments/{momentId}", momentId).contentType(MediaType.APPLICATION_JSON))
+    // .andExpect(status().is4xxClientError())
+    // .andExpect(content().json(jsonError))
+    // .andDo(document("delete-moment-throws-exception",
+    // resource("Deleting a moment throws exception when moment does not exist")))
+    // .andReturn();
+    // }
+
+}

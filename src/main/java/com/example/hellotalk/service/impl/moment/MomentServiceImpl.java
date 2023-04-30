@@ -5,8 +5,10 @@ import com.example.hellotalk.entity.user.LikeEntity;
 import com.example.hellotalk.entity.user.UserEntity;
 import com.example.hellotalk.exception.EntityDoesNotBelongToUserException;
 import com.example.hellotalk.exception.MomentNotFoundException;
+import com.example.hellotalk.exception.UserNotFoundException;
 import com.example.hellotalk.model.moment.Moment;
 import com.example.hellotalk.repository.LikeRepository;
+import com.example.hellotalk.repository.UserRepository;
 import com.example.hellotalk.repository.moment.MomentRepository;
 import com.example.hellotalk.service.moment.MomentService;
 import lombok.RequiredArgsConstructor;
@@ -19,8 +21,7 @@ import java.util.*;
 
 import static com.example.hellotalk.Constants.USER_ID;
 import static com.example.hellotalk.entity.moment.MomentEntity.buildMomentEntityFromModel;
-import static com.example.hellotalk.exception.AppExceptionHandler.ENTITY_DOES_NOT_BELONG_TO_USER_EXCEPTION;
-import static com.example.hellotalk.exception.AppExceptionHandler.MOMENT_NOT_FOUND_EXCEPTION;
+import static com.example.hellotalk.exception.AppExceptionHandler.*;
 import static com.example.hellotalk.model.moment.Moment.buildMomentFromEntity;
 
 @RequiredArgsConstructor
@@ -28,6 +29,7 @@ import static com.example.hellotalk.model.moment.Moment.buildMomentFromEntity;
 public class MomentServiceImpl implements MomentService {
 
     private final MomentRepository momentRepository;
+    private final UserRepository userRepository;
     private final LikeRepository likeRepository;
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
 
@@ -69,7 +71,9 @@ public class MomentServiceImpl implements MomentService {
 
     @Override
     public Moment createMoment(Moment moment, String authorization) {
-        UserEntity userEntity = UserEntity.builder().id(parseUUID(authorization)).build();
+
+        UserEntity userEntity = userRepository.findById(parseUUID(authorization))
+                .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND_EXCEPTION));
 
         MomentEntity momentEntity = buildMomentEntityFromModel(moment).toBuilder()
                 .userEntity(userEntity)

@@ -1,6 +1,5 @@
 package com.example.hellotalk.config;
 
-import com.example.hellotalk.client.RestClient;
 import com.example.hellotalk.dbclient.DBClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -18,11 +17,11 @@ public class ApiConfig {
 
     JdbcTemplate jdbcTemplate;
 
-    //todo: temporarily disabling this to enable ApplicationTests to run - 15/04/2023
-    //    @Bean
-    //    RestClient restClient(AppConfigProperties appConfigProperties) {
-    //        return new RestClient(appConfigProperties);
-    //    }
+    // todo: temporarily disabling this to enable ApplicationTests to run - 15/04/2023
+    // @Bean
+    // RestClient restClient(AppConfigProperties appConfigProperties) {
+    // return new RestClient(appConfigProperties);
+    // }
 
     @Bean
     public DataSource dataSource(AppConfigProperties appConfigProperties) {

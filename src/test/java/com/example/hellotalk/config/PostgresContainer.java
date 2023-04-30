@@ -1,4 +1,4 @@
-package com.example.hellotalk.repository;
+package com.example.hellotalk.config;
 
 import org.springframework.boot.test.util.TestPropertyValues;
 import org.springframework.context.ApplicationContextInitializer;

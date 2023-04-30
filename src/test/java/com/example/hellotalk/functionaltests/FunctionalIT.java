@@ -3,7 +3,7 @@ package com.example.hellotalk.functionaltests;
 import com.example.hellotalk.model.HobbyAndInterest;
 import com.example.hellotalk.model.Hometown;
 import com.example.hellotalk.model.user.User;
-import com.example.hellotalk.repository.BasePostgresConfig;
+import com.example.hellotalk.config.BasePostgresConfig;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.restassured.response.Response;

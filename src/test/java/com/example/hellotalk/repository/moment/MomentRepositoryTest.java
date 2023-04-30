@@ -2,7 +2,7 @@ package com.example.hellotalk.repository.moment;
 
 import com.example.hellotalk.entity.moment.MomentEntity;
 import com.example.hellotalk.entity.user.UserEntity;
-import com.example.hellotalk.repository.BasePostgresConfig;
+import com.example.hellotalk.config.BasePostgresConfig;
 import com.example.hellotalk.repository.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

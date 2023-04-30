@@ -1,5 +1,6 @@
 package com.example.hellotalk.repository;
 
+import com.example.hellotalk.config.BasePostgresConfig;
 import com.example.hellotalk.entity.user.FollowingRequestEntity;
 import com.example.hellotalk.entity.user.HobbyAndInterestEntity;
 import com.example.hellotalk.entity.user.HometownEntity;

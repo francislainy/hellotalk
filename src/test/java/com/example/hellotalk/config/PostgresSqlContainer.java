@@ -1,4 +1,4 @@
-package com.example.hellotalk.repository;
+package com.example.hellotalk.config;
 
 import org.testcontainers.containers.PostgreSQLContainer;
 

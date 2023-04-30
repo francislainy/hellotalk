@@ -1,4 +1,4 @@
-package com.example.hellotalk.repository;
+package com.example.hellotalk.config;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.springframework.test.context.ActiveProfiles;

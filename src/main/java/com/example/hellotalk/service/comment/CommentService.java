@@ -11,7 +11,7 @@ public interface CommentService {
 
     List<Comment> getAllCommentsForMoment(UUID momentId);
 
-    Comment createComment(UUID momentId, Comment comment);
+    Comment createComment(UUID momentId, Comment comment, String authorization);
 
     Comment updateComment(UUID commentId, Comment comment);
 

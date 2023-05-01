@@ -23,6 +23,7 @@ import static com.example.hellotalk.Constants.USER_ID;
 import static com.example.hellotalk.entity.moment.MomentEntity.buildMomentEntityFromModel;
 import static com.example.hellotalk.exception.AppExceptionHandler.*;
 import static com.example.hellotalk.model.moment.Moment.buildMomentFromEntity;
+import static com.example.hellotalk.util.Utils.parseUUID;
 
 @RequiredArgsConstructor
 @Service
@@ -144,13 +145,5 @@ public class MomentServiceImpl implements MomentService {
                 likeEntity -> likedByIds.add(likeEntity.getUserEntity().getId()));
 
         momentEntity.setLikedBy(likedByIds);
-    }
-
-    private UUID parseUUID(String uuidStr) {
-        try {
-            return UUID.fromString(uuidStr);
-        } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException("Invalid UUID string: " + uuidStr);
-        }
     }
 }

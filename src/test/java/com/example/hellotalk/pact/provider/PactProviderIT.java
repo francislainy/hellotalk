@@ -21,7 +21,6 @@ import java.util.Map;
 
 import static com.example.hellotalk.Constants.USER_ID;
 import static com.example.hellotalk.utils.Utils.logCurlFromPact;
-import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TEST_METHOD;
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.BEFORE_TEST_METHOD;
 
 /*
@@ -36,8 +35,8 @@ import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.BEFORE_TE
 // @PactBroker(host = BROKER_PACT_URL, consumers = {"MY_CONSUMER"})
 @VerificationReports(value = {"markdown"}, reportDir = "target/pacts")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@Sql(scripts = "classpath:clean-up.sql", executionPhase = BEFORE_TEST_METHOD)
 @Sql(scripts = "classpath:init.sql", executionPhase = BEFORE_TEST_METHOD)
-@Sql(scripts = "classpath:clean-up.sql", executionPhase = AFTER_TEST_METHOD)
 class PactProviderIT extends BasePostgresConfig {
 
     @LocalServerPort

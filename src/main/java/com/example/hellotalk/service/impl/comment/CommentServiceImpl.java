@@ -22,6 +22,7 @@ import java.util.UUID;
 
 import static com.example.hellotalk.exception.AppExceptionHandler.*;
 import static com.example.hellotalk.model.comment.Comment.buildCommentFromEntity;
+import static com.example.hellotalk.util.Utils.parseUUID;
 
 @RequiredArgsConstructor
 @Service
@@ -51,9 +52,9 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public Comment createComment(UUID momentId, Comment comment) {
+    public Comment createComment(UUID momentId, Comment comment, String authorization) {
 
-        UserEntity userEntity = userRepository.findById(comment.getUserCreatorId())
+        UserEntity userEntity = userRepository.findById(parseUUID(authorization))
                 .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND_EXCEPTION));
 
         if (momentRepository.findById(momentId).isPresent()) {

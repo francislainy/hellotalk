@@ -122,7 +122,10 @@ class MomentControllerTest extends BaseTestConfig {
         Moment moment = momentResponse;
         when(momentService.createMoment(any(), any())).thenReturn(moment);
 
-        mockMvc.perform(RestDocumentationRequestBuilders.post("/api/v1/ht/moments/").header("authorization", "anyValidUUID").content(jsonRequest).contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(RestDocumentationRequestBuilders.post("/api/v1/ht/moments/")
+                .header("authorization", "anyValidUUID")
+                .content(jsonRequest)
+                .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(content().json(jsonResponse))
                 .andDo(document("create-moment",

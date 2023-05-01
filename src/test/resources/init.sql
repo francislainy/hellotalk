@@ -1,8 +1,8 @@
--- INSERT INTO hometown(id, city, country)
--- VALUES ('2afff94a-b70e-4b39-bd2a-be1c0f898556', 'anyCity', 'anyCountry');
+INSERT INTO hometown(id, city, country)
+VALUES ('2afff94a-b70e-4b39-bd2a-be1c0f898556', 'anyCity', 'anyCountry');
 
--- INSERT INTO hometown(id, city, country)
--- VALUES ('3bfff94a-b70e-4b39-bd2a-be1c0f898556', 'anyCity', 'anyCountry');
+INSERT INTO hometown(id, city, country)
+VALUES ('3bfff94a-b70e-4b39-bd2a-be1c0f898556', 'anyCity', 'anyCountry');
 
 INSERT INTO users (id, creation_date, dob, gender, handle, name, native_language, occupation, places_to_visit,
                    self_introduction, status, subscription_type, target_language, hometown_id)

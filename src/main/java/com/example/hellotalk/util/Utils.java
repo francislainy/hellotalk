@@ -7,6 +7,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
+import java.util.UUID;
+
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class Utils {
 
@@ -41,4 +43,11 @@ public final class Utils {
         return objectFromJsonString(json, c);
     }
 
+    public static UUID parseUUID(String uuidStr) {
+        try {
+            return UUID.fromString(uuidStr);
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Invalid UUID string: " + uuidStr);
+        }
+    }
 }

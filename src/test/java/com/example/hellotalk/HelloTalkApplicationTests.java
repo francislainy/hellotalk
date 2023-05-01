@@ -8,7 +8,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 class HelloTalkApplicationTests extends BasePostgresConfig {
 
     @Test
-    void contextLoads() {
-    }
+    void contextLoads() {}
 
 }

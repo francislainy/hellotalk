@@ -123,7 +123,7 @@ class CommentServiceTest {
         when(momentRepository.findById(any())).thenReturn(Optional.ofNullable(momentEntity));
         when(userRepository.findById(any())).thenReturn(Optional.ofNullable(userEntity));
 
-        Comment comment = commentService.createComment(momentId, buildCommentFromEntity(commentEntity));
+        Comment comment = commentService.createComment(momentId, buildCommentFromEntity(commentEntity), userCreatorId.toString());
         assertAll(
                 () -> assertEquals(commentId, comment.getId()),
                 () -> assertEquals("anyText", comment.getText()),
@@ -144,7 +144,7 @@ class CommentServiceTest {
         when(momentRepository.findById(any())).thenReturn(Optional.empty());
 
         MomentNotFoundException exception =
-                assertThrows(MomentNotFoundException.class, () -> commentService.createComment(momentId, buildCommentFromEntity(commentEntity)));
+                assertThrows(MomentNotFoundException.class, () -> commentService.createComment(momentId, buildCommentFromEntity(commentEntity), userCreatorId.toString()));
 
         assertEquals(MOMENT_NOT_FOUND_EXCEPTION, exception.getMessage());
     }

@@ -99,9 +99,12 @@ class CommentControllerTest extends BaseTestConfig {
 
         Comment comment = commentResponse;
         UUID momentId = randomUUID();
-        when(commentService.createComment(any(), any())).thenReturn(comment);
+        when(commentService.createComment(any(), any(), any())).thenReturn(comment);
 
-        mockMvc.perform(RestDocumentationRequestBuilders.post("/api/v1/ht/moments/{momentId}/comments", momentId).content(jsonRequest).contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(RestDocumentationRequestBuilders.post("/api/v1/ht/moments/{momentId}/comments", momentId)
+                .header("authorization", "anyValidUUID")
+                .content(jsonRequest)
+                .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(content().json(jsonResponse))
                 .andDo(document("create-comment",

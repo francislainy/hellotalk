@@ -30,8 +30,8 @@ public class CommentController {
     }
 
     @PostMapping({"/{momentId}/comments", "/{momentId}/comments/"})
-    public ResponseEntity<Object> createComment(@PathVariable UUID momentId, @RequestBody Comment comment) {
-        return new ResponseEntity<>(commentService.createComment(momentId, comment), HttpStatus.CREATED);
+    public ResponseEntity<Object> createComment(@PathVariable UUID momentId, @RequestBody Comment comment, @RequestHeader("Authorization") String authorization) {
+        return new ResponseEntity<>(commentService.createComment(momentId, comment, authorization), HttpStatus.CREATED);
     }
 
     @PutMapping({"/{momentId}/comments/{commentId}", "/{momentId}/comments/{commentId}/"})

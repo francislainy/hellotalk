@@ -130,4 +130,27 @@ class PactProviderIT extends BasePostgresConfig {
         map.put("momentId", "b3f6bea6-4684-403e-9c41-8704fb0600c0");
         return map;
     }
+
+    @State("A request to retrieve a comment")
+    Map<String, Object> getComment() {
+        Map<String, Object> map = new HashMap<>();
+        map.put("momentId", "b3f6bea6-4684-403e-9c41-8704fb0600c0");
+        map.put("commentId", "a2f6bea6-4684-403e-9c41-8704fb0600c0");
+        return map;
+    }
+
+    @State("A request to retrieve a list of comments for a moment")
+    Map<String, Object> getCommentsForMoment() {
+        Map<String, Object> map = new HashMap<>();
+        map.put("momentId", "b3f6bea6-4684-403e-9c41-8704fb0600c0");
+        return map;
+    }
+
+    @State("A request to update a comment for a moment")
+    Map<String, Object> updateCommentForMoment() {
+        Map<String, Object> map = new HashMap<>();
+        map.put("momentId", "b3f6bea6-4684-403e-9c41-8704fb0600c0");
+        map.put("commentId", "a2f6bea6-4684-403e-9c41-8704fb0600c0");
+        return map;
+    }
 }

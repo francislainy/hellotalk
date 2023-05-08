@@ -98,7 +98,7 @@ public class MomentServiceImpl implements MomentService {
         }
 
         ZonedDateTime formattedDate = ZonedDateTime.parse(ZonedDateTime.now().format(formatter));
-        UserEntity userEntity = UserEntity.builder().id(moment.getUserCreatorId()).build();
+        UserEntity userEntity = userRepository.findById(momentEntity.getUserEntity().getId()).get();
 
         momentEntity = momentEntity.toBuilder()
                 .text(moment.getText())

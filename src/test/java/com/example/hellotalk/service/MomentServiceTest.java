@@ -5,6 +5,7 @@ import com.example.hellotalk.entity.user.LikeEntity;
 import com.example.hellotalk.entity.user.UserEntity;
 import com.example.hellotalk.exception.EntityDoesNotBelongToUserException;
 import com.example.hellotalk.exception.MomentNotFoundException;
+import com.example.hellotalk.exception.UserNotFoundException;
 import com.example.hellotalk.model.moment.Moment;
 import com.example.hellotalk.repository.LikeRepository;
 import com.example.hellotalk.repository.UserRepository;
@@ -100,7 +101,8 @@ class MomentServiceTest {
         when(momentRepository.findAll()).thenReturn(List.of(momentEntity));
         when(likeRepository.countLikesByMomentId(any())).thenReturn(1);
 
-        LikeEntity likeEntity = LikeEntity.builder().userEntity(UserEntity.builder().id(userId).build()).momentEntity(momentEntity).build();
+        UserEntity userEntity = UserEntity.builder().id(userId).build();
+        LikeEntity likeEntity = LikeEntity.builder().userEntity(userEntity).momentEntity(momentEntity).build();
         when(likeRepository.findAllByMomentEntity_Id(any())).thenReturn(List.of(likeEntity));
 
         Set<String> tagsSet = new HashSet<>();
@@ -111,7 +113,6 @@ class MomentServiceTest {
         assertEquals(1, allMoments.size());
 
         Moment moment = allMoments.get(0);
-
         assertAll(
                 () -> assertEquals(userCreatorId, moment.getUserCreatorId()),
                 () -> assertEquals(momentId, moment.getId()),
@@ -224,10 +225,13 @@ class MomentServiceTest {
                 .tags(tagsSet)
                 .build();
 
+        UserEntity userEntity = UserEntity.builder().id(userId).build();
+        LikeEntity likeEntity = LikeEntity.builder().userEntity(userEntity).momentEntity(momentEntity).build();
+
+        when(userRepository.findById(any())).thenReturn(Optional.ofNullable(userEntity));
         when(momentRepository.findById(any())).thenReturn(Optional.of(momentEntity));
         when(momentRepository.save(any())).thenReturn(momentEntityUpdated);
         when(likeRepository.countLikesByMomentId(any())).thenReturn(1);
-        LikeEntity likeEntity = LikeEntity.builder().userEntity(UserEntity.builder().id(userId).build()).momentEntity(momentEntity).build();
         when(likeRepository.findAllByMomentEntity_Id(any())).thenReturn(List.of(likeEntity));
 
         Moment moment = buildMomentFromEntity(momentEntity);
@@ -254,6 +258,21 @@ class MomentServiceTest {
                 assertThrows(MomentNotFoundException.class, () -> momentService.updateMoment(momentId, moment));
 
         assertEquals(MOMENT_NOT_FOUND_EXCEPTION, exception.getMessage());
+    }
+
+    @Test
+    void testUpdateMomentDetails_ThrowsExceptionWhenDoesNotExist() {
+
+        UUID momentId = randomUUID();
+        Moment moment = buildMomentFromEntity(getMomentEntity(momentId));
+
+        MomentEntity momentEntity = getMomentEntity(momentId);
+
+        when(momentRepository.findById(any())).thenReturn(Optional.of(momentEntity));
+        UserNotFoundException exception =
+                assertThrows(UserNotFoundException.class, () -> momentService.updateMoment(momentId, moment));
+
+        assertEquals(USER_NOT_FOUND_EXCEPTION, exception.getMessage());
     }
 
     @Test

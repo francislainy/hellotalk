@@ -97,8 +97,10 @@ public class MomentServiceImpl implements MomentService {
             throw new EntityDoesNotBelongToUserException(ENTITY_DOES_NOT_BELONG_TO_USER_EXCEPTION);
         }
 
+        UserEntity userEntity = userRepository.findById(momentEntity.getUserEntity().getId())
+                .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND_EXCEPTION));
+
         ZonedDateTime formattedDate = ZonedDateTime.parse(ZonedDateTime.now().format(formatter));
-        UserEntity userEntity = userRepository.findById(momentEntity.getUserEntity().getId()).get();
 
         momentEntity = momentEntity.toBuilder()
                 .text(moment.getText())

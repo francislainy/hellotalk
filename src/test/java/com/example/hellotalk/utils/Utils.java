@@ -61,15 +61,12 @@ public class Utils {
     public static void logCurlFromPact(PactVerificationContext context, HttpRequest request, String baseUri) {
 
         String bodyParam = ((RequestResponseInteraction) context.getInteraction()).getRequest().getBody().valueAsString();
-
         String bodyResponse = ((RequestResponseInteraction) context.getInteraction()).getResponse().getBody().valueAsString();
-
         String method = ((RequestResponseInteraction) context.getInteraction()).getRequest().getMethod();
 
         String url = baseUri + request.getPath();
 
         Header[] headers = request.getHeaders();
-
         String headersString = "";
         for (Header s : headers) {
             headersString = headersString + "--header " + "'" + s.getName() + ": " + s.getValue() + "'" + "\\" + "\n";
@@ -82,8 +79,7 @@ public class Utils {
                 """.formatted(method, url, headersString, bodyParam);
 
 
-        // log.debug(curl + "\n\n " + bodyResponse + "\n ---- \n\n");
-        System.out.println((curl + "\n\n " + bodyResponse + "\n ---- \n\n"));
+         log.debug(curl + "\n\n " + bodyResponse + "\n ---- \n\n");
     }
 
     public static RequestSpecification getMockRequest(Map<String, String> headers) {

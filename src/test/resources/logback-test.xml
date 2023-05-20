@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+    <conversionRule conversionWord="clr" converterClass="org.springframework.boot.logging.logback.ColorConverter"/>
+
+    <appender name="Console" class="ch.qos.logback.core.ConsoleAppender">
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %clr(%-5level) %logger{35} - %msg %n</pattern>
+        </layout>
+    </appender>
+
+    <appender name="File" class="ch.qos.logback.core.FileAppender">
+        <file>logback.log</file>
+        <append>true</append>
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <pattern>%d{HH:mm:ss.SSS} [%-5level] %logger{15} - %msg%n%rEx</pattern>
+        </layout>
+    </appender>
+
+    <logger name="com.example.hellotalk.utils.Utils" level="debug">
+        <appender-ref ref="File"/>
+    </logger>
+
+    <!--todo: check why the logfile is logging the same curl twice 20/05/2023-->
+    <logger name="curl" level="debug">
+        <appender-ref ref="File"/>
+    </logger>
+
+    <logger name="com.example.hellotalk" additivity="false" level="debug">
+        <appender-ref ref="Console"/>
+    </logger>
+
+    <root level="info">
+        <appender-ref ref="Console"/>
+    </root>
+
+</configuration>

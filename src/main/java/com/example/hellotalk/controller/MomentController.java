@@ -29,7 +29,7 @@ public class MomentController {
         return new ResponseEntity<>(momentService.getAllMoments(), HttpStatus.OK);
     }
 
-    @GetMapping("/user")
+    @GetMapping({"/user", "/user/"})
     public ResponseEntity<Object> getAllMomentsForUser(@RequestParam("userId") UUID userId) {
         return new ResponseEntity<>(momentService.getAllMomentsForUser(userId), HttpStatus.OK);
     }
@@ -39,7 +39,7 @@ public class MomentController {
         return new ResponseEntity<>(momentService.createMoment(moment, authorization), HttpStatus.CREATED);
     }
 
-    @PutMapping("/{momentId}")
+    @PutMapping({"/{momentId}", "/{momentId}/"})
     public ResponseEntity<Object> updateMoment(@PathVariable UUID momentId, @RequestBody Moment moment) {
         return new ResponseEntity<>(momentService.updateMoment(momentId, moment), HttpStatus.OK);
     }

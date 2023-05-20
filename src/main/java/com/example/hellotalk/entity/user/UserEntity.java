@@ -5,7 +5,7 @@ import com.example.hellotalk.model.user.User;
 import lombok.*;
 import org.modelmapper.ModelMapper;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.util.Set;
 import java.util.UUID;
 

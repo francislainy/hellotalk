@@ -1,11 +1,12 @@
 package com.example.hellotalk.entity.user;
 
+import com.example.hellotalk.security.AppUserPrincipal;
 import com.example.hellotalk.entity.moment.MomentEntity;
 import com.example.hellotalk.model.user.User;
+import jakarta.persistence.*;
 import lombok.*;
 import org.modelmapper.ModelMapper;
 
-import jakarta.persistence.*;
 import java.util.Set;
 import java.util.UUID;
 
@@ -16,7 +17,7 @@ import java.util.UUID;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserEntity {
+public class UserEntity extends AppUserPrincipal {
 
     private static final ModelMapper modelMapper = new ModelMapper();
 
@@ -24,6 +25,12 @@ public class UserEntity {
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id")
     private UUID id;
+
+    @Column(name = "username")
+    private String username;
+
+    @Column(name = "password")
+    private String password;
 
     @Column(name = "name")
     private String name;
@@ -35,7 +42,7 @@ public class UserEntity {
     private String gender;
 
     @Column(name = "creation_date")
-    private String creationDate; // timestamp
+    private String creationDate; // todo: timestamp - 21/05/2023
 
     @Column(name = "handle")
     private String handle;

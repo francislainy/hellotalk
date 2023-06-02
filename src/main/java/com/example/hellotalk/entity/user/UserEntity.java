@@ -1,6 +1,5 @@
 package com.example.hellotalk.entity.user;
 
-import com.example.hellotalk.security.AppUserPrincipal;
 import com.example.hellotalk.entity.moment.MomentEntity;
 import com.example.hellotalk.model.user.User;
 import jakarta.persistence.*;
@@ -17,7 +16,7 @@ import java.util.UUID;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserEntity extends AppUserPrincipal {
+public class UserEntity {
 
     private static final ModelMapper modelMapper = new ModelMapper();
 

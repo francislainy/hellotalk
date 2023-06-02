@@ -3,14 +3,16 @@ package com.example.hellotalk.service.impl.comment;
 import com.example.hellotalk.entity.comment.CommentEntity;
 import com.example.hellotalk.entity.user.UserEntity;
 import com.example.hellotalk.exception.CommentNotFoundException;
+import com.example.hellotalk.exception.EntityDoesNotBelongToUserException;
 import com.example.hellotalk.exception.MomentNotFoundException;
-import com.example.hellotalk.exception.UserNotFoundException;
 import com.example.hellotalk.model.comment.Comment;
 import com.example.hellotalk.repository.UserRepository;
 import com.example.hellotalk.repository.comment.CommentRepository;
 import com.example.hellotalk.repository.moment.MomentRepository;
 import com.example.hellotalk.service.comment.CommentService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.ZoneOffset;
@@ -22,7 +24,6 @@ import java.util.UUID;
 
 import static com.example.hellotalk.exception.AppExceptionHandler.*;
 import static com.example.hellotalk.model.comment.Comment.buildCommentFromEntity;
-import static com.example.hellotalk.util.Utils.parseUUID;
 
 @RequiredArgsConstructor
 @Service
@@ -52,10 +53,11 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public Comment createComment(UUID momentId, Comment comment, String authorization) {
+    public Comment createComment(UUID momentId, Comment comment) {
 
-        UserEntity userEntity = userRepository.findById(parseUUID(authorization))
-                .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND_EXCEPTION));
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        UserEntity userEntity = userRepository.findByUsername(username);
 
         if (momentRepository.findById(momentId).isPresent()) {
 
@@ -73,11 +75,18 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public Comment updateComment(UUID commentId, Comment comment) {
 
+        ZonedDateTime formattedDate = ZonedDateTime.parse(ZonedDateTime.now().format(formatter));
+
         CommentEntity commentEntity = commentRepository.findById(commentId)
                 .orElseThrow(() -> new CommentNotFoundException(COMMENT_NOT_FOUND_EXCEPTION));
 
-        ZonedDateTime formattedDate = ZonedDateTime.parse(ZonedDateTime.now().format(formatter));
-        UserEntity userEntity = UserEntity.builder().id(comment.getUserCreatorId()).build();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        UserEntity userEntity = userRepository.findByUsername(username);
+
+        if (!username.equals(commentEntity.getUserEntity().getUsername())) {
+            throw new EntityDoesNotBelongToUserException(ENTITY_DOES_NOT_BELONG_TO_USER_EXCEPTION);
+        }
 
         commentEntity = commentEntity.toBuilder()
                 .text(comment.getText())
@@ -99,8 +108,18 @@ public class CommentServiceImpl implements CommentService {
                 """;
 
         if (optionalCommentEntity.isPresent()) {
-            commentRepository.deleteById(commentId);
-            return json;
+
+            CommentEntity commentEntity = optionalCommentEntity.get();
+
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String username = authentication.getName();
+
+            if (!username.equals(commentEntity.getUserEntity().getUsername())) {
+                throw new EntityDoesNotBelongToUserException(ENTITY_DOES_NOT_BELONG_TO_USER_EXCEPTION);
+            } else {
+                commentRepository.deleteById(commentId);
+                return json;
+            }
         } else {
             throw new CommentNotFoundException(COMMENT_NOT_FOUND_EXCEPTION);
         }

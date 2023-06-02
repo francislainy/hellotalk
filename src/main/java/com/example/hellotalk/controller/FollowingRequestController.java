@@ -2,6 +2,7 @@ package com.example.hellotalk.controller;
 
 import com.example.hellotalk.model.FollowingRequest;
 import com.example.hellotalk.service.FollowingRequestService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,13 +12,10 @@ import java.util.UUID;
 @CrossOrigin
 @RestController
 @RequestMapping("/api/v1/ht/follow")
+@RequiredArgsConstructor
 public class FollowingRequestController {
 
-    final FollowingRequestService followingRequestService;
-
-    public FollowingRequestController(FollowingRequestService followingRequestService) {
-        this.followingRequestService = followingRequestService;
-    }
+    private final FollowingRequestService followingRequestService;
 
     @GetMapping({"/{followingRequestId}", "/{followingRequestId}/"})
     public ResponseEntity<Object> getFollowingRequest(@PathVariable UUID followingRequestId) {

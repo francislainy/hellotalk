@@ -14,7 +14,7 @@ public interface MomentService {
 
     List<Moment> getAllMomentsForUser(UUID userId);
 
-    Moment createMoment(Moment moment, String authorization);
+    Moment createMoment(Moment moment);
 
     Moment updateMoment(UUID momentId, Moment moment);
 

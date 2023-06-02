@@ -4,6 +4,7 @@ import com.example.hellotalk.entity.comment.CommentEntity;
 import com.example.hellotalk.entity.moment.MomentEntity;
 import com.example.hellotalk.entity.user.UserEntity;
 import com.example.hellotalk.exception.CommentNotFoundException;
+import com.example.hellotalk.exception.EntityDoesNotBelongToUserException;
 import com.example.hellotalk.exception.MomentNotFoundException;
 import com.example.hellotalk.model.comment.Comment;
 import com.example.hellotalk.repository.UserRepository;
@@ -23,9 +24,9 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static com.example.hellotalk.Constants.USER_ID;
-import static com.example.hellotalk.exception.AppExceptionHandler.COMMENT_NOT_FOUND_EXCEPTION;
-import static com.example.hellotalk.exception.AppExceptionHandler.MOMENT_NOT_FOUND_EXCEPTION;
+import static com.example.hellotalk.exception.AppExceptionHandler.*;
 import static com.example.hellotalk.model.comment.Comment.buildCommentFromEntity;
+import static com.example.hellotalk.service.MomentServiceTest.setupAuthenticatedUser;
 import static java.util.UUID.randomUUID;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -49,22 +50,23 @@ class CommentServiceTest {
     ZonedDateTime now = ZonedDateTime.parse(ZonedDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")));
     ZonedDateTime creationDate = now;
     ZonedDateTime lastUpdatedDate = now;
-    UUID userCreatorId = USER_ID;
 
     @Test
     void testGetComment() {
 
         UUID commentId = randomUUID();
+        UUID userId = randomUUID();
+        UserEntity userEntity = UserEntity.builder().id(userId).build();
         CommentEntity commentEntity = getCommentEntity(commentId);
+        commentEntity.setUserEntity(userEntity);
 
         when(commentRepository.findById(any())).thenReturn(Optional.of(commentEntity));
 
         Comment comment = commentService.getComment(commentId);
-
         assertAll(
                 () -> assertEquals(commentId, comment.getId()),
                 () -> assertEquals("anyText", comment.getText()),
-                () -> assertEquals(userCreatorId, comment.getUserCreatorId()),
+                () -> assertEquals(userId, comment.getUserCreatorId()),
                 () -> assertEquals(String.valueOf(creationDate), String.valueOf(comment.getCreationDate())));
     }
 
@@ -85,7 +87,11 @@ class CommentServiceTest {
 
         UUID commentId = randomUUID();
         UUID momentId = randomUUID();
+        UUID userId = randomUUID();
         CommentEntity commentEntity = getCommentEntity(commentId);
+
+        UserEntity userEntity = UserEntity.builder().id(userId).build();
+        commentEntity.setUserEntity(userEntity);
 
         when(commentRepository.findAllByMomentEntity_IdContains(any())).thenReturn(List.of(commentEntity));
 
@@ -93,12 +99,10 @@ class CommentServiceTest {
         assertEquals(1, allComments.size());
 
         Comment comment = allComments.get(0);
-
         assertAll(
-                () -> assertEquals(userCreatorId, comment.getUserCreatorId()),
                 () -> assertEquals(commentId, comment.getId()),
                 () -> assertEquals("anyText", comment.getText()),
-                () -> assertEquals(userCreatorId, comment.getUserCreatorId()),
+                () -> assertEquals(userId, comment.getUserCreatorId()),
                 () -> assertEquals(String.valueOf(creationDate), String.valueOf(comment.getCreationDate())),
                 () -> assertEquals(String.valueOf(lastUpdatedDate), String.valueOf(comment.getLastUpdatedDate())));
     }
@@ -113,21 +117,24 @@ class CommentServiceTest {
     @Test
     void testCreateComment() {
 
+        setupAuthenticatedUser();
+
         UUID commentId = randomUUID();
         UUID momentId = randomUUID();
+        UUID userId = randomUUID();
+        UserEntity userEntity = UserEntity.builder().id(userId).build();
         CommentEntity commentEntity = getCommentEntity(commentId);
-        MomentEntity momentEntity = MomentEntity.builder().id(momentId).build();
-        UserEntity userEntity = UserEntity.builder().id(userCreatorId).build();
+        commentEntity.setUserEntity(userEntity);
+        MomentEntity momentEntity = MomentEntity.builder().id(momentId).userEntity(userEntity).build();
 
         when(commentRepository.save(any())).thenReturn(commentEntity);
         when(momentRepository.findById(any())).thenReturn(Optional.ofNullable(momentEntity));
-        when(userRepository.findById(any())).thenReturn(Optional.ofNullable(userEntity));
 
-        Comment comment = commentService.createComment(momentId, buildCommentFromEntity(commentEntity), userCreatorId.toString());
+        Comment comment = commentService.createComment(momentId, buildCommentFromEntity(commentEntity));
         assertAll(
                 () -> assertEquals(commentId, comment.getId()),
                 () -> assertEquals("anyText", comment.getText()),
-                () -> assertEquals(userCreatorId, comment.getUserCreatorId()),
+                () -> assertEquals(userId, comment.getUserCreatorId()),
                 () -> assertEquals(String.valueOf(creationDate), String.valueOf(comment.getCreationDate())),
                 () -> assertEquals(String.valueOf(lastUpdatedDate), String.valueOf(comment.getLastUpdatedDate())));
     }
@@ -135,16 +142,18 @@ class CommentServiceTest {
     @Test
     void testCreateComment_ThrowsExceptionMomentDoesNotExist() {
 
+        setupAuthenticatedUser();
+
         UUID commentId = randomUUID();
         UUID momentId = randomUUID();
+        UUID userId = randomUUID();
+        UserEntity userEntity = UserEntity.builder().id(userId).build();
         CommentEntity commentEntity = getCommentEntity(commentId);
-
-        Optional<UserEntity> optionalUserEntity = Optional.ofNullable(UserEntity.builder().id(commentEntity.getUserEntity().getId()).build());
-        when(userRepository.findById(any())).thenReturn(optionalUserEntity);
+        commentEntity.setUserEntity(userEntity);
         when(momentRepository.findById(any())).thenReturn(Optional.empty());
 
         MomentNotFoundException exception =
-                assertThrows(MomentNotFoundException.class, () -> commentService.createComment(momentId, buildCommentFromEntity(commentEntity), userCreatorId.toString()));
+                assertThrows(MomentNotFoundException.class, () -> commentService.createComment(momentId, buildCommentFromEntity(commentEntity)));
 
         assertEquals(MOMENT_NOT_FOUND_EXCEPTION, exception.getMessage());
     }
@@ -152,13 +161,19 @@ class CommentServiceTest {
     @Test
     void testUpdateCommentDetails() {
 
+        setupAuthenticatedUser();
+        UUID userId = randomUUID();
+        UserEntity userEntity = UserEntity.builder().id(userId).username("authorizedUser").build();
+        when(userRepository.findByUsername(any())).thenReturn(userEntity);
+
         UUID commentId = randomUUID();
         CommentEntity commentEntity = getCommentEntity(commentId);
+        commentEntity.setUserEntity(userEntity);
 
         CommentEntity commentEntityUpdated = CommentEntity.builder()
                 .id(commentId)
                 .text("anyUpdatedText")
-                .userEntity(UserEntity.builder().id(userCreatorId).build())
+                .userEntity(userEntity)
                 .creationDate(creationDate)
                 .lastUpdatedDate(lastUpdatedDate)
                 .build();
@@ -173,7 +188,7 @@ class CommentServiceTest {
         assertAll(
                 () -> assertEquals(commentId, finalComment.getId()),
                 () -> assertEquals("anyUpdatedText", finalComment.getText()),
-                () -> assertEquals(userCreatorId, finalComment.getUserCreatorId()),
+                () -> assertEquals(userId, finalComment.getUserCreatorId()),
                 () -> assertEquals(String.valueOf(creationDate), String.valueOf(finalComment.getCreationDate())),
                 () -> assertEquals(String.valueOf(lastUpdatedDate), String.valueOf(finalComment.getLastUpdatedDate())));
     }
@@ -190,14 +205,44 @@ class CommentServiceTest {
     }
 
     @Test
+    void testUpdateCommentDetails_ThrowsExceptionWhenUserIsUnauthorized() {
+
+        setupAuthenticatedUser();
+
+        UUID userId = randomUUID();
+        UserEntity userEntity = UserEntity.builder().id(userId).username("unauthorizedUser").build();
+
+        when(userRepository.findByUsername(any())).thenReturn(userEntity);
+
+        UUID commentId = randomUUID();
+        Comment comment = buildCommentFromEntity(getCommentEntity(commentId));
+
+        CommentEntity commentEntity = getCommentEntity(commentId);
+        commentEntity.setUserEntity(userEntity);
+
+        when(commentRepository.findById(any())).thenReturn(Optional.of(commentEntity));
+        EntityDoesNotBelongToUserException exception =
+                assertThrows(EntityDoesNotBelongToUserException.class, () -> commentService.updateComment(commentId, comment));
+
+        assertEquals(ENTITY_DOES_NOT_BELONG_TO_USER_EXCEPTION, exception.getMessage());
+    }
+
+    @Test
     void testDeleteComment() {
+
+        setupAuthenticatedUser();
+        UUID userId = randomUUID();
+        UserEntity userEntity = UserEntity.builder().id(userId).username("authorizedUser").build();
+
+        UUID commentId = randomUUID();
+        CommentEntity commentEntity = getCommentEntity(commentId);
+        commentEntity.setUserEntity(userEntity);
 
         String json = """
                 {"message": "Comment Deleted"}
                 """;
 
-        UUID commentId = randomUUID();
-        when(commentRepository.findById(any())).thenReturn(Optional.of(getCommentEntity(commentId)));
+        when(commentRepository.findById(any())).thenReturn(Optional.of(commentEntity));
         assertEquals(json, assertDoesNotThrow(() -> commentService.deleteComment(commentId)));
     }
 
@@ -211,6 +256,25 @@ class CommentServiceTest {
         assertEquals(COMMENT_NOT_FOUND_EXCEPTION, exception.getMessage());
     }
 
+    @Test
+    void testDeleteComment_ThrowsExceptionWhenCommentDoesNorBelongToUser() {
+
+        setupAuthenticatedUser();
+        UUID userId = randomUUID();
+        UserEntity userEntity = UserEntity.builder().id(userId).username("unauthorizedUser").build();
+
+        UUID commentId = randomUUID();
+        CommentEntity commentEntity = getCommentEntity(commentId);
+        commentEntity.setUserEntity(userEntity);
+        when(commentRepository.findById(any())).thenReturn(Optional.of(commentEntity));
+
+        EntityDoesNotBelongToUserException exception =
+                assertThrows(EntityDoesNotBelongToUserException.class, () -> commentService.deleteComment(commentId));
+
+        assertEquals(ENTITY_DOES_NOT_BELONG_TO_USER_EXCEPTION, exception.getMessage());
+    }
+
+    // Helpers
     private CommentEntity getCommentEntity(UUID momentId) {
 
         ZonedDateTime now = ZonedDateTime.now();
@@ -219,7 +283,6 @@ class CommentServiceTest {
         return CommentEntity.builder()
                 .id(momentId)
                 .text("anyText")
-                .userEntity(UserEntity.builder().id(userCreatorId).build())
                 .creationDate(creationDate)
                 .lastUpdatedDate(lastUpdatedDate)
                 .build();

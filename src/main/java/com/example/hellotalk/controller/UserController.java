@@ -2,6 +2,7 @@ package com.example.hellotalk.controller;
 
 import com.example.hellotalk.model.user.User;
 import com.example.hellotalk.service.user.UserService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,13 +12,10 @@ import java.util.UUID;
 @CrossOrigin
 @RestController
 @RequestMapping("/api/v1/ht/users")
+@RequiredArgsConstructor
 public class UserController {
 
-    final UserService userService;
-
-    public UserController(UserService userService) {
-        this.userService = userService;
-    }
+    private final UserService userService;
 
     @GetMapping({"/{userId}", "/{userId}/"})
     public ResponseEntity<Object> getUser(@PathVariable UUID userId) {

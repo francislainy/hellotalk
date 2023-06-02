@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import static com.example.hellotalk.Constants.USER_ID;
 import static com.example.hellotalk.exception.AppExceptionHandler.*;
 import static com.example.hellotalk.model.comment.Comment.buildCommentFromEntity;
 import static com.example.hellotalk.service.MomentServiceTest.setupAuthenticatedUser;

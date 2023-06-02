@@ -1,11 +1,12 @@
 package com.example.hellotalk.functionaltests;
 
+import com.example.hellotalk.config.BasePostgresConfig;
 import com.example.hellotalk.model.HobbyAndInterest;
 import com.example.hellotalk.model.Hometown;
 import com.example.hellotalk.model.user.User;
-import com.example.hellotalk.config.BasePostgresConfig;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
 import org.junit.jupiter.api.BeforeAll;
@@ -33,21 +34,29 @@ import static org.junit.jupiter.api.Assertions.*;
 class FunctionalIT extends BasePostgresConfig {
 
     @LocalServerPort
-    int port;
+    private int port;
 
-    RequestSpecification rq;
+    private RequestSpecification rq;
+
+    private final String username = "testUsername";
+    private final String password = "testPassword";
+
+    private User user;
 
     @BeforeAll
     void setUp() {
         Map<String, String> headers = new HashMap<>();
         rq = getRequestSpecification().baseUri("http://localhost:" + port)
+                .contentType(ContentType.JSON)
+                .auth().basic(username, password)
                 .headers(headers);
+
+        Response response = createUserResponse(username, password);
+        user = response.as(User.class);
     }
 
     @Test
     void testGetAllUsers() throws JsonProcessingException {
-
-        createUserResponse();
 
         Response response = rq.get("/api/v1/ht/users");
         assertEquals(200, response.getStatusCode());
@@ -81,10 +90,9 @@ class FunctionalIT extends BasePostgresConfig {
     @Test
     void testGetUser() {
 
-        Response response = createUserResponse();
-        UUID userId = response.as(User.class).getId();
+        UUID userId = user.getId();
 
-        response = rq.get("/api/v1/ht/users/" + userId);
+        Response response = rq.get("/api/v1/ht/users/" + userId);
         assertEquals(200, response.getStatusCode());
 
         User user = response.as(User.class);
@@ -111,11 +119,13 @@ class FunctionalIT extends BasePostgresConfig {
     @Test
     void testCreateUser() {
 
-        Response response = createUserResponse();
+        String username = "anyUsername";
+        String password = "anyPassword";
+        Response response = createUserResponse(username, password);
         User user = response.as(User.class);
-
         assertAll(
                 () -> assertNotNull(user.getId()),
+                () -> assertEquals(username, user.getUsername()),
                 () -> assertEquals("anyCreationDate", user.getCreationDate()),
                 () -> assertEquals("anyDob", user.getDob()),
                 () -> assertEquals("anyGender", user.getGender()),
@@ -138,7 +148,7 @@ class FunctionalIT extends BasePostgresConfig {
     @Test
     void testDeleteUser() {
 
-        Response response = createUserResponse();
+        Response response = createUserResponse("anyUsername", "anyPassword");
         UUID userId = response.as(User.class).getId();
 
         response = rq.delete("/api/v1/ht/users/" + userId);
@@ -148,7 +158,7 @@ class FunctionalIT extends BasePostgresConfig {
         assertEquals(404, response.getStatusCode()); // Deleted item no longer found
     }
 
-    private Response createUserResponse() {
+    private Response createUserResponse(String username, String password) {
         Hometown hometownRequest = Hometown.builder().city("anyCity").country("anyCountry").build();
         Hometown hometownResponse = convertToNewObject(hometownRequest, Hometown.class);
         hometownResponse.setId(randomUUID());
@@ -156,7 +166,9 @@ class FunctionalIT extends BasePostgresConfig {
         Set<HobbyAndInterest> hobbyAndInterestsRequest = new HashSet<>();
         hobbyAndInterestsRequest.add(hobbyAndInterestRequest);
 
-        User userRequest = User.builder()
+        User user = User.builder()
+                .username(username)
+                .password(password)
                 .name("anyName")
                 .dob("anyDob")
                 .gender("anyGender")
@@ -173,6 +185,9 @@ class FunctionalIT extends BasePostgresConfig {
                 .hobbyAndInterests(hobbyAndInterestsRequest)
                 .build();
 
-        return rq.body(userRequest).post("/api/v1/ht/users");
+        Response response = rq.body(user).post("/api/v1/ht/users");
+        assertEquals(201, response.getStatusCode());
+
+        return response;
     }
 }

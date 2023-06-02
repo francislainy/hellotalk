@@ -8,8 +8,16 @@ import au.com.dius.pact.provider.junitsupport.State;
 import au.com.dius.pact.provider.junitsupport.VerificationReports;
 import au.com.dius.pact.provider.junitsupport.loader.PactFolder;
 import com.example.hellotalk.config.BasePostgresConfig;
+import com.example.hellotalk.model.HobbyAndInterest;
+import com.example.hellotalk.model.Hometown;
+import com.example.hellotalk.model.user.User;
+import io.restassured.http.ContentType;
+import io.restassured.response.Response;
+import io.restassured.specification.RequestSpecification;
 import org.apache.hc.core5.http.HttpRequest;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestTemplate;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -17,10 +25,16 @@ import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.test.context.jdbc.Sql;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import static com.example.hellotalk.Constants.USER_ID;
+import static com.example.hellotalk.util.Utils.convertToNewObject;
+import static com.example.hellotalk.utils.Utils.getRequestSpecification;
 import static com.example.hellotalk.utils.Utils.logCurlFromPact;
+import static java.util.UUID.randomUUID;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.BEFORE_TEST_METHOD;
 
 /*
@@ -37,16 +51,34 @@ import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.BEFORE_TE
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Sql(scripts = "classpath:clean-up.sql", executionPhase = BEFORE_TEST_METHOD)
 @Sql(scripts = "classpath:init.sql", executionPhase = BEFORE_TEST_METHOD)
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class PactProviderIT extends BasePostgresConfig {
 
     @LocalServerPort
     int port;
 
+    private RequestSpecification rq;
+
+    private final String username = "testUsername";
+    private final String password = "testPassword";
+
+    private User user;
+
+    @BeforeAll
+    void setUp() {
+        Map<String, String> headers = new HashMap<>();
+        rq = getRequestSpecification().baseUri("http://localhost:" + port)
+                .contentType(ContentType.JSON)
+                .auth().basic(username, password)
+                .headers(headers);
+
+        Response response = createUserResponse(username, password);
+        user = response.as(User.class);
+    }
+
     @TestTemplate
     @ExtendWith(PactVerificationInvocationContextProvider.class)
     void pactTestTemplate(PactVerificationContext context, HttpRequest request) {
-
-        request.addHeader("authorization", USER_ID);
 
         logCurlFromPact(context, request, "http://localhost:" + port);
 
@@ -152,5 +184,39 @@ class PactProviderIT extends BasePostgresConfig {
         map.put("momentId", "b3f6bea6-4684-403e-9c41-8704fb0600c0");
         map.put("commentId", "a2f6bea6-4684-403e-9c41-8704fb0600c0");
         return map;
+    }
+
+    // Helpers
+    private Response createUserResponse(String username, String password) {
+        Hometown hometownRequest = Hometown.builder().city("anyCity").country("anyCountry").build();
+        Hometown hometownResponse = convertToNewObject(hometownRequest, Hometown.class);
+        hometownResponse.setId(randomUUID());
+        HobbyAndInterest hobbyAndInterestRequest = HobbyAndInterest.builder().title("anyInterest").build();
+        Set<HobbyAndInterest> hobbyAndInterestsRequest = new HashSet<>();
+        hobbyAndInterestsRequest.add(hobbyAndInterestRequest);
+
+        User user = User.builder()
+                .username(username)
+                .password(password)
+                .name("anyName")
+                .dob("anyDob")
+                .gender("anyGender")
+                .subscriptionType("anySubscriptionType")
+                .creationDate("anyCreationDate")
+                .handle("anyHandle")
+                .status("anyStatus")
+                .nativeLanguage("anyNativeLanguage")
+                .targetLanguage("anyTargetLanguage")
+                .selfIntroduction("anySelfIntroduction")
+                .occupation("anyOccupation")
+                .placesToVisit("anyPlacesToVisit")
+                .hometown(hometownRequest)
+                .hobbyAndInterests(hobbyAndInterestsRequest)
+                .build();
+
+        Response response = rq.body(user).post("/api/v1/ht/users");
+        assertEquals(201, response.getStatusCode());
+
+        return response;
     }
 }

@@ -1,16 +1,14 @@
 package com.example.hellotalk.steps;
 
 import com.example.hellotalk.client.RestClient;
+import com.example.hellotalk.model.user.User;
+import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
-import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
-
-import java.util.HashMap;
-import java.util.Map;
 
 @Data
 @RequiredArgsConstructor
@@ -25,16 +23,18 @@ public class ApiStep {
     @Given("I access the get users endpoint")
     public void iAccessGetUsersEndpoint() {
 
-        Map<String, String> headers = new HashMap<>();
         RequestSpecification rq = restClient.getRequestSpecification()
-                .contentType(ContentType.JSON)
-                .auth().basic(username, password)
-                .headers(headers);
+                .auth().basic(username, password);
         setResponse(rq.get("/api/v1/ht/users/"));
     }
 
     @Then("I get a 200 successful response")
     public void iGetResponse() {
         response.then().statusCode(200);
+    }
+
+    @And("The response has all the expected fields for the get users endpoint")
+    public void responseHasExpectedFieldsForGetUsersEndpoint() {
+        getResponse().as(User[].class);
     }
 }

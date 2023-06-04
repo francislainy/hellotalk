@@ -74,7 +74,7 @@ public class UserEntity {
             inverseJoinColumns = @JoinColumn(name = "hobby_and_interest_id", referencedColumnName = "id"))
     private Set<HobbyAndInterestEntity> hobbyAndInterestEntities;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "hometown_id", referencedColumnName = "id")
     private HometownEntity hometownEntity;
 

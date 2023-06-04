@@ -25,7 +25,7 @@ public class RestClient {
 
     public RequestSpecification getRequestSpecification() {
 
-        int port = Integer.valueOf(System.getProperty("port"));
+        int port = Integer.parseInt(System.getProperty("port"));
 
         /* Enables printing request as curl under the terminal as per https://github.com/dzieciou/curl-logger */
         Options options = Options.builder()

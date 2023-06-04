@@ -37,9 +37,13 @@
 
         <testcontainers.version>1.17.4</testcontainers.version>
 
+        <cucumber.version>7.12.0</cucumber.version>
+        <extent-report.version>1.13.0</extent-report.version>
+
         <curl.logger.version>2.1.1</curl.logger.version>
         <pact.version>4.3.15</pact.version>
         <pact.plugin.version>4.0.10</pact.plugin.version>
+
     </properties>
     <dependencies>
         <dependency>
@@ -90,6 +94,44 @@
             <artifactId>spotless-maven-plugin</artifactId>
             <version>${spotless-plugin.version}</version>
         </dependency>
+
+        <dependency>
+            <groupId>io.cucumber</groupId>
+            <artifactId>cucumber-spring</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>io.cucumber</groupId>
+            <artifactId>cucumber-java</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>io.cucumber</groupId>
+            <artifactId>cucumber-junit-platform-engine</artifactId>
+        </dependency>
+
+
+        <dependency>
+            <groupId>org.junit.platform</groupId>
+            <artifactId>junit-platform-suite</artifactId>
+            <version>1.9.1</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+        </dependency>
+
+
+
+        <!-- https://mvnrepository.com/artifact/tech.grasshopper/extentreports-cucumber7-adapter -->
+<!--        <dependency>-->
+<!--            <groupId>tech.grasshopper</groupId>-->
+<!--            <artifactId>extentreports-cucumber7-adapter</artifactId>-->
+<!--            <version>${extent-report.version}</version>-->
+<!--        </dependency>-->
+
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
@@ -187,6 +229,29 @@
                 <version>${testcontainers.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>io.cucumber</groupId>
+                <artifactId>cucumber-bom</artifactId>
+                <version>${cucumber.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>io.cucumber</groupId>
+                <artifactId>cucumber-jvm</artifactId>
+                <version>${cucumber.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.junit</groupId>
+                <artifactId>junit-bom</artifactId>
+                <version></version>
+                <scope>test</scope>
             </dependency>
 
         </dependencies>

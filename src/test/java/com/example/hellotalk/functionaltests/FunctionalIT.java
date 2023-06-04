@@ -28,7 +28,6 @@ import static org.junit.jupiter.api.Assertions.*;
  * mvn -Dtest="functionaltests.*IT" integration-test
  */
 
-@ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class FunctionalIT extends BasePostgresConfig {
@@ -58,7 +57,12 @@ class FunctionalIT extends BasePostgresConfig {
     @Test
     void testGetAllUsers() throws JsonProcessingException {
 
-        Response response = rq.get("/api/v1/ht/users");
+        Map<String, String> headers = new HashMap<>();
+        rq = getRequestSpecification().baseUri("http://localhost:" + port)
+                .contentType(ContentType.JSON)
+                .auth().basic(username, password)
+                .headers(headers);
+        Response response = rq.get("/api/v1/ht/users/");
         assertEquals(200, response.getStatusCode());
 
         List<User> list = response.jsonPath().get();

@@ -5,13 +5,14 @@ import com.example.hellotalk.entity.user.LikeEntity;
 import com.example.hellotalk.entity.user.UserEntity;
 import com.example.hellotalk.exception.EntityDoesNotBelongToUserException;
 import com.example.hellotalk.exception.MomentNotFoundException;
-import com.example.hellotalk.exception.UserNotFoundException;
 import com.example.hellotalk.model.moment.Moment;
 import com.example.hellotalk.repository.LikeRepository;
 import com.example.hellotalk.repository.UserRepository;
 import com.example.hellotalk.repository.moment.MomentRepository;
 import com.example.hellotalk.service.moment.MomentService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.ZoneOffset;
@@ -19,11 +20,9 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
-import static com.example.hellotalk.Constants.USER_ID;
 import static com.example.hellotalk.entity.moment.MomentEntity.buildMomentEntityFromModel;
 import static com.example.hellotalk.exception.AppExceptionHandler.*;
 import static com.example.hellotalk.model.moment.Moment.buildMomentFromEntity;
-import static com.example.hellotalk.util.Utils.parseUUID;
 
 @RequiredArgsConstructor
 @Service
@@ -71,10 +70,11 @@ public class MomentServiceImpl implements MomentService {
     }
 
     @Override
-    public Moment createMoment(Moment moment, String authorization) {
+    public Moment createMoment(Moment moment) {
 
-        UserEntity userEntity = userRepository.findById(parseUUID(authorization))
-                .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND_EXCEPTION));
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        UserEntity userEntity = userRepository.findByUsername(username);
 
         MomentEntity momentEntity = buildMomentEntityFromModel(moment).toBuilder()
                 .userEntity(userEntity)
@@ -93,12 +93,13 @@ public class MomentServiceImpl implements MomentService {
         MomentEntity momentEntity = momentRepository.findById(momentId)
                 .orElseThrow(() -> new MomentNotFoundException(MOMENT_NOT_FOUND_EXCEPTION));
 
-        if (!momentEntity.getUserEntity().getId().toString().equals(USER_ID.toString())) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        UserEntity userEntity = userRepository.findByUsername(username);
+
+        if (!username.equals(momentEntity.getUserEntity().getUsername())) {
             throw new EntityDoesNotBelongToUserException(ENTITY_DOES_NOT_BELONG_TO_USER_EXCEPTION);
         }
-
-        UserEntity userEntity = userRepository.findById(momentEntity.getUserEntity().getId())
-                .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND_EXCEPTION));
 
         ZonedDateTime formattedDate = ZonedDateTime.parse(ZonedDateTime.now().format(formatter));
 
@@ -125,8 +126,19 @@ public class MomentServiceImpl implements MomentService {
                 """;
 
         if (optionalMomentEntity.isPresent()) {
-            momentRepository.deleteById(momentId);
-            return json;
+
+            MomentEntity momentEntity = optionalMomentEntity.get();
+
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String username = authentication.getName();
+
+            if (!username.equals(momentEntity.getUserEntity().getUsername())) {
+                throw new EntityDoesNotBelongToUserException(ENTITY_DOES_NOT_BELONG_TO_USER_EXCEPTION);
+            } else {
+                momentRepository.deleteById(momentId);
+                return json;
+            }
+
         } else {
             throw new MomentNotFoundException(MOMENT_NOT_FOUND_EXCEPTION);
         }

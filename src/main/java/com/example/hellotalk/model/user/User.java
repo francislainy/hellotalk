@@ -24,6 +24,8 @@ public class User {
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private UUID id;
+    private String username;
+    private String password;
     private String name;
     private String dob;
     private String gender;

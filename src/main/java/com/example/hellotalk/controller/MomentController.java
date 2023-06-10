@@ -2,6 +2,7 @@ package com.example.hellotalk.controller;
 
 import com.example.hellotalk.model.moment.Moment;
 import com.example.hellotalk.service.moment.MomentService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,16 +12,13 @@ import java.util.UUID;
 @CrossOrigin
 @RestController
 @RequestMapping("/api/v1/ht/moments")
+@RequiredArgsConstructor
 public class MomentController {
 
-    final MomentService momentService;
+    private final MomentService momentService;
 
-    public MomentController(MomentService momentService) {
-        this.momentService = momentService;
-    }
-
-    @GetMapping({"{momentId}", "{momentId}/"})
-    public ResponseEntity<Object> getMomentForUser(@PathVariable UUID momentId) {
+    @GetMapping({"/{momentId}", "/{momentId}/"})
+    public ResponseEntity<Object> getMoment(@PathVariable UUID momentId) {
         return new ResponseEntity<>(momentService.getMoment(momentId), HttpStatus.OK);
     }
 
@@ -35,8 +33,8 @@ public class MomentController {
     }
 
     @PostMapping({"", "/"})
-    public ResponseEntity<Object> createMoment(@RequestBody Moment moment, @RequestHeader("Authorization") String authorization) {
-        return new ResponseEntity<>(momentService.createMoment(moment, authorization), HttpStatus.CREATED);
+    public ResponseEntity<Object> createMoment(@RequestBody Moment moment) {
+        return new ResponseEntity<>(momentService.createMoment(moment), HttpStatus.CREATED);
     }
 
     @PutMapping({"/{momentId}", "/{momentId}/"})

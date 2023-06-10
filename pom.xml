@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.0.6</version>
+        <version>3.1.0</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.example</groupId>
@@ -37,14 +37,23 @@
 
         <testcontainers.version>1.17.4</testcontainers.version>
 
+        <cucumber.version>7.12.0</cucumber.version>
+        <extent-report.version>1.13.0</extent-report.version>
+
         <curl.logger.version>2.1.1</curl.logger.version>
         <pact.version>4.3.15</pact.version>
         <pact.plugin.version>4.0.10</pact.plugin.version>
+
+        <junit-platform-suite.version>1.9.1</junit-platform-suite.version>
     </properties>
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -86,6 +95,40 @@
             <artifactId>spotless-maven-plugin</artifactId>
             <version>${spotless-plugin.version}</version>
         </dependency>
+
+        <dependency>
+            <groupId>io.cucumber</groupId>
+            <artifactId>cucumber-spring</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>io.cucumber</groupId>
+            <artifactId>cucumber-java</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>io.cucumber</groupId>
+            <artifactId>cucumber-junit-platform-engine</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>tech.grasshopper</groupId>
+            <artifactId>extentreports-cucumber7-adapter</artifactId>
+            <version>${extent-report.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.junit.platform</groupId>
+            <artifactId>junit-platform-suite</artifactId>
+            <version>${junit-platform-suite.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+        </dependency>
+
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
@@ -183,6 +226,29 @@
                 <version>${testcontainers.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>io.cucumber</groupId>
+                <artifactId>cucumber-bom</artifactId>
+                <version>${cucumber.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>io.cucumber</groupId>
+                <artifactId>cucumber-jvm</artifactId>
+                <version>${cucumber.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.junit</groupId>
+                <artifactId>junit-bom</artifactId>
+                <version></version>
+                <scope>test</scope>
             </dependency>
 
         </dependencies>
@@ -361,6 +427,18 @@
                 <configuration>
                     <testSourceDirectory>src/test/java/com/example/hellotalk</testSourceDirectory>
                     <trimStackTrace>false</trimStackTrace>
+                    <includes>
+                        <include>**/HelloTalkTest*.java</include>
+                    </includes>
+                    <systemPropertyVariables>
+                        <extent.reporter.html.start>true</extent.reporter.html.start>
+                        <extent.reporter.html.out>target/cucumber-reports/HelloTalkTestReport.html
+                        </extent.reporter.html.out>
+                        <extent.reporter.html.config>src/test/resources/reporting/extent-config.xml
+                        </extent.reporter.html.config>
+                        <cucumber.publish.quiet>true</cucumber.publish.quiet>
+                    </systemPropertyVariables>
+                    <testFailureIgnore>true</testFailureIgnore>
                 </configuration>
             </plugin>
             <plugin>

@@ -120,7 +120,7 @@ class MomentControllerTest extends BaseTestConfig {
     void testCreateMoment() throws Exception {
 
         Moment moment = momentResponse;
-        when(momentService.createMoment(any(), any())).thenReturn(moment);
+        when(momentService.createMoment(any())).thenReturn(moment);
 
         mockMvc.perform(RestDocumentationRequestBuilders.post("/api/v1/ht/moments/")
                 .header("authorization", "anyValidUUID")

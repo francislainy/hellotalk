@@ -3,7 +3,7 @@ name: Pact CI
 on:
   push:
     branches:
-      - master
+      - cucumber
   workflow_dispatch:
 
 jobs:

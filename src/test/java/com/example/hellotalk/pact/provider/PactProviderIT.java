@@ -24,10 +24,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.test.context.jdbc.Sql;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
 
 import static com.example.hellotalk.Constants.USER_ID;
 import static com.example.hellotalk.util.Utils.convertToNewObject;
@@ -59,10 +57,8 @@ class PactProviderIT extends BasePostgresConfig {
 
     private RequestSpecification rq;
 
-    private final String username = "testUsername";
-    private final String password = "testPassword";
-
-    private User user;
+    private final String username = "usernamed";
+    private final String password = "passwordd";
 
     @BeforeAll
     void setUp() {
@@ -72,13 +68,16 @@ class PactProviderIT extends BasePostgresConfig {
                 .auth().basic(username, password)
                 .headers(headers);
 
-        Response response = createUserResponse(username, password);
-        user = response.as(User.class);
+        createUserResponse(username, password);
     }
 
     @TestTemplate
     @ExtendWith(PactVerificationInvocationContextProvider.class)
     void pactTestTemplate(PactVerificationContext context, HttpRequest request) {
+
+        String encoded = Base64.getEncoder()
+                .encodeToString((username + ":" + password).getBytes(StandardCharsets.UTF_8));
+        request.addHeader("Authorization", "Basic " + encoded);
 
         logCurlFromPact(context, request, "http://localhost:" + port);
 

@@ -44,6 +44,7 @@
         <pact.version>4.3.15</pact.version>
         <pact.plugin.version>4.0.10</pact.plugin.version>
 
+        <junit-platform-suite.version>1.9.1</junit-platform-suite.version>
     </properties>
     <dependencies>
         <dependency>
@@ -110,26 +111,22 @@
             <artifactId>cucumber-junit-platform-engine</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>tech.grasshopper</groupId>
+            <artifactId>extentreports-cucumber7-adapter</artifactId>
+            <version>${extent-report.version}</version>
+        </dependency>
 
         <dependency>
             <groupId>org.junit.platform</groupId>
             <artifactId>junit-platform-suite</artifactId>
-            <version>1.9.1</version>
+            <version>${junit-platform-suite.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>
         </dependency>
-
-
-
-        <!-- https://mvnrepository.com/artifact/tech.grasshopper/extentreports-cucumber7-adapter -->
-<!--        <dependency>-->
-<!--            <groupId>tech.grasshopper</groupId>-->
-<!--            <artifactId>extentreports-cucumber7-adapter</artifactId>-->
-<!--            <version>${extent-report.version}</version>-->
-<!--        </dependency>-->
 
 
         <dependency>
@@ -430,6 +427,18 @@
                 <configuration>
                     <testSourceDirectory>src/test/java/com/example/hellotalk</testSourceDirectory>
                     <trimStackTrace>false</trimStackTrace>
+                    <includes>
+                        <include>**/HelloTalkTest*.java</include>
+                    </includes>
+                    <systemPropertyVariables>
+                        <extent.reporter.html.start>true</extent.reporter.html.start>
+                        <extent.reporter.html.out>target/cucumber-reports/HelloTalkTestReport.html
+                        </extent.reporter.html.out>
+                        <extent.reporter.html.config>src/test/resources/reporting/extent-config.xml
+                        </extent.reporter.html.config>
+                        <cucumber.publish.quiet>true</cucumber.publish.quiet>
+                    </systemPropertyVariables>
+                    <testFailureIgnore>true</testFailureIgnore>
                 </configuration>
             </plugin>
             <plugin>

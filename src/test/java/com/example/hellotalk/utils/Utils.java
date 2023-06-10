@@ -2,6 +2,7 @@ package com.example.hellotalk.utils;
 
 import au.com.dius.pact.core.model.RequestResponseInteraction;
 import au.com.dius.pact.provider.junit5.PactVerificationContext;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -43,9 +44,9 @@ public class Utils {
                         ObjectMapper om = new ObjectMapper().findAndRegisterModules();
                         om.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
                         om.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+                        om.setSerializationInclusion(JsonInclude.Include.NON_NULL);
                         return om;
                     }
-
                 }));
 
         return given()

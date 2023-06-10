@@ -3,7 +3,7 @@ name: Unit Tests CI
 on:
   push:
     branches:
-      - cucumber
+      - master
   workflow_dispatch:
 
 jobs:

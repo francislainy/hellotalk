@@ -1,6 +1,7 @@
 package com.example.hellotalk.controller;
 
 import com.example.hellotalk.model.comment.Comment;
+import com.example.hellotalk.model.user.UserSmall;
 import com.example.hellotalk.service.comment.CommentService;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -54,7 +55,8 @@ class CommentControllerTest extends BaseTestConfig {
         jsonRequest = jsonStringFromObject(commentRequest);
         commentResponse = convertToNewObject(commentRequest, Comment.class);
         commentResponse.setId(commentId);
-        commentResponse.setUserCreatorId(userCreatorId);
+
+        commentResponse.setUser(UserSmall.builder().id(userCreatorId).build());
 
         jsonResponse = jsonStringFromObject(commentResponse);
     }
@@ -148,24 +150,4 @@ class CommentControllerTest extends BaseTestConfig {
                         resource("Delete a comment")))
                 .andReturn();
     }
-
-    // @Test
-    // void testDeleteMoment_ThrowsExceptionWhenMomentNotFound() throws Exception { //todo: to find out why this gets printed before the delete exception
-    // on swagger - 04/02/2023
-    //
-    // doThrow(new MomentNotFoundException(MOMENT_NOT_FOUND_EXCEPTION)).when(momentService).deleteMoment(any());
-    //
-    // String jsonError = """
-    // {"message": "jsonError"}
-    // """;
-    // jsonError = jsonError.replace("jsonError", MOMENT_NOT_FOUND_EXCEPTION);
-    //
-    // mockMvc.perform(RestDocumentationRequestBuilders.delete("/api/v1/ht/moments/{momentId}", momentId).contentType(MediaType.APPLICATION_JSON))
-    // .andExpect(status().is4xxClientError())
-    // .andExpect(content().json(jsonError))
-    // .andDo(document("delete-moment-throws-exception",
-    // resource("Deleting a moment throws exception when moment does not exist")))
-    // .andReturn();
-    // }
-
 }

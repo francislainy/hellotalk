@@ -55,9 +55,14 @@ class CommentServiceTest {
 
         UUID commentId = randomUUID();
         UUID userId = randomUUID();
-        UserEntity userEntity = UserEntity.builder().id(userId).build();
+        String username = "anyUsername";
+        String name = "anyName";
+        UserEntity userEntity = UserEntity.builder().id(userId).username(username).name(name).build();
+        UUID momentId = randomUUID();
+        MomentEntity momentEntity = MomentEntity.builder().id(momentId).build();
         CommentEntity commentEntity = getCommentEntity(commentId);
         commentEntity.setUserEntity(userEntity);
+        commentEntity.setMomentEntity(momentEntity);
 
         when(commentRepository.findById(any())).thenReturn(Optional.of(commentEntity));
 
@@ -65,7 +70,10 @@ class CommentServiceTest {
         assertAll(
                 () -> assertEquals(commentId, comment.getId()),
                 () -> assertEquals("anyText", comment.getText()),
-                () -> assertEquals(userId, comment.getUserCreatorId()),
+                () -> assertEquals(momentId.toString(), comment.getMomentId().toString()),
+                () -> assertEquals(userId.toString(), comment.getUser().getId().toString()),
+                () -> assertEquals(username, comment.getUser().getUsername()),
+                () -> assertEquals(name, comment.getUser().getName()),
                 () -> assertEquals(String.valueOf(creationDate), String.valueOf(comment.getCreationDate())));
     }
 
@@ -85,12 +93,15 @@ class CommentServiceTest {
     void testGetAllCommentsForMoment() {
 
         UUID commentId = randomUUID();
-        UUID momentId = randomUUID();
         UUID userId = randomUUID();
+        String username = "anyUsername";
+        String name = "anyName";
+        UserEntity userEntity = UserEntity.builder().id(userId).username(username).name(name).build();
+        UUID momentId = randomUUID();
+        MomentEntity momentEntity = MomentEntity.builder().id(momentId).build();
         CommentEntity commentEntity = getCommentEntity(commentId);
-
-        UserEntity userEntity = UserEntity.builder().id(userId).build();
         commentEntity.setUserEntity(userEntity);
+        commentEntity.setMomentEntity(momentEntity);
 
         when(commentRepository.findAllByMomentEntity_IdContains(any())).thenReturn(List.of(commentEntity));
 
@@ -101,7 +112,10 @@ class CommentServiceTest {
         assertAll(
                 () -> assertEquals(commentId, comment.getId()),
                 () -> assertEquals("anyText", comment.getText()),
-                () -> assertEquals(userId, comment.getUserCreatorId()),
+                () -> assertEquals(momentId.toString(), comment.getMomentId().toString()),
+                () -> assertEquals(userId.toString(), comment.getUser().getId().toString()),
+                () -> assertEquals(username, comment.getUser().getUsername()),
+                () -> assertEquals(name, comment.getUser().getName()),
                 () -> assertEquals(String.valueOf(creationDate), String.valueOf(comment.getCreationDate())),
                 () -> assertEquals(String.valueOf(lastUpdatedDate), String.valueOf(comment.getLastUpdatedDate())));
     }
@@ -133,7 +147,7 @@ class CommentServiceTest {
         assertAll(
                 () -> assertEquals(commentId, comment.getId()),
                 () -> assertEquals("anyText", comment.getText()),
-                () -> assertEquals(userId, comment.getUserCreatorId()),
+                () -> assertEquals(userId.toString(), comment.getUser().getId().toString()),
                 () -> assertEquals(String.valueOf(creationDate), String.valueOf(comment.getCreationDate())),
                 () -> assertEquals(String.valueOf(lastUpdatedDate), String.valueOf(comment.getLastUpdatedDate())));
     }
@@ -187,7 +201,7 @@ class CommentServiceTest {
         assertAll(
                 () -> assertEquals(commentId, finalComment.getId()),
                 () -> assertEquals("anyUpdatedText", finalComment.getText()),
-                () -> assertEquals(userId, finalComment.getUserCreatorId()),
+                () -> assertEquals(userId.toString(), finalComment.getUser().getId().toString()),
                 () -> assertEquals(String.valueOf(creationDate), String.valueOf(finalComment.getCreationDate())),
                 () -> assertEquals(String.valueOf(lastUpdatedDate), String.valueOf(finalComment.getLastUpdatedDate())));
     }
@@ -274,13 +288,13 @@ class CommentServiceTest {
     }
 
     // Helpers
-    private CommentEntity getCommentEntity(UUID momentId) {
+    private CommentEntity getCommentEntity(UUID commentId) {
 
         ZonedDateTime now = ZonedDateTime.now();
         creationDate = ZonedDateTime.parse(now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")));
 
         return CommentEntity.builder()
-                .id(momentId)
+                .id(commentId)
                 .text("anyText")
                 .creationDate(creationDate)
                 .lastUpdatedDate(lastUpdatedDate)

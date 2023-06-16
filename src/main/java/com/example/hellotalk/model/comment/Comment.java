@@ -1,6 +1,7 @@
 package com.example.hellotalk.model.comment;
 
 import com.example.hellotalk.entity.comment.CommentEntity;
+import com.example.hellotalk.model.user.UserSmall;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
@@ -24,19 +25,16 @@ public class Comment {
     private UUID id;
     private String text;
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    private UUID userCreatorId;
-    @JsonInclude(JsonInclude.Include.NON_NULL)
     private ZonedDateTime creationDate;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private ZonedDateTime lastUpdatedDate;
 
-    static {
-        modelMapper.typeMap(CommentEntity.class, Comment.class)
-                .addMappings(mapper -> {
-                    mapper.map(src -> src.getUserEntity().getId(), Comment::setUserCreatorId);
-                });
-    }
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private UUID momentId;
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private UserSmall user;
 
     public static Comment buildCommentFromEntity(CommentEntity commentEntity) {
         return modelMapper.map(commentEntity, Comment.class);

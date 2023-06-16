@@ -43,7 +43,11 @@ class GetCommentsIT {
                 .uuid("id", "d3256c76-62d7-4481-9d1c-a0ccc4da380f")
                 .stringType("text", "anyText")
                 .stringType("creationDate", creationDate.format(formatter))
-                .uuid("userCreatorId", "caf6bea6-4684-403e-9c41-8704fb0600c0")
+                .uuid("momentId", momentId)
+                .object("user")
+                .uuid("id", "caf6bea6-4684-403e-9c41-8704fb0600c0")
+                .stringType("name", "anyName")
+                .stringType("username", "anyUsername")
                 .closeObject();
 
         return builder

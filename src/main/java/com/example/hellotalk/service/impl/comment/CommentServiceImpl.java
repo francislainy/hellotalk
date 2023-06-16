@@ -1,6 +1,7 @@
 package com.example.hellotalk.service.impl.comment;
 
 import com.example.hellotalk.entity.comment.CommentEntity;
+import com.example.hellotalk.entity.moment.MomentEntity;
 import com.example.hellotalk.entity.user.UserEntity;
 import com.example.hellotalk.exception.CommentNotFoundException;
 import com.example.hellotalk.exception.EntityDoesNotBelongToUserException;
@@ -59,11 +60,14 @@ public class CommentServiceImpl implements CommentService {
         String username = authentication.getName();
         UserEntity userEntity = userRepository.findByUsername(username);
 
-        if (momentRepository.findById(momentId).isPresent()) {
+        Optional<MomentEntity> optionalMomentEntity = momentRepository.findById(momentId);
+        if (optionalMomentEntity.isPresent()) {
 
+            MomentEntity momentEntity = optionalMomentEntity.get();
             CommentEntity commentEntity = CommentEntity.buildCommentEntityFromModel(comment).toBuilder()
                     .userEntity(userEntity)
                     .creationDate(ZonedDateTime.now().withZoneSameInstant(ZoneOffset.UTC))
+                    .momentEntity(momentEntity)
                     .build();
             commentEntity = commentRepository.save(commentEntity);
 

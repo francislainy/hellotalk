@@ -18,7 +18,7 @@ public class CommentController {
     private final CommentService commentService;
 
     @GetMapping({"/{momentId}/comments/{commentId}", "/{momentId}/comments/{commentId}/"})
-    public ResponseEntity<Object> getComment(@PathVariable UUID commentId) {
+    public ResponseEntity<Object> getComment(@PathVariable UUID momentId, @PathVariable UUID commentId) {
         return new ResponseEntity<>(commentService.getComment(commentId), HttpStatus.OK);
     }
 
@@ -33,12 +33,12 @@ public class CommentController {
     }
 
     @PutMapping({"/{momentId}/comments/{commentId}", "/{momentId}/comments/{commentId}/"})
-    public ResponseEntity<Object> updateMoment(@PathVariable UUID commentId, @RequestBody Comment comment) {
+    public ResponseEntity<Object> updateMoment(@PathVariable UUID momentId, @PathVariable UUID commentId, @RequestBody Comment comment) {
         return new ResponseEntity<>(commentService.updateComment(commentId, comment), HttpStatus.OK);
     }
 
     @DeleteMapping({"/{momentId}/comments/{commentId}", "/{momentId}/comments/{commentId}/"})
-    public ResponseEntity<Object> deleteMoment(@PathVariable UUID commentId) {
+    public ResponseEntity<Object> deleteMoment(@PathVariable UUID momentId, @PathVariable UUID commentId) {
         return new ResponseEntity<>(commentService.deleteComment(commentId), HttpStatus.PARTIAL_CONTENT);
     }
 }

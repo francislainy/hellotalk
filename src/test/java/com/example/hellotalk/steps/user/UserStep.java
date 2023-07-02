@@ -1,8 +1,10 @@
-package com.example.hellotalk.steps;
+package com.example.hellotalk.steps.user;
 
 import com.example.hellotalk.entity.user.UserEntity;
 import com.example.hellotalk.model.user.User;
+import com.example.hellotalk.steps.ApiStep;
 import io.cucumber.java.en.Then;
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
 
 import java.util.Arrays;
@@ -12,6 +14,7 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @RequiredArgsConstructor
+@Data
 public class UserStep {
 
     private final ApiStep apiStep;
@@ -40,5 +43,4 @@ public class UserStep {
     private Optional<User> findApiUserMatchingDB(List<User> userListApi, UserEntity userDB) {
         return userListApi.stream().filter(userApi -> userApi.getId().equals(userDB.getId())).findFirst();
     }
-
 }

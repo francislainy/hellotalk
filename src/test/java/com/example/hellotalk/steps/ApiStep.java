@@ -10,6 +10,9 @@ import io.restassured.specification.RequestSpecification;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 
+import static com.example.hellotalk.config.Constants.PASSWORD;
+import static com.example.hellotalk.config.Constants.USERNAME;
+
 @Data
 @RequiredArgsConstructor
 public class ApiStep {
@@ -17,14 +20,11 @@ public class ApiStep {
     private final RestClient restClient;
     private Response response;
 
-    private final String username = "testUsername";
-    private final String password = "testPassword";
-
     @Given("I access the get users endpoint")
     public void iAccessGetUsersEndpoint() {
 
         RequestSpecification rq = restClient.getRequestSpecification()
-                .auth().basic(username, password);
+                .auth().basic(USERNAME, PASSWORD);
         setResponse(rq.get("/api/v1/ht/users/"));
     }
 

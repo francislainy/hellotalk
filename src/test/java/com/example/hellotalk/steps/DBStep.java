@@ -4,6 +4,7 @@ import com.example.hellotalk.client.DBClient;
 import com.example.hellotalk.entity.user.UserEntity;
 import com.example.hellotalk.model.Hometown;
 import com.example.hellotalk.repository.UserRepository;
+import com.example.hellotalk.steps.user.UserContext;
 import io.cucumber.java.en.Given;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

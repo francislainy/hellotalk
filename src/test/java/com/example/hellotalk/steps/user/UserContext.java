@@ -1,4 +1,4 @@
-package com.example.hellotalk.steps;
+package com.example.hellotalk.steps.user;
 
 import com.example.hellotalk.entity.user.UserEntity;
 import io.cucumber.spring.ScenarioScope;

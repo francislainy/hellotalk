@@ -7,11 +7,8 @@ import com.example.hellotalk.model.Hometown;
 import com.example.hellotalk.repository.UserRepository;
 import com.example.hellotalk.steps.user.UserContext;
 import io.cucumber.java.en.Given;
-import io.cucumber.java.it.Data;
-import io.cucumber.spring.ScenarioScope;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
 
 import static com.example.hellotalk.entity.user.HometownEntity.buildHometownEntity;
 

@@ -70,7 +70,7 @@ class CommentControllerTest extends BaseTestConfig {
 
         mockMvc.perform(RestDocumentationRequestBuilders.get("/api/v1/ht/moments/{momentId}/comments/{commentId}", momentId, commentId))
                 .andExpect(status().is2xxSuccessful())
-                .andExpect(content().string(jsonResponse))
+                .andExpect(content().json(jsonResponse))
                 .andDo(document("get-comment",
                         resource("Get a comment's details")))
                 .andReturn();

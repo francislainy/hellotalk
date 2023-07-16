@@ -5,9 +5,7 @@ import com.example.hellotalk.entity.user.UserEntity;
 import com.example.hellotalk.model.comment.Comment;
 import com.example.hellotalk.model.moment.Moment;
 import com.example.hellotalk.repository.UserRepository;
-import com.example.hellotalk.steps.ApiContext;
 import com.example.hellotalk.steps.ApiStep;
-import com.example.hellotalk.steps.user.UserContext;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -19,8 +17,6 @@ import lombok.RequiredArgsConstructor;
 import java.util.Arrays;
 import java.util.List;
 
-import static com.example.hellotalk.config.Constants.PASSWORD;
-import static com.example.hellotalk.config.Constants.USERNAME;
 import static com.mongodb.internal.connection.tlschannel.util.Util.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

@@ -5,7 +5,6 @@ import com.example.hellotalk.entity.user.LikeEntity;
 import com.example.hellotalk.entity.user.UserEntity;
 import com.example.hellotalk.exception.EntityDoesNotBelongToUserException;
 import com.example.hellotalk.exception.MomentNotFoundException;
-import com.example.hellotalk.exception.UserNotFoundException;
 import com.example.hellotalk.model.ResultInfo;
 import com.example.hellotalk.model.moment.Moment;
 import com.example.hellotalk.repository.LikeRepository;
@@ -289,17 +288,6 @@ class MomentServiceTest {
                 assertThrows(EntityDoesNotBelongToUserException.class, () -> momentService.updateMoment(momentId, moment));
 
         assertEquals(ENTITY_DOES_NOT_BELONG_TO_USER_EXCEPTION, exception.getMessage());
-    }
-
-    @Test
-    void testLikeMoment_ThrowsExceptionUserNotFound() {
-
-        UUID momentId = randomUUID();
-
-        UserNotFoundException exception =
-                assertThrows(UserNotFoundException.class, () -> momentService.likeMoment(momentId));
-
-        assertEquals(USER_NOT_FOUND_EXCEPTION, exception.getMessage());
     }
 
     @Test

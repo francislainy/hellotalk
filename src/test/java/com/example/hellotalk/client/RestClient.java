@@ -16,8 +16,6 @@ import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Type;
 
-import static com.example.hellotalk.config.Constants.PASSWORD;
-import static com.example.hellotalk.config.Constants.USERNAME;
 import static io.restassured.RestAssured.given;
 
 @Slf4j
@@ -51,7 +49,7 @@ public class RestClient {
                 }));
 
         return given()
-//                .auth().basic(USERNAME, PASSWORD)
+                // .auth().basic(USERNAME, PASSWORD)
                 .config(config)
                 .port(port)
                 .contentType(ContentType.JSON)

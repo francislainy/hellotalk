@@ -7,8 +7,11 @@ import com.example.hellotalk.model.Hometown;
 import com.example.hellotalk.repository.UserRepository;
 import com.example.hellotalk.steps.user.UserContext;
 import io.cucumber.java.en.Given;
+import io.cucumber.java.it.Data;
+import io.cucumber.spring.ScenarioScope;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
 
 import static com.example.hellotalk.entity.user.HometownEntity.buildHometownEntity;
 
@@ -23,11 +26,15 @@ public class DBStep {
 
     @Given("I add a user to the DB with username {} and password {}")
     public void iAddUserToDB(String username, String password) {
-        UserEntity userEntity = getUserEntity();
-        userEntity.setUsername(username);
-        userEntity.setPassword(password);
+        UserEntity userEntity = userRepository.findByUsername(username);
+        if (userEntity == null) {
+            userEntity = getUserEntity();
+            userEntity.setUsername(username);
+            userEntity.setPassword(password);
+            userEntity = userRepository.save(userEntity);
+        }
 
-        uc.setUserDB(userRepository.save(userEntity));
+        uc.setUserDB(userEntity);
     }
 
     @Given("I access the users DB data")

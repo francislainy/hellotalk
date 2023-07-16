@@ -2,6 +2,7 @@ package com.example.hellotalk.steps;
 
 import com.example.hellotalk.client.RestClient;
 import com.example.hellotalk.model.user.User;
+import com.example.hellotalk.steps.user.UserContext;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -18,11 +19,13 @@ import static com.example.hellotalk.config.Constants.USERNAME;
 public class ApiStep {
 
     private final RestClient restClient;
+
     private Response response;
+
+    private final UserContext uc;
 
     @Given("I access the get users endpoint")
     public void iAccessGetUsersEndpoint() {
-
         RequestSpecification rq = restClient.getRequestSpecification()
                 .auth().basic(USERNAME, PASSWORD);
         setResponse(rq.get("/api/v1/ht/users/"));
@@ -37,4 +40,9 @@ public class ApiStep {
     public void responseHasExpectedFieldsForGetUsersEndpoint() {
         getResponse().as(User[].class);
     }
+
+    public RequestSpecification getRqWithAuth() {
+        return restClient.getRequestSpecification().auth().basic(uc.getUserDB().getUsername(), uc.getUserDB().getPassword());
+    }
+
 }

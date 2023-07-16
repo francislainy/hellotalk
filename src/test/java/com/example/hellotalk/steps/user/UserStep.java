@@ -26,7 +26,6 @@ public class UserStep {
         List<UserEntity> userListDB = uc.getUserListDB();
 
         for (UserEntity userDB : userListDB) {
-
             Optional<User> matchingUser = findApiUserMatchingDB(userListApi, userDB);
 
             if (matchingUser.isPresent()) {

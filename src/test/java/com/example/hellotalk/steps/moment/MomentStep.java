@@ -5,6 +5,7 @@ import com.example.hellotalk.entity.user.UserEntity;
 import com.example.hellotalk.model.comment.Comment;
 import com.example.hellotalk.model.moment.Moment;
 import com.example.hellotalk.repository.UserRepository;
+import com.example.hellotalk.steps.ApiContext;
 import com.example.hellotalk.steps.ApiStep;
 import com.example.hellotalk.steps.user.UserContext;
 import io.cucumber.java.en.And;
@@ -28,7 +29,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class MomentStep {
 
     private final MomentContext mc;
-    private final UserContext uc;
 
     private final ApiStep apiStep;
     private final RestClient restClient;
@@ -39,7 +39,7 @@ public class MomentStep {
     public void theUserCreatesAMomentWithSomeBasicAndSimpleContent() {
         Moment moment = Moment.builder().text("A great day testing").build();
 
-        RequestSpecification rq = restClient.getRequestSpecification().auth().basic(uc.getUserDB().getUsername(), uc.getUserDB().getPassword());
+        RequestSpecification rq = apiStep.getRqWithAuth();
         Response response = rq.body(moment).post("/api/v1/ht/moments/");
         assertEquals(201, response.getStatusCode());
 
@@ -51,7 +51,7 @@ public class MomentStep {
     public void theUserCreatesAMomentWithSomeContent(String text) {
         Moment moment = Moment.builder().text(text).build();
 
-        RequestSpecification rq = restClient.getRequestSpecification().auth().basic(uc.getUserDB().getUsername(), uc.getUserDB().getPassword());
+        RequestSpecification rq = apiStep.getRqWithAuth();
         Response response = rq.body(moment).post("/api/v1/ht/moments/");
         assertEquals(201, response.getStatusCode());
 
@@ -71,7 +71,7 @@ public class MomentStep {
 
     @And("^the user should be able to see the moment in their list of moments$")
     public void userSeeMomentInMomentList() {
-        RequestSpecification rq = restClient.getRequestSpecification().auth().basic(uc.getUserDB().getUsername(), uc.getUserDB().getPassword());
+        RequestSpecification rq = apiStep.getRqWithAuth();
         apiStep.setResponse(rq.get("/api/v1/ht/moments/"));
 
         List<Moment> momentList = Arrays.asList(apiStep.getResponse().as(Moment[].class));
@@ -84,7 +84,7 @@ public class MomentStep {
     public void userAddsCommentToMoment(String text) {
         Comment comment = Comment.builder().text(text).build();
 
-        RequestSpecification rq = restClient.getRequestSpecification().auth().basic(uc.getUserDB().getUsername(), uc.getUserDB().getPassword());
+        RequestSpecification rq = apiStep.getRqWithAuth();
         Response response = rq.body(comment).post("/api/v1/ht/moments/" + mc.getMoment().getId() + "/comments");
         apiStep.setResponse(response);
 
@@ -94,7 +94,7 @@ public class MomentStep {
 
     @And("the comment should be added to the list of comments for that moment")
     public void commentShouldBeAddedToTheListOfComments() {
-        RequestSpecification rq = restClient.getRequestSpecification();
+        RequestSpecification rq = apiStep.getRqWithAuth();
         Response response = rq.get("/api/v1/ht/moments/" + mc.getMoment().getId() + "/comments");
         apiStep.setResponse(response);
         List<Comment> commentList = Arrays.asList(response.as(Comment[].class));
@@ -115,7 +115,7 @@ public class MomentStep {
 
     @When("the moment should receive a like from the user")
     public void likeMoment(String username) {
-        RequestSpecification rq = restClient.getRequestSpecification().auth().basic(uc.getUserDB().getUsername(), uc.getUserDB().getPassword());;
+        RequestSpecification rq = apiStep.getRqWithAuth();;
         Response response = rq.get("/api/v1/ht/moments/" + mc.getMoment().getId());
         apiStep.setResponse(response);
 
@@ -133,7 +133,7 @@ public class MomentStep {
     @When("the user removes his like for the moment")
     public void removeLike() {
         mc.setMoment(mc.getUpdatedMoment());
-        RequestSpecification rq = restClient.getRequestSpecification().auth().basic(uc.getUserDB().getUsername(), uc.getUserDB().getPassword());
+        RequestSpecification rq = apiStep.getRqWithAuth();
         Response response = rq.get("/api/v1/ht/moments/" + mc.getMoment().getId());
 
         apiStep.setResponse(response);

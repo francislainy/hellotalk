@@ -32,3 +32,4 @@ build/
 ### VS Code ###
 .vscode/
 /logback.log
+/test-output/

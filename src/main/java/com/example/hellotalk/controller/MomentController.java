@@ -42,6 +42,11 @@ public class MomentController {
         return new ResponseEntity<>(momentService.updateMoment(momentId, moment), HttpStatus.OK);
     }
 
+    @PostMapping({"/{momentId}/like", "/{momentId}/like/"})
+    public ResponseEntity<Object> likeMoment(@PathVariable UUID momentId) {
+        return new ResponseEntity<>(momentService.likeMoment(momentId), HttpStatus.CREATED);
+    }
+
     @DeleteMapping({"/{momentId}", "/{momentId}/"})
     public ResponseEntity<Object> deleteMoment(@PathVariable UUID momentId) {
         return new ResponseEntity<>(momentService.deleteMoment(momentId), HttpStatus.PARTIAL_CONTENT);

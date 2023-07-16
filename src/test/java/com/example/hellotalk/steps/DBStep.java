@@ -1,6 +1,7 @@
 package com.example.hellotalk.steps;
 
 import com.example.hellotalk.client.DBClient;
+import com.example.hellotalk.client.RestClient;
 import com.example.hellotalk.entity.user.UserEntity;
 import com.example.hellotalk.model.Hometown;
 import com.example.hellotalk.repository.UserRepository;
@@ -16,22 +17,34 @@ import static com.example.hellotalk.entity.user.HometownEntity.buildHometownEnti
 public class DBStep {
 
     private final DBClient dbClient;
+    private final RestClient restClient;
     private final UserRepository userRepository;
-    private final UserContext userContext;
+    private final UserContext uc;
 
-    @Given("I add a user to the DB")
-    public void iAddUserToDB() {
-        userRepository.save(getUserEntity());
+    @Given("I add a user to the DB with username {} and password {}")
+    public void iAddUserToDB(String username, String password) {
+        UserEntity userEntity = getUserEntity();
+        userEntity.setUsername(username);
+        userEntity.setPassword(password);
+
+        uc.setUserDB(userRepository.save(userEntity));
     }
 
     @Given("I access the users DB data")
     public void iAccessUsersDBData() {
-        userContext.setUserListDB(dbClient.getUsers());
+        uc.setUserListDB(dbClient.getUsers());
+    }
+
+    @Given("an authenticated user with username {string} and password {string} logs into the system")
+    public void userWithUsernameLogsIntoSystem(String username, String password) {
+        restClient.getRequestSpecification().and().auth().basic(username, password);
     }
 
     private UserEntity getUserEntity() {
         Hometown hometown = Hometown.builder().city("anyCity").country("anyCountry").build();
         return UserEntity.builder()
+                .username("anyUsername")
+                .password("anyPassword")
                 .name("anyName")
                 .dob("anyDob")
                 .gender("anyGender")

@@ -7,6 +7,6 @@ public class Constants {
     public static final String MOCK_PACT_URL = "http://localhost:8082";
     public static final String MOCK_PACT_PORT = "8082";
 
-    public static final String USERNAME = "testUsername";
-    public static final String PASSWORD = "testPassword";
+    public static final String USERNAME = "usernamed";
+    public static final String PASSWORD = "passwordd";
 }

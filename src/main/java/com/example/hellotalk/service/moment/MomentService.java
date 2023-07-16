@@ -4,6 +4,7 @@ import com.example.hellotalk.entity.user.LikeEntity;
 import com.example.hellotalk.model.moment.Moment;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 public interface MomentService {
@@ -19,6 +20,8 @@ public interface MomentService {
     Moment updateMoment(UUID momentId, Moment moment);
 
     String deleteMoment(UUID momentId);
+
+    Map<String, Object> likeMoment(UUID momentId);
 
     List<LikeEntity> getLikesByMoment(UUID momentId);
 }

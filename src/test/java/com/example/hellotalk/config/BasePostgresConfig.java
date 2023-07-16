@@ -1,6 +1,7 @@
 package com.example.hellotalk.config;
 
 import org.junit.jupiter.api.BeforeAll;
+import org.springframework.context.annotation.Profile;
 import org.springframework.test.context.ActiveProfiles;
 import org.testcontainers.junit.jupiter.Container;
 

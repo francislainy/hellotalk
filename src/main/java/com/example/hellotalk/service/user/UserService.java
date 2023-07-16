@@ -3,7 +3,6 @@ package com.example.hellotalk.service.user;
 import com.example.hellotalk.model.user.User;
 
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 public interface UserService {
@@ -17,6 +16,4 @@ public interface UserService {
     User updateUser(UUID userId, User user);
 
     String deleteUser(UUID userId);
-
-    Map<String, Object> likeMoment(UUID userId, UUID momentId);
 }

@@ -1,4 +1,4 @@
-package com.example.hellotalk.pact.consumer.user;
+package com.example.hellotalk.pact.consumer.moment;
 
 import au.com.dius.pact.consumer.dsl.DslPart;
 import au.com.dius.pact.consumer.dsl.PactDslJsonBody;
@@ -26,7 +26,7 @@ class UnlikeMomentIT {
 
     Map<String, String> headers = new HashMap<>();
 
-    String path = "/api/v1/ht/users/";
+    String path = "/api/v1/ht/moments/";
     UUID userId = UUID.fromString("1bfff94a-b70e-4b39-bd2a-be1c0f898589");
     UUID momentId = UUID.fromString("2afff94a-b70e-4b39-bd2a-be1c0f898545");
 
@@ -47,7 +47,7 @@ class UnlikeMomentIT {
         return builder
                 .given("A request to remove a like for a moment")
                 .uponReceiving("A request to remove a like for a moment")
-                .pathFromProviderState(path + "${userId}" + "/like/" + "${momentId}", path + userId + "like/" + momentId)
+                .pathFromProviderState(path + "${momentId}" + "/like/", path + momentId + "/like/")
                 .method("POST")
                 .headers(headers)
                 .willRespondWith()
@@ -60,7 +60,7 @@ class UnlikeMomentIT {
     @PactTestFor(providerName = PACT_PROVIDER, port = MOCK_PACT_PORT, pactVersion = PactSpecVersion.V3)
     void runTest() {
 
-        Response response = getMockRequest(headers).post(path + userId + "like/" + momentId);
+        Response response = getMockRequest(headers).post(path + momentId + "/like/");
         assertEquals(201, response.getStatusCode());
     }
 }

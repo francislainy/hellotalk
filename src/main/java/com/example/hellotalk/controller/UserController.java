@@ -41,9 +41,4 @@ public class UserController {
     public ResponseEntity<Object> deleteUser(@PathVariable UUID userId) {
         return new ResponseEntity<>(userService.deleteUser(userId), HttpStatus.PARTIAL_CONTENT);
     }
-
-    @PostMapping({"{userId}/like/{momentId}", "{userId}/like/{momentId}/"}) // todo: remove user id and move this to like moment class. 02/06/2023
-    public ResponseEntity<Object> likeMoment(@PathVariable UUID userId, @PathVariable UUID momentId) {
-        return new ResponseEntity<>(userService.likeMoment(userId, momentId), HttpStatus.CREATED);
-    }
 }

@@ -1,12 +1,7 @@
 package com.example.hellotalk.service;
 
-import com.example.hellotalk.entity.moment.MomentEntity;
 import com.example.hellotalk.entity.user.HobbyAndInterestEntity;
-import com.example.hellotalk.entity.user.LikeEntity;
-import com.example.hellotalk.model.ResultInfo;
 import com.example.hellotalk.entity.user.UserEntity;
-import com.example.hellotalk.exception.EntityBelongsToUserException;
-import com.example.hellotalk.exception.MomentNotFoundException;
 import com.example.hellotalk.exception.UserNotFoundException;
 import com.example.hellotalk.model.Hometown;
 import com.example.hellotalk.model.user.User;
@@ -277,105 +272,5 @@ class UserServiceTest {
                 assertThrows(UserNotFoundException.class, () -> userService.deleteUser(userId));
 
         assertEquals(USER_NOT_FOUND_EXCEPTION, exception.getMessage());
-    }
-
-    @Test
-    void testLikeMoment_ThrowsExceptionUserNotFound() {
-
-        UUID userId = randomUUID();
-        UUID momentId = randomUUID();
-
-        UserNotFoundException exception =
-                assertThrows(UserNotFoundException.class, () -> userService.likeMoment(userId, momentId));
-
-        assertEquals(USER_NOT_FOUND_EXCEPTION, exception.getMessage());
-    }
-
-    @Test
-    void testLikeMoment_ThrowsExceptionMomentNotFound() {
-
-        UUID userId = randomUUID();
-        UUID momentId = randomUUID();
-
-        when(userRepository.findById(any())).thenReturn(Optional.ofNullable(UserEntity.builder().id(userId).build()));
-
-        MomentNotFoundException exception =
-                assertThrows(MomentNotFoundException.class, () -> userService.likeMoment(userId, momentId));
-
-        assertEquals(MOMENT_NOT_FOUND_EXCEPTION, exception.getMessage());
-    }
-
-    @Test
-    void testLikeMoment_RemovesLikeIfMomentAlreadyLiked() {
-
-        UUID userId = randomUUID();
-        UUID userIdMomentCreator = randomUUID();
-        UUID momentId = randomUUID();
-        UUID likeId = randomUUID();
-
-        UserEntity userEntity = UserEntity.builder().id(userId).build();
-        UserEntity userEntityMomentCreator = UserEntity.builder().id(userIdMomentCreator).build();
-        MomentEntity momentEntity = MomentEntity.builder().id(momentId).userEntity(userEntityMomentCreator).build();
-        LikeEntity likeEntity = LikeEntity.builder().id(likeId).userEntity(userEntity).momentEntity(momentEntity).build();
-
-        when(userRepository.findById(any())).thenReturn(Optional.ofNullable(userEntity));
-        when(momentRepository.findById(any())).thenReturn(Optional.ofNullable(momentEntity));
-        when(likeRepository.findByUserEntity_IdAndMomentEntity_Id(any(), any())).thenReturn(likeEntity);
-
-        assertDoesNotThrow(() -> {
-            Map<String, Object> responseMap = userService.likeMoment(userId, momentId);
-            ResultInfo resultInfo = (ResultInfo) responseMap.get("data");
-            assertAll(
-                    () -> assertTrue(momentService.getLikesByMoment(momentId).isEmpty()),
-                    () -> assertEquals(likeId, resultInfo.getId()),
-                    () -> assertEquals(userId, resultInfo.getUserId()),
-                    () -> assertEquals(momentId, resultInfo.getMomentId()),
-                    () -> assertEquals("Moment unliked successfully", responseMap.get("message")));
-        });
-    }
-
-    @Test
-    void testLikeMoment_ThrowsExceptionIfMomentBelongsToTheSameUser() {
-
-        UUID userId = randomUUID();
-        UUID momentId = randomUUID();
-
-        UserEntity userEntity = UserEntity.builder().id(userId).build();
-        MomentEntity momentEntity = MomentEntity.builder().id(momentId).userEntity(userEntity).build();
-
-        when(userRepository.findById(any())).thenReturn(Optional.ofNullable(userEntity));
-        when(momentRepository.findById(any())).thenReturn(Optional.ofNullable(momentEntity));
-
-        EntityBelongsToUserException exception =
-                assertThrows(EntityBelongsToUserException.class, () -> userService.likeMoment(userId, momentId));
-
-        assertEquals(ENTITY_BELONG_TO_USER_EXCEPTION, exception.getMessage());
-    }
-
-    @Test
-    void testLikeMoment() {
-
-        UUID userId = randomUUID();
-        UUID userIdMomentCreator = randomUUID();
-        UUID momentId = randomUUID();
-        UUID likeEntityId = UUID.fromString("8346e9cb-44b6-4366-b5f7-645d07541e8a");
-
-        UserEntity userEntity = UserEntity.builder().id(userId).build();
-        UserEntity userEntityMomentCreator = UserEntity.builder().id(userIdMomentCreator).build();
-        MomentEntity momentEntity = MomentEntity.builder().id(momentId).userEntity(userEntityMomentCreator).build();
-        LikeEntity likeEntity = LikeEntity.builder().id(likeEntityId).userEntity(userEntity).momentEntity(momentEntity).build();
-
-        when(userRepository.findById(any())).thenReturn(Optional.ofNullable(userEntity));
-        when(momentRepository.findById(any())).thenReturn(Optional.ofNullable(momentEntity));
-        when(likeRepository.save(any())).thenReturn(likeEntity);
-
-        Map<String, Object> responseMap = userService.likeMoment(userId, momentId);
-        ResultInfo resultInfo = (ResultInfo) responseMap.get("data");
-
-        assertAll("Like added",
-                () -> assertEquals(likeEntityId, resultInfo.getId()),
-                () -> assertEquals(userId, resultInfo.getUserId()),
-                () -> assertEquals(momentId, resultInfo.getMomentId()),
-                () -> assertEquals("Moment liked successfully", responseMap.get("message")));
     }
 }

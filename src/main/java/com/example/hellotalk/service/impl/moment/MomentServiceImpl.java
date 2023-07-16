@@ -5,6 +5,7 @@ import com.example.hellotalk.entity.user.LikeEntity;
 import com.example.hellotalk.entity.user.UserEntity;
 import com.example.hellotalk.exception.EntityDoesNotBelongToUserException;
 import com.example.hellotalk.exception.MomentNotFoundException;
+import com.example.hellotalk.model.ResultInfo;
 import com.example.hellotalk.model.moment.Moment;
 import com.example.hellotalk.repository.LikeRepository;
 import com.example.hellotalk.repository.UserRepository;
@@ -142,6 +143,43 @@ public class MomentServiceImpl implements MomentService {
         } else {
             throw new MomentNotFoundException(MOMENT_NOT_FOUND_EXCEPTION);
         }
+    }
+
+    @Override
+    public Map<String, Object> likeMoment(UUID momentId) {
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        UserEntity userEntity = userRepository.findByUsername(username);
+
+        MomentEntity momentEntity = momentRepository.findById(momentId)
+                .orElseThrow(() -> new MomentNotFoundException(MOMENT_NOT_FOUND_EXCEPTION));
+
+        Map<String, Object> map = new HashMap<>();
+        Optional<LikeEntity> likeEntityOptional = Optional.ofNullable(likeRepository.findByUserEntity_IdAndMomentEntity_Id(userEntity.getId(), momentId));
+        LikeEntity likeEntity;
+        String resultMessage;
+
+        if (likeEntityOptional.isPresent()) {
+            likeEntity = likeEntityOptional.get();
+            likeRepository.delete(likeEntity);
+            resultMessage = "Moment unliked successfully";
+        } else {
+            likeEntity = LikeEntity.builder().userEntity(userEntity).momentEntity(momentEntity).build();
+            likeEntity = likeRepository.save(likeEntity);
+            resultMessage = "Moment liked successfully";
+        }
+
+        ResultInfo resultInfo = ResultInfo.builder()
+                .id(likeEntity.getId())
+                .userId(likeEntity.getUserEntity().getId())
+                .momentId(likeEntity.getMomentEntity().getId())
+                .build();
+
+        map.put("data", resultInfo);
+        map.put("message", resultMessage);
+
+        return map;
     }
 
     @Override

@@ -74,7 +74,6 @@ class PactProviderIT extends BasePostgresConfig {
     @TestTemplate
     @ExtendWith(PactVerificationInvocationContextProvider.class)
     void pactTestTemplate(PactVerificationContext context, HttpRequest request) {
-
         String encoded = Base64.getEncoder()
                 .encodeToString((username + ":" + password).getBytes(StandardCharsets.UTF_8));
         request.addHeader("Authorization", "Basic " + encoded);
@@ -86,7 +85,6 @@ class PactProviderIT extends BasePostgresConfig {
 
     @BeforeEach
     void before(PactVerificationContext context) {
-
         context.setTarget(new HttpTestTarget("localhost", port, ""));
     }
 

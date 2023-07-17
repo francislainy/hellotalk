@@ -37,7 +37,7 @@ import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.BEFORE_TE
 
 /*
  * mvn -Dtest=pact.provider.PactProviderIT integration-test
- * mvn -Dtest="pact.provider.*IT" integration-test
+ * mvn -Dtest="pact.provider.**.*IT" integration-test
  */
 
 @Provider("MY_PROVIDER")

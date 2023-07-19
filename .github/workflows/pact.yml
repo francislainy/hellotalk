@@ -24,7 +24,7 @@ jobs:
         run: ./mvnw clean package -DskipTests
 
       - name: Generate pact contracts with Maven
-        run: ./mvnw -Dtest="pact.consumer.**.*IT" integration-test
+        run: ./mvnw -Dtest="pact.consumer.**.*IT" integration-test -Dspring.profiles.active=test
 
       - name: Start PostgreSQL container
         run: docker run -d -p 5432:5432 -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=helloTalk postgres

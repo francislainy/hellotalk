@@ -24,11 +24,8 @@ jobs:
         run: ./mvnw clean package -DskipTests
 
       - name: Run unit tests
-        run: ./mvnw test --fail-at-end -Dtest=*Test
-
-      - name: Run integration tests
         env:
           SPRING_DATASOURCE_URL: jdbc:tc:postgresql:13.5:///helloTalk
           SPRING_DATASOURCE_USERNAME: postgres
           SPRING_DATASOURCE_PASSWORD: postgres
-        run: ./mvnw verify --fail-at-end -Dspring.profiles.active=test
+        run: ./mvnw test --fail-at-end -Dtest=*Test

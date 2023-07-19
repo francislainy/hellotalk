@@ -3,10 +3,3 @@ spring:
     type: com.zaxxer.hikari.HikariDataSource
     driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
     url: jdbc:tc:postgresql:13.5:///helloTalk
-
-
-#spring
-#    datasource.url=jdbc:postgresql://localhost:5432/hellotalk
-#          username=
-#spring.datasource.password=
-#server.port=8081

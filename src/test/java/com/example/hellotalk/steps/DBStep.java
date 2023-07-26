@@ -21,7 +21,7 @@ public class DBStep {
     private final UserRepository userRepository;
     private final UserContext uc;
 
-    @Given("I add a user to the DB with username {} and password {}")
+    @Given("I add a user to the DB with username {string} and password {string}")
     public void iAddUserToDB(String username, String password) {
         UserEntity userEntity = userRepository.findByUsername(username);
         if (userEntity == null) {

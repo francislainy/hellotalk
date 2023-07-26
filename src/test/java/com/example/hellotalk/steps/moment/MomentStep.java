@@ -109,7 +109,7 @@ public class MomentStep {
         apiStep.setResponse(rq.post("/api/v1/ht/moments/" + moment.getId() + "/like"));
     }
 
-    @When("the moment should receive a like from the user")
+    @When("the moment should indicate it has received a like from the user with username {string}")
     public void likeMoment(String username) {
         RequestSpecification rq = apiStep.getRqWithAuth();;
         Response response = rq.get("/api/v1/ht/moments/" + mc.getMoment().getId());
@@ -121,7 +121,7 @@ public class MomentStep {
         assertTrue(mc.getUpdatedMoment().getLikedByIds().contains(userEntity.getId()));
     }
 
-    @When("the total number of likes for the moment should increase")
+    @When("the total number of likes for the moment should increase by 1")
     public void momentNumberIncreases() {
         assertTrue(mc.getUpdatedMoment().getNumLikes() == mc.getMoment().getNumLikes() + 1);
     }
@@ -130,13 +130,13 @@ public class MomentStep {
     public void removeLike() {
         mc.setMoment(mc.getUpdatedMoment());
         RequestSpecification rq = apiStep.getRqWithAuth();
-        Response response = rq.get("/api/v1/ht/moments/" + mc.getMoment().getId());
+        Response response = rq.get("/api/v1/ht/moments/" + mc.getMoment().getId() + "/like");
 
         apiStep.setResponse(response);
         mc.setUpdatedMoment(response.as(Moment.class));
     }
 
-    @When("the total number of likes for the moment should decrease")
+    @When("the total number of likes for the moment should decrease by 1")
     public void removingLikeUpdatesMoment() {
         assertTrue(mc.getUpdatedMoment().getNumLikes() == mc.getMoment().getNumLikes() - 1);
     }

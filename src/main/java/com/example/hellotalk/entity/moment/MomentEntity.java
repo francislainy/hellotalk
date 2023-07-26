@@ -1,6 +1,7 @@
 package com.example.hellotalk.entity.moment;
 
 import com.example.hellotalk.entity.comment.CommentEntity;
+import com.example.hellotalk.entity.user.LikeEntity;
 import com.example.hellotalk.entity.user.UserEntity;
 import com.example.hellotalk.model.moment.Moment;
 import lombok.*;
@@ -11,6 +12,8 @@ import java.time.ZonedDateTime;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
+
+import static org.springframework.beans.BeanUtils.copyProperties;
 
 @Entity
 @Table(name = "moment")
@@ -50,24 +53,16 @@ public class MomentEntity {
     @OneToMany(mappedBy = "momentEntity", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = false)
     private Set<CommentEntity> commentEntitySet;
 
-    @ElementCollection
-    @CollectionTable(name = "moment_like",
-            joinColumns = @JoinColumn(name = "moment_id"))
-    @Column(name = "liked_by")
-    private Set<UUID> likedBy = new HashSet<>();
+    @OneToMany(mappedBy = "momentEntity", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = false)
+    private Set<LikeEntity> likes = new HashSet<>();
 
     @Transient
     private Integer numLikes = 0;
 
-    static {
-        modelMapper.typeMap(Moment.class, MomentEntity.class)
-                .addMappings(mapper -> {
-                    mapper.map(Moment::getUserCreatorId, (dest, value) -> dest.setUserEntity(UserEntity.builder().id((UUID) value).build()));
-                    mapper.map(Moment::getLikedByIds, MomentEntity::setLikedBy);
-                });
-    }
-
     public static MomentEntity buildMomentEntityFromModel(Moment moment) {
-        return modelMapper.map(moment, MomentEntity.class);
+        MomentEntity momentEntity = new MomentEntity();
+        copyProperties(moment, momentEntity);
+        momentEntity.setUserEntity(UserEntity.builder().id(moment.getUserCreatorId()).build());
+        return momentEntity;
     }
 }

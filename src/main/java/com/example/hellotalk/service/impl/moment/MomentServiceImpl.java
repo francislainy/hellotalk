@@ -22,7 +22,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 import static com.example.hellotalk.entity.moment.MomentEntity.buildMomentEntityFromModel;
-import static com.example.hellotalk.exception.AppExceptionHandler.*;
+import static com.example.hellotalk.exception.AppExceptionHandler.ENTITY_DOES_NOT_BELONG_TO_USER_EXCEPTION;
+import static com.example.hellotalk.exception.AppExceptionHandler.MOMENT_NOT_FOUND_EXCEPTION;
 import static com.example.hellotalk.model.moment.Moment.buildMomentFromEntity;
 
 @RequiredArgsConstructor
@@ -160,15 +161,20 @@ public class MomentServiceImpl implements MomentService {
         LikeEntity likeEntity;
         String resultMessage;
 
+        Set<LikeEntity> likes = momentEntity.getLikes();
         if (likeEntityOptional.isPresent()) {
             likeEntity = likeEntityOptional.get();
             likeRepository.delete(likeEntity);
+            likes.removeIf(like -> like.getUserEntity().getId().equals(userEntity.getId()));
             resultMessage = "Moment unliked successfully";
         } else {
             likeEntity = LikeEntity.builder().userEntity(userEntity).momentEntity(momentEntity).build();
             likeEntity = likeRepository.save(likeEntity);
+            likes.add(likeEntity);
             resultMessage = "Moment liked successfully";
         }
+        momentEntity.setLikes(likes);
+        momentRepository.save(momentEntity);
 
         ResultInfo resultInfo = ResultInfo.builder()
                 .id(likeEntity.getId())
@@ -190,12 +196,7 @@ public class MomentServiceImpl implements MomentService {
     private void setLikesInfo(MomentEntity momentEntity) {
         Integer numLikes = likeRepository.countLikesByMomentId(momentEntity.getId());
         momentEntity.setNumLikes(numLikes);
-
         List<LikeEntity> likeEntityList = likeRepository.findAllByMomentEntity_Id(momentEntity.getId());
-        Set<UUID> likedByIds = new HashSet<>();
-        likeEntityList.forEach(
-                likeEntity -> likedByIds.add(likeEntity.getUserEntity().getId()));
-
-        momentEntity.setLikedBy(likedByIds);
+        momentEntity.setLikes(new HashSet<>(likeEntityList));
     }
 }

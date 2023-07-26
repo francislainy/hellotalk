@@ -186,6 +186,7 @@ class MomentServiceTest {
         MomentEntity momentEntity = getMomentEntity(momentId);
         momentEntity.setUserEntity(userEntity);
         momentEntity.setNumLikes(0);
+        momentEntity.setLikes(new HashSet<>());
 
         when(momentRepository.save(any())).thenReturn(momentEntity);
         when(userRepository.findByUsername(any())).thenReturn(userEntity);
@@ -321,8 +322,12 @@ class MomentServiceTest {
         UUID likeId = randomUUID();
 
         UserEntity userEntityMomentCreator = UserEntity.builder().id(userIdMomentCreator).build();
-        MomentEntity momentEntity = MomentEntity.builder().id(momentId).userEntity(userEntityMomentCreator).build();
-        LikeEntity likeEntity = LikeEntity.builder().id(likeId).userEntity(userEntity).momentEntity(momentEntity).build();
+        LikeEntity likeEntity = LikeEntity.builder().id(likeId).userEntity(userEntity).build();
+        Set<LikeEntity> likeEntities = new HashSet<>();
+        likeEntities.add(LikeEntity.builder().userEntity(userEntity).build());
+        MomentEntity momentEntity = MomentEntity.builder().id(momentId).userEntity(userEntityMomentCreator).likes(likeEntities).build();
+
+        likeEntity.setMomentEntity(momentEntity);
 
         when(momentRepository.findById(any())).thenReturn(Optional.ofNullable(momentEntity));
         when(likeRepository.findByUserEntity_IdAndMomentEntity_Id(any(), any())).thenReturn(likeEntity);
@@ -349,8 +354,14 @@ class MomentServiceTest {
         when(userRepository.findByUsername(any())).thenReturn(userEntity);
 
         UUID momentId = randomUUID();
-        MomentEntity momentEntity = MomentEntity.builder().id(momentId).userEntity(userEntity).build();
-        LikeEntity likeEntity = LikeEntity.builder().id(randomUUID()).userEntity(userEntity).momentEntity(momentEntity).build();
+
+        UserEntity userEntityMomentCreator = UserEntity.builder().id(userId).build();
+        LikeEntity likeEntity = LikeEntity.builder().id(randomUUID()).userEntity(userEntity).build();
+        Set<LikeEntity> likeEntities = new HashSet<>();
+        likeEntities.add(LikeEntity.builder().userEntity(userEntity).build());
+        MomentEntity momentEntity = MomentEntity.builder().id(momentId).userEntity(userEntityMomentCreator).likes(likeEntities).build();
+
+        likeEntity.setMomentEntity(momentEntity);
 
         when(momentRepository.findById(any())).thenReturn(Optional.ofNullable(momentEntity));
         when(likeRepository.save(any())).thenReturn(likeEntity);
@@ -372,8 +383,12 @@ class MomentServiceTest {
         UUID likeEntityId = randomUUID();
 
         UserEntity userEntityMomentCreator = UserEntity.builder().id(userIdMomentCreator).build();
-        MomentEntity momentEntity = MomentEntity.builder().id(momentId).userEntity(userEntityMomentCreator).build();
-        LikeEntity likeEntity = LikeEntity.builder().id(likeEntityId).userEntity(userEntity).momentEntity(momentEntity).build();
+        LikeEntity likeEntity = LikeEntity.builder().id(likeEntityId).userEntity(userEntity).build();
+        Set<LikeEntity> likeEntities = new HashSet<>();
+        likeEntities.add(LikeEntity.builder().userEntity(userEntity).build());
+        MomentEntity momentEntity = MomentEntity.builder().id(momentId).userEntity(userEntityMomentCreator).likes(likeEntities).build();
+
+        likeEntity.setMomentEntity(momentEntity);
 
         when(momentRepository.findById(any())).thenReturn(Optional.ofNullable(momentEntity));
         when(likeRepository.save(any())).thenReturn(likeEntity);
@@ -452,12 +467,16 @@ class MomentServiceTest {
         tagsSet.add("anyTag1");
         tagsSet.add("anyTag2");
 
+        UserEntity userEntity = UserEntity.builder().id(randomUUID()).build();
+
         return MomentEntity.builder()
                 .id(momentId)
                 .text("anyText")
                 .creationDate(creationDate)
                 .lastUpdatedDate(lastUpdatedDate)
-                .numLikes(10)
+                .numLikes(0)
+                .likes(new HashSet<>())
+                .userEntity(userEntity)
                 .tags(tagsSet)
                 .build();
     }

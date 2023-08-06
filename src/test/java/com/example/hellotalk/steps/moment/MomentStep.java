@@ -55,6 +55,68 @@ public class MomentStep {
         mc.setMoment(response.as(Moment.class));
     }
 
+    @And("the user deletes the moment")
+    public void theUserDeletesTheMoment() {
+        RequestSpecification rq = apiStep.getRqWithAuth();
+        Response response = rq.delete("/api/v1/ht/moments/" + mc.getMoment().getId());
+        assertEquals(206, response.getStatusCode());
+    }
+
+    @And("the user attempts to delete the moment")
+    public void theUserAttemptsToDeleteTheMoment() {
+        RequestSpecification rq = apiStep.getRqWithAuth();
+        rq.delete("/api/v1/ht/moments/" + mc.getMoment().getId());
+    }
+
+    @And("the moment should no longer exist in the system")
+    public void theMomentShouldNoLongerExistInTheSystem() {
+        RequestSpecification rq = apiStep.getRqWithAuth();
+        Response response = rq.get("/api/v1/ht/moments/" + mc.getMoment().getId());
+        assertEquals(404, response.getStatusCode());
+    }
+
+    @And("the moment should still exist in the system")
+    public void theMomentShouldStillExistInTheSystem() {
+        RequestSpecification rq = apiStep.getRqWithAuth();
+        Response response = rq.get("/api/v1/ht/moments/" + mc.getMoment().getId());
+        assertEquals(200, response.getStatusCode());
+    }
+
+    @And("the user edits the text for the moment to {string}")
+    public void theUserEditsAMomentWithSomeContent(String text) {
+        mc.getMoment().setText(text);
+
+        RequestSpecification rq = apiStep.getRqWithAuth();
+        Response response = rq.body(mc.getMoment()).put("/api/v1/ht/moments/" + mc.getMoment().getId());
+        assertEquals(200, response.getStatusCode());
+
+        apiStep.setResponse(response);
+        mc.setMoment(response.as(Moment.class));
+        assertEquals(text, mc.getMoment().getText());
+    }
+
+    @And("the authenticated user attempts to edit the moment that belongs to user {string}")
+    public void theUserAttemptsToEditAMomentWithSomeContent(String text) {
+        mc.getMoment().setText(text);
+
+        RequestSpecification rq = apiStep.getRqWithAuth();
+        apiStep.setResponse(rq.body(mc.getMoment()).put("/api/v1/ht/moments/" + mc.getMoment().getId()));
+    }
+
+    @And("the moment should have its text updated successfully across the whole system")
+    public void theMomentShouldHaveItsTextUpdatedSuccessfully() {
+        RequestSpecification rq = apiStep.getRqWithAuth();
+        Response response = rq.body(mc.getMoment()).put("/api/v1/ht/moments/" + mc.getMoment().getId());
+        assertEquals(200, response.getStatusCode());
+
+        apiStep.setResponse(response);
+
+        Moment moment = response.as(Moment.class);
+        assertEquals(mc.getMoment().getText(), moment.getText());
+
+        mc.setMoment(moment);
+    }
+
     @Then("^the (.*) should be created successfully$")
     public void iGe201tResponse(String item) {
         apiStep.getResponse().then().statusCode(201);
@@ -96,7 +158,6 @@ public class MomentStep {
         List<Comment> commentList = Arrays.asList(response.as(Comment[].class));
 
         boolean hasFoundComment = commentList.stream().anyMatch(comment -> comment.getMomentId().equals(mc.getMoment().getId()));
-
         assertTrue(hasFoundComment);
     }
 
@@ -104,8 +165,7 @@ public class MomentStep {
     public void theUserLikesTheMoment(String username) {
         Moment moment = apiStep.getResponse().as(Moment.class);
         UserEntity userEntity = userRepository.findByUsername(username);
-
-        RequestSpecification rq = restClient.getRequestSpecification().auth().basic(userEntity.getUsername(), userEntity.getPassword());
+        RequestSpecification rq = apiStep.getRqWithAuth(userEntity.getUsername(), userEntity.getPassword());
         apiStep.setResponse(rq.post("/api/v1/ht/moments/" + moment.getId() + "/like"));
     }
 

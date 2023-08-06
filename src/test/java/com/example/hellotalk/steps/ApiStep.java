@@ -31,9 +31,14 @@ public class ApiStep {
         setResponse(rq.get("/api/v1/ht/users/"));
     }
 
-    @Then("I get a 200 successful response")
-    public void iGetResponse() {
-        response.then().statusCode(200);
+    @Then("^I get a (\\d+) (successful|error) response$")
+    public void iGetResponse(int responseCode, String responseType) {
+        response.then().statusCode(responseCode);
+    }
+
+    @Then("^the system should block the user with a forbidden error")
+    public void theUserIsBlockedWithForbiddenError() {
+        response.then().statusCode(403);
     }
 
     @And("The response has all the expected fields for the get users endpoint")
@@ -43,6 +48,10 @@ public class ApiStep {
 
     public RequestSpecification getRqWithAuth() {
         return restClient.getRequestSpecification().auth().basic(uc.getUserDB().getUsername(), uc.getUserDB().getPassword());
+    }
+
+    public RequestSpecification getRqWithAuth(String username, String password) {
+        return restClient.getRequestSpecification().auth().basic(username, password);
     }
 
 }

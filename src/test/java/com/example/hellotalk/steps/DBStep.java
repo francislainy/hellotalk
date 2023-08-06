@@ -41,7 +41,15 @@ public class DBStep {
 
     @Given("an authenticated user with username {string} and password {string} logs into the system")
     public void userWithUsernameLogsIntoSystem(String username, String password) {
-        restClient.getRequestSpecification().and().auth().basic(username, password);
+        // restClient.getRequestSpecification().and().auth().basic(username, password);
+        UserEntity userEntity = userRepository.findByUsername(username);
+        if (userEntity == null) {
+            userEntity = getUserEntity();
+            userEntity.setUsername(username);
+            userEntity.setPassword(password);
+        }
+
+        uc.setUserDB(userEntity);
     }
 
     private UserEntity getUserEntity() {

@@ -36,6 +36,16 @@ public class ApiStep {
         response.then().statusCode(responseCode);
     }
 
+    @Then("The creation request is successful")
+    public void iGetSuccessfulCreationResponse() {
+        response.then().statusCode(201);
+    }
+
+    @Then("The retrieval request is successful")
+    public void iGetSuccessfulRetrievalResponse() {
+        response.then().statusCode(200);
+    }
+
     @Then("^the system should block the user with a forbidden error")
     public void theUserIsBlockedWithForbiddenError() {
         response.then().statusCode(403);

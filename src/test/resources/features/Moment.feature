@@ -55,3 +55,4 @@ Feature: Moment Posting and Commenting
     Then an authenticated user with username "mary@email.com" and password "Password123!" logs into the system
     Then the user attempts to delete the moment
     And the moment should still exist in the system
+    

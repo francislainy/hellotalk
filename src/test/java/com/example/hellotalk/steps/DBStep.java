@@ -1,7 +1,6 @@
 package com.example.hellotalk.steps;
 
 import com.example.hellotalk.client.DBClient;
-import com.example.hellotalk.client.RestClient;
 import com.example.hellotalk.entity.user.UserEntity;
 import com.example.hellotalk.model.Hometown;
 import com.example.hellotalk.repository.UserRepository;
@@ -17,7 +16,6 @@ import static com.example.hellotalk.entity.user.HometownEntity.buildHometownEnti
 public class DBStep {
 
     private final DBClient dbClient;
-    private final RestClient restClient;
     private final UserRepository userRepository;
     private final UserContext uc;
 
@@ -32,6 +30,19 @@ public class DBStep {
         }
 
         uc.setUserDB(userEntity);
+    }
+
+    @Given("I add a second user to the DB with username {string} and password {string}")
+    public void iAddSecondUserToDB(String username, String password) {
+        UserEntity userEntity = userRepository.findByUsername(username);
+        if (userEntity == null) {
+            userEntity = getUserEntity();
+            userEntity.setUsername(username);
+            userEntity.setPassword(password);
+            userEntity = userRepository.save(userEntity);
+        }
+
+        uc.setSecondUserDB(userEntity);
     }
 
     @Given("I access the users DB data")

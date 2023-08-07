@@ -6,7 +6,6 @@ import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.restdocs.cli.CliDocumentation;
@@ -22,14 +21,12 @@ import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.docu
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 
-@WebMvcTest(controllers = FollowingRequestController.class) // todo: check why this is pointing to following request controller - 16/07/2023
-@ExtendWith(MockitoExtension.class)
-@ExtendWith({RestDocumentationExtension.class, SpringExtension.class})
+@ExtendWith({RestDocumentationExtension.class, SpringExtension.class, MockitoExtension.class})
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public abstract class BaseTestConfig {
 
     @Autowired
-    MockMvc mockMvc;
+    protected MockMvc mockMvc;
 
     @BeforeEach
     void setUp(WebApplicationContext webApplicationContext, RestDocumentationContextProvider restDocumentation) {

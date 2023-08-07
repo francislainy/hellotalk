@@ -1,4 +1,4 @@
-package com.example.hellotalk.controller;
+package com.example.hellotalk.controller.moment;
 
 import com.example.hellotalk.model.moment.Moment;
 import com.example.hellotalk.service.moment.MomentService;

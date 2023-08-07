@@ -1,4 +1,4 @@
-package com.example.hellotalk.controller;
+package com.example.hellotalk.controller.follow;
 
 import com.example.hellotalk.model.FollowingRequest;
 import com.example.hellotalk.service.FollowingRequestService;
@@ -28,12 +28,12 @@ public class FollowingRequestController {
     }
 
     @GetMapping({"/from/user/{userId}", "/from/user/{userId}/"})
-    public ResponseEntity<Object> getAllFollowingRequestsFromUser(@PathVariable UUID userId) {
+    public ResponseEntity<Object> getAllFolloweeForUser(@PathVariable UUID userId) {
         return new ResponseEntity<>(followingRequestService.getAllFollowingRequestsFromUser(userId), HttpStatus.OK);
     }
 
     @GetMapping({"/to/user/{userId}", "/to/user/{userId}/"})
-    public ResponseEntity<Object> getAllFollowingRequestsToUser(@PathVariable UUID userId) {
+    public ResponseEntity<Object> getAllFollowersForUser(@PathVariable UUID userId) {
         return new ResponseEntity<>(followingRequestService.getAllFollowingRequestsToUser(userId), HttpStatus.OK);
     }
 

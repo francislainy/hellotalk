@@ -1,5 +1,6 @@
-package com.example.hellotalk.controller;
+package com.example.hellotalk.controller.follow;
 
+import com.example.hellotalk.controller.BaseTestConfig;
 import com.example.hellotalk.entity.user.UserEntity;
 import com.example.hellotalk.model.FollowingRequest;
 import com.example.hellotalk.repository.UserRepository;

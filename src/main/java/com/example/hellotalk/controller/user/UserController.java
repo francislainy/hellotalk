@@ -1,4 +1,4 @@
-package com.example.hellotalk.controller;
+package com.example.hellotalk.controller.user;
 
 import com.example.hellotalk.model.user.User;
 import com.example.hellotalk.service.user.UserService;

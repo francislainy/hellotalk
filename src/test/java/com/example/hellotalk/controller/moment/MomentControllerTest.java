@@ -1,5 +1,6 @@
-package com.example.hellotalk.controller;
+package com.example.hellotalk.controller.moment;
 
+import com.example.hellotalk.controller.BaseTestConfig;
 import com.example.hellotalk.entity.moment.MomentEntity;
 import com.example.hellotalk.entity.user.LikeEntity;
 import com.example.hellotalk.entity.user.UserEntity;

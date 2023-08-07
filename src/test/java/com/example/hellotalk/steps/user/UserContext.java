@@ -14,4 +14,5 @@ public class UserContext {
 
     private List<UserEntity> userListDB;
     private UserEntity userDB;
+    private UserEntity secondUserDB;
 }

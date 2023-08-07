@@ -1,4 +1,4 @@
-package com.example.hellotalk.controller;
+package com.example.hellotalk.controller.comment;
 
 import com.example.hellotalk.model.comment.Comment;
 import com.example.hellotalk.service.comment.CommentService;

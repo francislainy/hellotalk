@@ -39,7 +39,6 @@ public class FollowingRequestController {
 
     @PostMapping({"", "/"})
     public ResponseEntity<Object> createFollowingRequest(@RequestBody FollowingRequest followingRequest) {
-
         return new ResponseEntity<>(followingRequestService.createFollowingRequest(followingRequest), HttpStatus.CREATED);
     }
 }

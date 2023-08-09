@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Repository
@@ -20,4 +21,10 @@ public interface FollowingRequestRepository extends JpaRepository<FollowingReque
 
     @Query(value = QUERY_FOLLOWING_REQUESTS_RECEIVED_BY_USER_TO_ID, nativeQuery = true)
     List<FollowingRequestEntity> findFollowingRequestEntitiesByUserToId(UUID userToId);
+
+    String QUERY_FOLLOWING_REQUESTS_FROM_USER_ID_TO_USER_ID = "SELECT * FROM following_request WHERE user_from_id = :userFromId and user_to_id = :userToId";
+
+    @Query(value = QUERY_FOLLOWING_REQUESTS_FROM_USER_ID_TO_USER_ID, nativeQuery = true)
+    Optional<FollowingRequestEntity> findByUserFromIdAndUserToId(UUID userFromId, UUID userToId);
+
 }

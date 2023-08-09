@@ -9,5 +9,15 @@ Feature: Following/Follower relationships
   Scenario: User can follow another user
     When the authenticated user triggers the request to follow another user
     Then The creation request is successful
-    And the follower user should have their list of users they follow updated
+    And the follower user should have their list of users they follow updated to include the user they are following
     And the followed user should have their list of followers updated to include the new follower
+    And I delete the following relationship
+
+  Scenario: User can stop following another user
+    When the authenticated user triggers the request to follow another user
+    Then The creation request is successful
+    And the authenticated user triggers the request to follow another user
+    And the follower user should have their list of users they follow updated to not include the user they are no longer following
+    And the followed user should have their list of followers updated to not include the new follower
+
+

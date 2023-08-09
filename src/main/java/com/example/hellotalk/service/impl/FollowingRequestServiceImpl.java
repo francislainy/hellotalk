@@ -2,6 +2,7 @@ package com.example.hellotalk.service.impl;
 
 import com.example.hellotalk.entity.user.FollowingRequestEntity;
 import com.example.hellotalk.entity.user.UserEntity;
+import com.example.hellotalk.exception.FollowingRelationshipDeletedException;
 import com.example.hellotalk.exception.FollowingRelationshipNotCreatedException;
 import com.example.hellotalk.exception.UserNotFoundException;
 import com.example.hellotalk.model.FollowingRequest;
@@ -11,10 +12,7 @@ import com.example.hellotalk.service.FollowingRequestService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 import static com.example.hellotalk.exception.AppExceptionHandler.*;
 import static com.example.hellotalk.model.FollowingRequest.buildFollowingRequestFromEntity;
@@ -91,22 +89,15 @@ public class FollowingRequestServiceImpl implements FollowingRequestService {
             throw new UserNotFoundException(USER_NOT_FOUND_EXCEPTION);
         }
 
-        if (userEntityOptionalTo.get().getFollowedByEntity() != null) {
-            for (FollowingRequestEntity followingRequestEntity : userEntityOptionalTo.get().getFollowedByEntity()) {
-                if (followingRequestEntity.getUserFromEntity().getId().equals(userFromId)) {
-                    throw new FollowingRelationshipNotCreatedException(FOLLOWING_RELATIONSHIP_ALREADY_EXISTS_EXCEPTION);
-                }
-            }
+        Optional<FollowingRequestEntity> optionalFollowingRequest = followingRequestRepository.findByUserFromIdAndUserToId(userFromId, userToId);
+        if (optionalFollowingRequest.isPresent()) {
+            followingRequestRepository.delete(optionalFollowingRequest.get());
+            throw new FollowingRelationshipDeletedException(FOLLOWING_RELATIONSHIP_ALREADY_EXISTS_EXCEPTION);
         }
 
         UserEntity userEntityTo = userEntityOptionalTo.get();
         UserEntity userEntityFrom = userEntityOptionalFrom.get();
-
-        FollowingRequestEntity followingRequestEntity = FollowingRequestEntity.builder()
-                .userToEntity(userEntityTo)
-                .userFromEntity(userEntityFrom)
-                .build();
-
+        FollowingRequestEntity followingRequestEntity = FollowingRequestEntity.builder().userToEntity(userEntityTo).userFromEntity(userEntityFrom).build();
         followingRequestEntity = followingRequestRepository.save(followingRequestEntity);
 
         return FollowingRequest.builder()

@@ -20,7 +20,7 @@ public class AppExceptionHandler extends ResponseEntityExceptionHandler {
     public static final String MOMENT_NOT_FOUND_EXCEPTION = "NO MOMENT FOUND WITH THIS ID";
     public static final String COMMENT_NOT_FOUND_EXCEPTION = "NO COMMENT FOUND WITH THIS ID";
     public static final String MOMENT_ALREADY_LIKED_EXCEPTION = "MOMENT ALREADY LIKED";
-    public static final String FOLLOWING_RELATIONSHIP_ALREADY_EXISTS_EXCEPTION = "FOLLOWING RELATIONSHIP ALREADY EXISTS";
+    public static final String FOLLOWING_RELATIONSHIP_ALREADY_EXISTS_EXCEPTION = "FOLLOWING RELATIONSHIP DELETED AS IT ALREADY EXISTED";
     public static final String FOLLOWING_RELATIONSHIP_DOES_NOT_EXIST_EXCEPTION = "FOLLOWING RELATIONSHIP DOES NOT EXIST";
 
     @ExceptionHandler(UserNotFoundException.class)
@@ -33,6 +33,12 @@ public class AppExceptionHandler extends ResponseEntityExceptionHandler {
     @ResponseStatus(NOT_FOUND)
     public ResponseEntity<Object> handleFollowerNotFoundException(FollowingRelationshipNotCreatedException ex, WebRequest webRequest) {
         return new ResponseEntity<>(new ApiError(ex.getMessage(), NOT_FOUND, LocalDateTime.now()), NOT_FOUND);
+    }
+
+    @ExceptionHandler(FollowingRelationshipDeletedException.class)
+    @ResponseStatus(PARTIAL_CONTENT)
+    public ResponseEntity<Object> handleFollowingRelationshipDeletedException(FollowingRelationshipDeletedException ex, WebRequest webRequest) {
+        return new ResponseEntity<>(new ApiError(ex.getMessage(), PARTIAL_CONTENT, LocalDateTime.now()), PARTIAL_CONTENT);
     }
 
     @ExceptionHandler(MomentNotFoundException.class)

@@ -2,6 +2,7 @@ package com.example.hellotalk.controller.follow;
 
 import com.example.hellotalk.controller.BaseTestConfig;
 import com.example.hellotalk.entity.user.UserEntity;
+import com.example.hellotalk.exception.FollowingRelationshipDeletedException;
 import com.example.hellotalk.model.FollowingRequest;
 import com.example.hellotalk.repository.UserRepository;
 import com.example.hellotalk.service.FollowingRequestService;
@@ -45,17 +46,10 @@ class FollowingRequestControllerTest extends BaseTestConfig {
 
     @Test
     void testGetFollowingRequest() throws Exception {
-
-        FollowingRequest followingRequest = FollowingRequest.builder()
-                .id(randomUUID())
-                .userFromId(randomUUID())
-                .userToId(randomUUID())
-                .build();
-
+        FollowingRequest followingRequest = FollowingRequest.builder().id(randomUUID()).userFromId(randomUUID()).userToId(randomUUID()).build();
         when(followingRequestService.getFollowingRequest(any())).thenReturn(followingRequest);
 
         String jsonResponse = jsonStringFromObject(followingRequest);
-
         mockMvc.perform(RestDocumentationRequestBuilders.get("/api/v1/ht/follow/{followingRequestId}", randomUUID()))
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(content().json(jsonResponse))
@@ -66,7 +60,6 @@ class FollowingRequestControllerTest extends BaseTestConfig {
 
     @Test
     void testGetAllFollowingRequests() throws Exception {
-
         FollowingRequest followingRequest = FollowingRequest.builder().build();
         when(followingRequestService.getAllFollowingRequests()).thenReturn(List.of(followingRequest));
 
@@ -74,7 +67,6 @@ class FollowingRequestControllerTest extends BaseTestConfig {
         followingRequestList.add(followingRequest);
 
         String jsonResponse = jsonStringFromObject(followingRequestList);
-
         mockMvc.perform(RestDocumentationRequestBuilders.get("/api/v1/ht/follow/"))
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(content().json(jsonResponse))
@@ -85,19 +77,13 @@ class FollowingRequestControllerTest extends BaseTestConfig {
 
     @Test
     void testGetAllFollowingRequestsFromUser() throws Exception {
-
-        FollowingRequest followingRequest = FollowingRequest.builder()
-                .id(randomUUID())
-                .userFromId(randomUUID())
-                .userToId(randomUUID())
-                .build();
+        FollowingRequest followingRequest = FollowingRequest.builder().id(randomUUID()).userFromId(randomUUID()).userToId(randomUUID()).build();
         when(followingRequestService.getAllFollowingRequestsFromUser(any())).thenReturn(List.of(followingRequest));
 
         List<FollowingRequest> followingRequestList = new ArrayList<>();
         followingRequestList.add(followingRequest);
 
         String jsonResponse = jsonStringFromObject(followingRequestList);
-
         mockMvc.perform(RestDocumentationRequestBuilders.get("/api/v1/ht/follow/from/user/{userId}", randomUUID()))
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(content().json(jsonResponse))
@@ -108,19 +94,13 @@ class FollowingRequestControllerTest extends BaseTestConfig {
 
     @Test
     void testGetAllFollowingRequestsToUser() throws Exception {
-
-        FollowingRequest followingRequest = FollowingRequest.builder()
-                .id(randomUUID())
-                .userFromId(randomUUID())
-                .userToId(randomUUID())
-                .build();
+        FollowingRequest followingRequest = FollowingRequest.builder().id(randomUUID()).userFromId(randomUUID()).userToId(randomUUID()).build();
         when(followingRequestService.getAllFollowingRequestsToUser(any())).thenReturn(List.of(followingRequest));
 
         List<FollowingRequest> followingRequestList = new ArrayList<>();
         followingRequestList.add(followingRequest);
 
         String jsonResponse = jsonStringFromObject(followingRequestList);
-
         mockMvc.perform(RestDocumentationRequestBuilders.get("/api/v1/ht/follow/to/user/{userId}", randomUUID()))
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(content().json(jsonResponse))
@@ -130,21 +110,12 @@ class FollowingRequestControllerTest extends BaseTestConfig {
     }
 
     @Test
-    void testCreateFollowingRequest() throws Exception {
-
+    void testCreateFollowingRequest_WhenRelationshipDoesNotYetExist_RelationshipCreatedAndSuccessReturned() throws Exception {
         UUID userToId = randomUUID();
         UUID userFromId = randomUUID();
 
-        FollowingRequest followingRequest = FollowingRequest.builder()
-                .userToId(userToId)
-                .userFromId(userFromId)
-                .build();
-
-        FollowingRequest followingResponse = FollowingRequest.builder()
-                .id(userToId)
-                .userToId(userToId)
-                .userFromId(userFromId)
-                .build();
+        FollowingRequest followingRequest = FollowingRequest.builder().userToId(userToId).userFromId(userFromId).build();
+        FollowingRequest followingResponse = FollowingRequest.builder().id(userToId).userToId(userToId).userFromId(userFromId).build();
 
         UserEntity userFromEntity = UserEntity.builder().id(userFromId).build();
         UserEntity userToEntity = UserEntity.builder().id(userToId).build();
@@ -158,6 +129,28 @@ class FollowingRequestControllerTest extends BaseTestConfig {
         mockMvc.perform(RestDocumentationRequestBuilders.post("/api/v1/ht/follow/").content(jsonRequest).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(content().json(jsonResponse))
+                .andDo(document("create-following-request-for-user-new-relationship",
+                        resource("Create a following request for a user when the relationship does not yet exist")))
+                .andReturn();
+    }
+
+    @Test
+    void testCreateFollowingRequest_WhenRelationshipAlreadyExists_DeletesRelationshipAndReturnsSuccess() throws Exception {
+        UUID userToId = randomUUID();
+        UUID userFromId = randomUUID();
+
+        FollowingRequest followingRequest = FollowingRequest.builder().userToId(userToId).userFromId(userFromId).build();
+
+        UserEntity userFromEntity = UserEntity.builder().id(userFromId).build();
+        UserEntity userToEntity = UserEntity.builder().id(userToId).build();
+
+        when(userRepository.findById(userFromEntity.getId())).thenReturn(Optional.of(userFromEntity));
+        when(userRepository.findById(userToEntity.getId())).thenReturn(Optional.of(userToEntity));
+        when(followingRequestService.createFollowingRequest(any())).thenThrow(FollowingRelationshipDeletedException.class);
+
+        String jsonRequest = jsonStringFromObject(followingRequest);
+        mockMvc.perform(RestDocumentationRequestBuilders.post("/api/v1/ht/follow/").content(jsonRequest).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isPartialContent())
                 .andDo(document("create-following-request-for-user",
                         resource("Create a following request for a user")))
                 .andReturn();

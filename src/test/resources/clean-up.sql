@@ -1,4 +1,4 @@
-DELETE from following_request;
+DELETE from followship;
 DELETE from users_hobbies;
 DELETE from comment;
 DELETE from moment_tags;

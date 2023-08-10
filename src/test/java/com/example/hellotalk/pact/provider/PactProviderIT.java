@@ -102,21 +102,21 @@ class PactProviderIT extends BasePostgresConfig {
         return map;
     }
 
-    @State("A request to retrieve a following request")
-    Map<String, Object> getFollowingRelationship() {
+    @State("A request to retrieve a followship")
+    Map<String, Object> getFollowship() {
         Map<String, Object> map = new HashMap<>();
-        map.put("followingRequestId", "1b00ce80-806b-4d16-b0ec-32f5396ba4b0");
+        map.put("followshipId", "1b00ce80-806b-4d16-b0ec-32f5396ba4b0");
         return map;
     }
 
-    @State("A request to retrieve a list of following requests sent from a given user")
+    @State("A request to retrieve a list of followships sent from a given user")
     Map<String, Object> getFollowingRequestsFromUser() {
         Map<String, Object> map = new HashMap<>();
         map.put("userId", "ca3569ee-cb62-4f45-b1c2-199028ba5562");
         return map;
     }
 
-    @State("A request to retrieve a list of following requests sent to a given user")
+    @State("A request to retrieve a list of followships sent to a given user")
     Map<String, Object> getFollowingRequestsToUser() {
         Map<String, Object> map = new HashMap<>();
         map.put("userId", "ca3569ee-cb62-4f45-b1c2-199028ba5562");

@@ -1,4 +1,4 @@
-package com.example.hellotalk.pact.consumer.followingrequest;
+package com.example.hellotalk.pact.consumer.followship;
 
 import au.com.dius.pact.consumer.dsl.DslPart;
 import au.com.dius.pact.consumer.dsl.PactDslJsonBody;
@@ -8,7 +8,7 @@ import au.com.dius.pact.consumer.junit5.PactTestFor;
 import au.com.dius.pact.core.model.PactSpecVersion;
 import au.com.dius.pact.core.model.RequestResponsePact;
 import au.com.dius.pact.core.model.annotations.Pact;
-import com.example.hellotalk.model.FollowingRequest;
+import com.example.hellotalk.model.followship.Followship;
 import io.restassured.response.Response;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -23,17 +23,17 @@ import static java.util.UUID.fromString;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /*
- * mvn -Dtest=pact.consumer.followingrequest.CreateFollowingRequestIT integration-test
- * mvn -Dtest="pact.consumer.followingrequest.*IT" integration-test
+ * mvn -Dtest=pact.consumer.followship.CreateFollowshipIT integration-test
+ * mvn -Dtest="pact.consumer.followship.*IT" integration-test
  * mvn -Dtest="pact.consumer.**.*IT" integration-test
  */
 
 @ExtendWith(PactConsumerTestExt.class)
-class CreateFollowingRequestIT {
+class CreateFollowshipIT {
 
     Map<String, String> headers = new HashMap<>();
 
-    String path = "/api/v1/ht/follow/";
+    String path = "/api/v1/ht/followship/";
 
     @Pact(provider = PACT_PROVIDER, consumer = PACT_CONSUMER)
     public RequestResponsePact createPact(PactDslWithProvider builder) {
@@ -51,7 +51,7 @@ class CreateFollowingRequestIT {
                 .close();
 
         return builder
-                .uponReceiving("A request to create a follower")
+                .uponReceiving("A request to create a followship")
                 .path(path)
                 .body(Objects.requireNonNull(bodyReceived))
                 .method("POST")
@@ -66,11 +66,11 @@ class CreateFollowingRequestIT {
     @PactTestFor(providerName = PACT_PROVIDER, port = MOCK_PACT_PORT, pactVersion = PactSpecVersion.V3)
     void runTest() {
 
-        FollowingRequest followingRequest = FollowingRequest.builder()
+        Followship followship = Followship.builder()
                 .userToId(fromString("ca3569ee-cb62-4f45-b1c2-199028ba5562"))
                 .build();
 
-        Response response = getMockRequest(headers).body(followingRequest).post(path);
+        Response response = getMockRequest(headers).body(followship).post(path);
         assertEquals(201, response.getStatusCode());
     }
 

@@ -1,5 +1,6 @@
-package com.example.hellotalk.entity.user;
+package com.example.hellotalk.entity.followship;
 
+import com.example.hellotalk.entity.user.UserEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -9,12 +10,12 @@ import jakarta.persistence.*;
 import java.util.UUID;
 
 @Entity
-@Table(name = "following_request")
+@Table(name = "followship")
 @Builder
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class FollowingRequestEntity {
+public class FollowshipEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

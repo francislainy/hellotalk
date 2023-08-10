@@ -1,6 +1,6 @@
-package com.example.hellotalk.model;
+package com.example.hellotalk.model.followship;
 
-import com.example.hellotalk.entity.user.FollowingRequestEntity;
+import com.example.hellotalk.entity.followship.FollowshipEntity;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,7 +14,7 @@ import java.util.UUID;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class FollowingRequest {
+public class Followship {
 
     private static ModelMapper modelMapper = new ModelMapper();
 
@@ -23,7 +23,7 @@ public class FollowingRequest {
     private UUID userToId;
     private UUID userFromId;
 
-    public static FollowingRequest buildFollowingRequestFromEntity(FollowingRequestEntity followingRequestEntity) {
-        return modelMapper.map(followingRequestEntity, FollowingRequest.class);
+    public static Followship buildFollowshipFromEntity(FollowshipEntity followshipEntity) {
+        return modelMapper.map(followshipEntity, Followship.class);
     }
 }

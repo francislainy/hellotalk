@@ -1,4 +1,4 @@
-package com.example.hellotalk.steps.follow;
+package com.example.hellotalk.steps.followship;
 
 import com.example.hellotalk.model.comment.Comment;
 import com.example.hellotalk.model.moment.Moment;
@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 @Data
 @Component
 @ScenarioScope
-public class FollowContext {
+public class FollowshipContext {
     private Moment moment;
     private Moment updatedMoment;
     private Comment comment;

@@ -1,4 +1,4 @@
-@Follow
+@Followship
 Feature: Following/Follower relationships
 
   Background: Set up user
@@ -11,7 +11,7 @@ Feature: Following/Follower relationships
     Then The creation request is successful
     And the follower user should have their list of users they follow updated to include the user they are following
     And the followed user should have their list of followers updated to include the new follower
-    And I delete the following relationship
+    And I delete the followship
 
   Scenario: User can stop following another user
     When the authenticated user triggers the request to follow another user

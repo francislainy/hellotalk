@@ -1,5 +1,6 @@
 package com.example.hellotalk.entity.user;
 
+import com.example.hellotalk.entity.followship.FollowshipEntity;
 import com.example.hellotalk.entity.moment.MomentEntity;
 import com.example.hellotalk.model.user.User;
 import jakarta.persistence.*;
@@ -79,10 +80,10 @@ public class UserEntity {
     private HometownEntity hometownEntity;
 
     @OneToMany(mappedBy = "userToEntity", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = false)
-    private Set<FollowingRequestEntity> followedByEntity;
+    private Set<FollowshipEntity> followedByEntity;
 
     @OneToMany(mappedBy = "userFromEntity", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = false)
-    private Set<FollowingRequestEntity> followerOfEntity;
+    private Set<FollowshipEntity> followerOfEntity;
 
     @OneToMany(mappedBy = "userEntity", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = false)
     private Set<MomentEntity> momentEntitySet;

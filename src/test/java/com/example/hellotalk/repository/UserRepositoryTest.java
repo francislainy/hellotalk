@@ -1,10 +1,11 @@
 package com.example.hellotalk.repository;
 
 import com.example.hellotalk.config.BasePostgresConfig;
-import com.example.hellotalk.entity.user.FollowingRequestEntity;
+import com.example.hellotalk.entity.followship.FollowshipEntity;
 import com.example.hellotalk.entity.user.HobbyAndInterestEntity;
 import com.example.hellotalk.entity.user.HometownEntity;
 import com.example.hellotalk.entity.user.UserEntity;
+import com.example.hellotalk.repository.followship.FollowshipRepository;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +25,7 @@ class UserRepositoryTest extends BasePostgresConfig {
     @Autowired
     UserRepository userRepository;
     @Autowired
-    FollowingRequestRepository followingRequestRepository;
+    FollowshipRepository followshipRepository;
     @Autowired
     HometownRepository hometownRepository;
     @Autowired
@@ -128,15 +129,15 @@ class UserRepositoryTest extends BasePostgresConfig {
         userFromEntity = userRepository.save(userFromEntity);
         userToEntity = userRepository.save(userToEntity);
 
-        FollowingRequestEntity followingRequestEntity = FollowingRequestEntity.builder().userFromEntity(userFromEntity).userToEntity(userToEntity).build();
-        followingRequestRepository.save(followingRequestEntity);
+        FollowshipEntity followshipEntity = FollowshipEntity.builder().userFromEntity(userFromEntity).userToEntity(userToEntity).build();
+        followshipRepository.save(followshipEntity);
 
-        FollowingRequestEntity followerOfEntity = FollowingRequestEntity.builder().userToEntity(userToEntity).build();
-        Set<FollowingRequestEntity> followerOfEntities = new HashSet<>();
+        FollowshipEntity followerOfEntity = FollowshipEntity.builder().userToEntity(userToEntity).build();
+        Set<FollowshipEntity> followerOfEntities = new HashSet<>();
         followerOfEntities.add(followerOfEntity);
 
-        FollowingRequestEntity followedByEntity = FollowingRequestEntity.builder().userFromEntity(userFromEntity).build();
-        Set<FollowingRequestEntity> followedByEntities = new HashSet<>();
+        FollowshipEntity followedByEntity = FollowshipEntity.builder().userFromEntity(userFromEntity).build();
+        Set<FollowshipEntity> followedByEntities = new HashSet<>();
         followedByEntities.add(followedByEntity);
 
         HometownEntity hometownEntity = HometownEntity.builder().city("anyCity").country("anyCountry").build();

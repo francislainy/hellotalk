@@ -1,4 +1,4 @@
-package com.example.hellotalk.pact.consumer.followingrequest;
+package com.example.hellotalk.pact.consumer.followship;
 
 import au.com.dius.pact.consumer.dsl.DslPart;
 import au.com.dius.pact.consumer.dsl.PactDslJsonArray;
@@ -20,11 +20,11 @@ import static com.example.hellotalk.utils.Utils.getMockRequest;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ExtendWith(PactConsumerTestExt.class)
-class GetFollowingRequestsIT {
+class GetFollowshipsIT {
 
     Map<String, String> headers = new HashMap<>();
 
-    String path = "/api/v1/ht/follow";
+    String path = "/api/v1/ht/followship/";
 
     @Pact(provider = PACT_PROVIDER, consumer = PACT_CONSUMER)
     public RequestResponsePact createPact(PactDslWithProvider builder) {
@@ -37,7 +37,7 @@ class GetFollowingRequestsIT {
                 .closeObject();
 
         return builder
-                .uponReceiving("A request to retrieve a list of following requests")
+                .uponReceiving("A request to retrieve a list of followships")
                 .path(path)
                 .method("GET")
                 .headers(headers)

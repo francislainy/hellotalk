@@ -1,4 +1,4 @@
-package com.example.hellotalk.pact.consumer.followingrequest;
+package com.example.hellotalk.pact.consumer.followship;
 
 import au.com.dius.pact.consumer.dsl.DslPart;
 import au.com.dius.pact.consumer.dsl.PactDslJsonBody;
@@ -21,12 +21,12 @@ import static com.example.hellotalk.utils.Utils.getMockRequest;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ExtendWith(PactConsumerTestExt.class)
-class GetFollowingRequestIT {
+class GetFollowshipIT {
 
     Map<String, String> headers = new HashMap<>();
 
-    String path = "/api/v1/ht/follow/";
-    UUID followingRequestId = UUID.fromString("1bfff94a-b70e-4b39-bd2a-be1c0f898589");
+    String path = "/api/v1/ht/followship/";
+    UUID followshipId = UUID.fromString("1bfff94a-b70e-4b39-bd2a-be1c0f898589");
 
     @Pact(provider = PACT_PROVIDER, consumer = PACT_CONSUMER)
     public RequestResponsePact createPact(PactDslWithProvider builder) {
@@ -34,15 +34,15 @@ class GetFollowingRequestIT {
         headers.put("Accept", "application/json");
 
         DslPart bodyReturned = new PactDslJsonBody()
-                .uuid("id", followingRequestId)
+                .uuid("id", followshipId)
                 .uuid("userFromId", "499cfb0e-ede3-45a2-9272-e23135ac40fb")
                 .uuid("userToId", "ca3569ee-cb62-4f45-b1c2-199028ba5562")
                 .close();
 
         return builder
-                .given("A request to retrieve a following request")
-                .uponReceiving("A request to retrieve a following request")
-                .pathFromProviderState(path + "${followingRequestId}", path + followingRequestId)
+                .given("A request to retrieve a followship")
+                .uponReceiving("A request to retrieve a followship")
+                .pathFromProviderState(path + "${followshipId}", path + followshipId)
                 .method("GET")
                 .headers(headers)
                 .willRespondWith()
@@ -55,7 +55,7 @@ class GetFollowingRequestIT {
     @PactTestFor(providerName = PACT_PROVIDER, port = MOCK_PACT_PORT, pactVersion = PactSpecVersion.V3)
     void runTest() {
 
-        Response response = getMockRequest(headers).get(path + followingRequestId);
+        Response response = getMockRequest(headers).get(path + followshipId);
         assertEquals(200, response.getStatusCode());
     }
 

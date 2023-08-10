@@ -1,8 +1,8 @@
-package com.example.hellotalk.steps.follow;
+package com.example.hellotalk.steps.followship;
 
 import com.example.hellotalk.client.RestClient;
-import com.example.hellotalk.model.FollowingRequest;
-import com.example.hellotalk.repository.FollowingRequestRepository;
+import com.example.hellotalk.model.followship.Followship;
+import com.example.hellotalk.repository.followship.FollowshipRepository;
 import com.example.hellotalk.repository.UserRepository;
 import com.example.hellotalk.steps.ApiStep;
 import com.example.hellotalk.steps.user.UserContext;
@@ -20,26 +20,26 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @RequiredArgsConstructor
 @Data
-public class FollowStep {
+public class FollowshipStep {
 
-    private final FollowContext mc;
+    private final FollowshipContext mc;
     private final UserContext uc;
 
     private final ApiStep apiStep;
     private final RestClient restClient;
 
     private final UserRepository userRepository;
-    private final FollowingRequestRepository followingRequestRepository;
+    private final FollowshipRepository followshipRepository;
 
     @And("the authenticated user triggers the request to follow another user")
     public void theUserTriggersTheFollowingRequestToStartFollowingAnotherUser() {
         UUID userFromId = uc.getUserDB().getId();
         UUID userToId = uc.getSecondUserDB().getId();
 
-        FollowingRequest followingRequest = FollowingRequest.builder().userFromId(userFromId).userToId(userToId).build();
+        Followship followship = Followship.builder().userFromId(userFromId).userToId(userToId).build();
 
         RequestSpecification rq = apiStep.getRqWithAuth();
-        Response response = rq.body(followingRequest).post("/api/v1/ht/follow/");
+        Response response = rq.body(followship).post("/api/v1/ht/followship/");
         assertEquals(201, response.getStatusCode());
 
         apiStep.setResponse(response);
@@ -49,10 +49,10 @@ public class FollowStep {
     public void theUserTriggersTheFollowingRequestToStartFollowingThemself() {
         UUID userFromId = uc.getUserDB().getId();
 
-        FollowingRequest followingRequest = FollowingRequest.builder().userFromId(userFromId).userToId(userFromId).build();
+        Followship followship = Followship.builder().userFromId(userFromId).userToId(userFromId).build();
 
         RequestSpecification rq = apiStep.getRqWithAuth();
-        Response response = rq.body(followingRequest).post("/api/v1/ht/follow/");
+        Response response = rq.body(followship).post("/api/v1/ht/followship/");
 
         apiStep.setResponse(response);
     }
@@ -62,10 +62,10 @@ public class FollowStep {
         UUID userFromId = uc.getUserDB().getId();
         UUID userToId = uc.getSecondUserDB().getId();
 
-        FollowingRequest followingRequest = FollowingRequest.builder().userFromId(userFromId).userToId(userToId).build();
+        Followship followship = Followship.builder().userFromId(userFromId).userToId(userToId).build();
 
         RequestSpecification rq = apiStep.getRqWithAuth();
-        Response response = rq.body(followingRequest).post("/api/v1/ht/follow/");
+        Response response = rq.body(followship).post("/api/v1/ht/followship/");
         assertEquals(206, response.getStatusCode());
 
         apiStep.setResponse(response);
@@ -77,11 +77,11 @@ public class FollowStep {
         UUID userToId = uc.getSecondUserDB().getId();
 
         RequestSpecification rq = apiStep.getRqWithAuth();
-        Response response = rq.get("/api/v1/ht/follow/from/user/" + userFromId);
+        Response response = rq.get("/api/v1/ht/followship/from/user/" + userFromId);
         assertEquals(200, response.getStatusCode());
 
-        List<FollowingRequest> followingRequestList = Arrays.asList(response.as(FollowingRequest[].class));
-        assertEquals(userToId.toString(), followingRequestList.get(0).getUserToId().toString());
+        List<Followship> followshipList = Arrays.asList(response.as(Followship[].class));
+        assertEquals(userToId.toString(), followshipList.get(0).getUserToId().toString());
 
         apiStep.setResponse(response);
     }
@@ -91,11 +91,11 @@ public class FollowStep {
         UUID userFromId = uc.getUserDB().getId();
 
         RequestSpecification rq = apiStep.getRqWithAuth();
-        Response response = rq.get("/api/v1/ht/follow/from/user/" + userFromId);
+        Response response = rq.get("/api/v1/ht/followship/from/user/" + userFromId);
         assertEquals(200, response.getStatusCode());
 
-        List<FollowingRequest> followingRequestList = Arrays.asList(response.as(FollowingRequest[].class));
-        assertEquals(0, followingRequestList.size());
+        List<Followship> followshipList = Arrays.asList(response.as(Followship[].class));
+        assertEquals(0, followshipList.size());
     }
 
     @And("the followed user should have their list of followers updated to include the new follower")
@@ -104,11 +104,11 @@ public class FollowStep {
         UUID userToId = uc.getSecondUserDB().getId();
 
         RequestSpecification rq = apiStep.getRqWithAuth();
-        Response response = rq.get("/api/v1/ht/follow/to/user/" + userToId);
+        Response response = rq.get("/api/v1/ht/followship/to/user/" + userToId);
         assertEquals(200, response.getStatusCode());
 
-        List<FollowingRequest> followingRequestList = Arrays.asList(response.as(FollowingRequest[].class));
-        assertEquals(userFromId.toString(), followingRequestList.get(0).getUserFromId().toString());
+        List<Followship> followshipList = Arrays.asList(response.as(Followship[].class));
+        assertEquals(userFromId.toString(), followshipList.get(0).getUserFromId().toString());
 
         apiStep.setResponse(response);
     }
@@ -118,21 +118,21 @@ public class FollowStep {
         UUID userToId = uc.getSecondUserDB().getId();
 
         RequestSpecification rq = apiStep.getRqWithAuth();
-        Response response = rq.get("/api/v1/ht/follow/to/user/" + userToId);
+        Response response = rq.get("/api/v1/ht/followship/to/user/" + userToId);
         assertEquals(200, response.getStatusCode());
 
-        List<FollowingRequest> followingRequestList = Arrays.asList(response.as(FollowingRequest[].class));
-        assertEquals(0, followingRequestList.size());
+        List<Followship> followshipList = Arrays.asList(response.as(Followship[].class));
+        assertEquals(0, followshipList.size());
     }
 
-    @And("I delete the following relationship")
-    public void iDeleteTheRelationship() {
-        FollowingRequest[] followingRequests = apiStep.getResponse().as(FollowingRequest[].class);
-        FollowingRequest followingRequest = Arrays.stream(followingRequests)
+    @And("I delete the followship")
+    public void iDeleteTheFollowship() {
+        Followship[] followships = apiStep.getResponse().as(Followship[].class);
+        Followship followship = Arrays.stream(followships)
                 .filter(fr -> fr.getUserFromId().toString().equals(uc.getUserDB().getId().toString()))
                 .findFirst()
                 .get();
-        followingRequestRepository.deleteById(followingRequest.getId());
+        followshipRepository.deleteById(followship.getId());
     }
 
 }

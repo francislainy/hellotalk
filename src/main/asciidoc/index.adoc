@@ -82,32 +82,32 @@ include::{snippets}/delete-user-throws-exception-when-user-not-found/http-respon
 Get Following Requests Sent To User
 
 .curl
-include::{snippets}/test-get-all-following-requests-to-user/curl-request.adoc[]
+include::{snippets}/test-get-all-followships-to-user/curl-request.adoc[]
 
 .request
-include::{snippets}/test-get-all-following-requests-to-user/http-request.adoc[]
+include::{snippets}/test-get-all-followships-to-user/http-request.adoc[]
 
 .response
-include::{snippets}/test-get-all-following-requests-to-user/http-response.adoc[]
+include::{snippets}/test-get-all-followships-to-user/http-response.adoc[]
 
 Get Following Requests Sent By User
 
 .curl
-include::{snippets}/test-get-all-following-requests-from-user/curl-request.adoc[]
+include::{snippets}/test-get-all-followships-from-user/curl-request.adoc[]
 
 .request
-include::{snippets}/test-get-all-following-requests-from-user/http-request.adoc[]
+include::{snippets}/test-get-all-followships-from-user/http-request.adoc[]
 
 .response
-include::{snippets}/test-get-all-following-requests-from-user/http-response.adoc[]
+include::{snippets}/test-get-all-followships-from-user/http-response.adoc[]
 
 Create Following Request
 
 .curl
-include::{snippets}/test-create-following-request/curl-request.adoc[]
+include::{snippets}/test-create-followship_-when-following-relationship-does-not-yet-exist_-returns-success/curl-request.adoc[]
 
 .request
-include::{snippets}/test-create-following-request/http-request.adoc[]
+include::{snippets}/test-create-followship_-when-following-relationship-does-not-yet-exist_-returns-success/http-request.adoc[]
 
 .response
-include::{snippets}/test-create-following-request/http-response.adoc[]
+include::{snippets}/test-create-followship_-when-following-relationship-does-not-yet-exist_-returns-success/http-response.adoc[]

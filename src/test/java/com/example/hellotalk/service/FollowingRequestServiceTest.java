@@ -4,7 +4,7 @@ import com.example.hellotalk.entity.user.FollowingRequestEntity;
 import com.example.hellotalk.entity.user.UserEntity;
 import com.example.hellotalk.exception.FollowingRelationshipDeletedException;
 import com.example.hellotalk.exception.FollowingRelationshipDoesNotExistException;
-import com.example.hellotalk.exception.FollowingRelationshipNotCreatedException;
+import com.example.hellotalk.exception.FollowingRelationshipNotCreatedUserCantFollowThemselfException;
 import com.example.hellotalk.exception.UserNotFoundException;
 import com.example.hellotalk.model.FollowingRequest;
 import com.example.hellotalk.repository.FollowingRequestRepository;
@@ -278,10 +278,10 @@ class FollowingRequestServiceTest {
         when(userRepository.findByUsername(any())).thenReturn(userToEntity);
 
         FollowingRequest followingRequest = FollowingRequest.builder().userFromId(userToId).userToId(userToId).build();
-        FollowingRelationshipNotCreatedException exception =
-                assertThrows(FollowingRelationshipNotCreatedException.class, () -> followingRequestService.createFollowingRequest(followingRequest));
+        FollowingRelationshipNotCreatedUserCantFollowThemselfException exception =
+                assertThrows(FollowingRelationshipNotCreatedUserCantFollowThemselfException.class, () -> followingRequestService.createFollowingRequest(followingRequest));
 
-        assertEquals(USER_TO_AND_FROM_CANT_BE_THE_SAME, exception.getMessage());
+        assertEquals(FOLLOWING_RELATIONSHIP_NOT_CREATED_USER_CANT_FOLLOW_THEMSELF, exception.getMessage());
     }
 
     // Helpers

@@ -3,7 +3,7 @@ package com.example.hellotalk.service.impl;
 import com.example.hellotalk.entity.user.FollowingRequestEntity;
 import com.example.hellotalk.entity.user.UserEntity;
 import com.example.hellotalk.exception.FollowingRelationshipDeletedException;
-import com.example.hellotalk.exception.FollowingRelationshipNotCreatedException;
+import com.example.hellotalk.exception.FollowingRelationshipNotCreatedUserCantFollowThemselfException;
 import com.example.hellotalk.exception.UserNotFoundException;
 import com.example.hellotalk.model.FollowingRequest;
 import com.example.hellotalk.repository.FollowingRequestRepository;
@@ -37,7 +37,7 @@ public class FollowingRequestServiceImpl implements FollowingRequestService {
                     .userToId(followingRequestEntity.get().getUserToEntity().getId())
                     .build();
         } else {
-            throw new FollowingRelationshipNotCreatedException(FOLLOWING_RELATIONSHIP_DOES_NOT_EXIST_EXCEPTION);
+            throw new FollowingRelationshipNotCreatedUserCantFollowThemselfException(FOLLOWING_RELATIONSHIP_DOES_NOT_EXIST_EXCEPTION);
         }
     }
 
@@ -93,7 +93,7 @@ public class FollowingRequestServiceImpl implements FollowingRequestService {
         }
 
         if (userFromEntity.getId().toString().equals(userEntityOptionalTo.get().getId().toString())) {
-            throw new FollowingRelationshipNotCreatedException(USER_TO_AND_FROM_CANT_BE_THE_SAME);
+            throw new FollowingRelationshipNotCreatedUserCantFollowThemselfException(FOLLOWING_RELATIONSHIP_NOT_CREATED_USER_CANT_FOLLOW_THEMSELF);
         }
 
         UUID userFromId = userFromEntity.getId();

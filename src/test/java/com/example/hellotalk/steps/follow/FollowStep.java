@@ -71,7 +71,6 @@ public class FollowStep {
         apiStep.setResponse(response);
     }
 
-
     @And("the follower user should have their list of users they follow updated to include the user they are following")
     public void theListOfFolloweesShouldUpdateToIncludeUser() {
         UUID userFromId = uc.getUserDB().getId();

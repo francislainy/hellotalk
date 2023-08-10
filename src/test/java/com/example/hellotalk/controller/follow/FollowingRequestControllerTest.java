@@ -2,7 +2,7 @@ package com.example.hellotalk.controller.follow;
 
 import com.example.hellotalk.controller.BaseTestConfig;
 import com.example.hellotalk.exception.FollowingRelationshipDeletedException;
-import com.example.hellotalk.exception.FollowingRelationshipNotCreatedException;
+import com.example.hellotalk.exception.FollowingRelationshipNotCreatedUserCantFollowThemselfException;
 import com.example.hellotalk.model.FollowingRequest;
 import com.example.hellotalk.repository.UserRepository;
 import com.example.hellotalk.service.FollowingRequestService;
@@ -21,8 +21,7 @@ import java.util.List;
 import java.util.UUID;
 
 import static com.epages.restdocs.apispec.ResourceDocumentation.resource;
-import static com.example.hellotalk.exception.AppExceptionHandler.FOLLOWING_RELATIONSHIP_ALREADY_EXISTS_EXCEPTION;
-import static com.example.hellotalk.exception.AppExceptionHandler.USER_TO_AND_FROM_CANT_BE_THE_SAME;
+import static com.example.hellotalk.exception.AppExceptionHandler.FOLLOWING_RELATIONSHIP_NOT_CREATED_USER_CANT_FOLLOW_THEMSELF;
 import static com.example.hellotalk.util.Utils.jsonStringFromObject;
 import static java.util.UUID.randomUUID;
 import static org.mockito.ArgumentMatchers.any;
@@ -32,7 +31,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-
 
 @WebMvcTest(controllers = FollowingRequestController.class)
 @ExtendWith(MockitoExtension.class)
@@ -157,12 +155,12 @@ class FollowingRequestControllerTest extends BaseTestConfig {
 
         FollowingRequest followingRequest = FollowingRequest.builder().userToId(userToId).userFromId(userFromId).build();
 
-        when(followingRequestService.createFollowingRequest(any())).thenThrow(new FollowingRelationshipNotCreatedException(USER_TO_AND_FROM_CANT_BE_THE_SAME));
+        when(followingRequestService.createFollowingRequest(any())).thenThrow(new FollowingRelationshipNotCreatedUserCantFollowThemselfException(FOLLOWING_RELATIONSHIP_NOT_CREATED_USER_CANT_FOLLOW_THEMSELF));
 
         String jsonRequest = jsonStringFromObject(followingRequest);
         mockMvc.perform(RestDocumentationRequestBuilders.post("/api/v1/ht/follow/").content(jsonRequest).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.message", is(USER_TO_AND_FROM_CANT_BE_THE_SAME)))
+                .andExpect(jsonPath("$.message", is(FOLLOWING_RELATIONSHIP_NOT_CREATED_USER_CANT_FOLLOW_THEMSELF)))
                 .andDo(document("create-following-request-for-user-fails-when-user-is-the-same",
                         resource("Create a following request for a user to follow themself - It should fail")))
                 .andReturn();

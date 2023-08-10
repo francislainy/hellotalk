@@ -41,6 +41,11 @@ public class ApiStep {
         response.then().statusCode(201);
     }
 
+    @Then("The creation request fails with a bad request error")
+    public void iGetErrorForCreationRequest() {
+        response.then().statusCode(400);
+    }
+
     @Then("The retrieval request is successful")
     public void iGetSuccessfulRetrievalResponse() {
         response.then().statusCode(200);

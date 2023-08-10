@@ -92,6 +92,10 @@ public class FollowingRequestServiceImpl implements FollowingRequestService {
             throw new UserNotFoundException(USER_NOT_FOUND_EXCEPTION);
         }
 
+        if (userFromEntity.getId().toString().equals(userEntityOptionalTo.get().getId().toString())) {
+            throw new FollowingRelationshipNotCreatedException(USER_TO_AND_FROM_CANT_BE_THE_SAME);
+        }
+
         UUID userFromId = userFromEntity.getId();
         Optional<FollowingRequestEntity> optionalFollowingRequest = followingRequestRepository.findByUserFromIdAndUserToId(userFromId, userToId);
         if (optionalFollowingRequest.isPresent()) {

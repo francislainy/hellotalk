@@ -4,7 +4,7 @@ Feature: Following/Follower relationships
   Background: Set up user
     Given I add a user to the DB with username "mary@email.com" and password "Password123!"
     Given I add a second user to the DB with username "john@email.com" and password "1234"
-    Given an authenticated user with username "john@email.com" and password "1234" logs into the system
+    Given an authenticated user with username "mary@email.com" and password "Password123!" logs into the system
 
   Scenario: User can follow another user
     When the authenticated user triggers the request to follow another user
@@ -20,4 +20,7 @@ Feature: Following/Follower relationships
     And the follower user should have their list of users they follow updated to not include the user they are no longer following
     And the followed user should have their list of followers updated to not include the new follower
 
+  Scenario: User can't follow themself
+    When the authenticated user triggers the request to follow themself
+    Then The creation request fails with a bad request error
 

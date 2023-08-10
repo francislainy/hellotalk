@@ -45,6 +45,18 @@ public class FollowStep {
         apiStep.setResponse(response);
     }
 
+    @And("the authenticated user triggers the request to follow themself")
+    public void theUserTriggersTheFollowingRequestToStartFollowingThemself() {
+        UUID userFromId = uc.getUserDB().getId();
+
+        FollowingRequest followingRequest = FollowingRequest.builder().userFromId(userFromId).userToId(userFromId).build();
+
+        RequestSpecification rq = apiStep.getRqWithAuth();
+        Response response = rq.body(followingRequest).post("/api/v1/ht/follow/");
+
+        apiStep.setResponse(response);
+    }
+
     @And("the authenticated user triggers the request to stop following the other user")
     public void theUserTriggersTheFollowingRequestToStopFollowingOtherUser() {
         UUID userFromId = uc.getUserDB().getId();
@@ -97,7 +109,7 @@ public class FollowStep {
         assertEquals(200, response.getStatusCode());
 
         List<FollowingRequest> followingRequestList = Arrays.asList(response.as(FollowingRequest[].class));
-        assertEquals(userFromId.toString(), followingRequestList.get(0).getUserToId().toString());
+        assertEquals(userFromId.toString(), followingRequestList.get(0).getUserFromId().toString());
 
         apiStep.setResponse(response);
     }
@@ -118,7 +130,7 @@ public class FollowStep {
     public void iDeleteTheRelationship() {
         FollowingRequest[] followingRequests = apiStep.getResponse().as(FollowingRequest[].class);
         FollowingRequest followingRequest = Arrays.stream(followingRequests)
-                .filter(fr -> fr.getUserToId().toString().equals(uc.getUserDB().getId().toString()))
+                .filter(fr -> fr.getUserFromId().toString().equals(uc.getUserDB().getId().toString()))
                 .findFirst()
                 .get();
         followingRequestRepository.deleteById(followingRequest.getId());

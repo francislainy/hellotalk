@@ -10,6 +10,8 @@ import com.example.hellotalk.repository.FollowingRequestRepository;
 import com.example.hellotalk.repository.UserRepository;
 import com.example.hellotalk.service.FollowingRequestService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -80,15 +82,17 @@ public class FollowingRequestServiceImpl implements FollowingRequestService {
     public FollowingRequest createFollowingRequest(FollowingRequest followingRequest) {
 
         UUID userToId = followingRequest.getUserToId();
-        UUID userFromId = followingRequest.getUserFromId();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        UserEntity userFromEntity = userRepository.findByUsername(username);
 
-        Optional<UserEntity> userEntityOptionalFrom = userRepository.findById(userFromId);
         Optional<UserEntity> userEntityOptionalTo = userRepository.findById(userToId);
 
-        if (userEntityOptionalFrom.isEmpty() || userEntityOptionalTo.isEmpty()) {
+        if (userFromEntity == null || userEntityOptionalTo.isEmpty()) {
             throw new UserNotFoundException(USER_NOT_FOUND_EXCEPTION);
         }
 
+        UUID userFromId = userFromEntity.getId();
         Optional<FollowingRequestEntity> optionalFollowingRequest = followingRequestRepository.findByUserFromIdAndUserToId(userFromId, userToId);
         if (optionalFollowingRequest.isPresent()) {
             followingRequestRepository.delete(optionalFollowingRequest.get());
@@ -96,8 +100,7 @@ public class FollowingRequestServiceImpl implements FollowingRequestService {
         }
 
         UserEntity userEntityTo = userEntityOptionalTo.get();
-        UserEntity userEntityFrom = userEntityOptionalFrom.get();
-        FollowingRequestEntity followingRequestEntity = FollowingRequestEntity.builder().userToEntity(userEntityTo).userFromEntity(userEntityFrom).build();
+        FollowingRequestEntity followingRequestEntity = FollowingRequestEntity.builder().userFromEntity(userFromEntity).userToEntity(userEntityTo).build();
         followingRequestEntity = followingRequestRepository.save(followingRequestEntity);
 
         return FollowingRequest.builder()

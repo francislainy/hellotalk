@@ -41,7 +41,6 @@ class CreateFollowingRequestIT {
         headers.put("Accept", "application/json");
 
         DslPart bodyReceived = new PactDslJsonBody()
-                .uuid("userFromId", "d3256c76-62d7-4481-9d1c-a0ccc4da380f")
                 .uuid("userToId", "ca3569ee-cb62-4f45-b1c2-199028ba5562")
                 .close();
 
@@ -68,7 +67,6 @@ class CreateFollowingRequestIT {
     void runTest() {
 
         FollowingRequest followingRequest = FollowingRequest.builder()
-                .userFromId(fromString("d3256c76-62d7-4481-9d1c-a0ccc4da380f"))
                 .userToId(fromString("ca3569ee-cb62-4f45-b1c2-199028ba5562"))
                 .build();
 

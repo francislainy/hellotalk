@@ -17,6 +17,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.util.*;
 
@@ -46,12 +49,6 @@ class FollowingRequestServiceTest {
     void setUp() {
         userRepository = Mockito.mock(UserRepository.class);
         followingRequestService = new FollowingRequestServiceImpl(userRepository, followingRequestRepository);
-    }
-
-    private UserEntity getUserEntity() {
-        return UserEntity.builder()
-                .id(userId)
-                .build();
     }
 
     @Test
@@ -176,6 +173,9 @@ class FollowingRequestServiceTest {
 
     @Test
     void testCreateFollowingRequest() {
+
+        setupAuthenticatedUser();
+
         UserEntity userFromEntity = getUserEntity();
         userFromEntity.setId(randomUUID());
 
@@ -183,11 +183,11 @@ class FollowingRequestServiceTest {
         userToEntity.setId(randomUUID());
 
         UUID followingRequestId = UUID.randomUUID();
-        FollowingRequestEntity followingRequestEntity = createFollowingRequestEntity(followingRequestId, userFromEntity, userToEntity);
-        FollowingRequest followingRequest = createFollowingRequest(followingRequestId, userFromEntity, userToEntity);
+        FollowingRequestEntity followingRequestEntity = buildFollowingRequestEntity(followingRequestId, userFromEntity, userToEntity);
+        FollowingRequest followingRequest = buildFollowingRequest(followingRequestId, userToEntity);
 
-        when(userRepository.findById(userFromEntity.getId())).thenReturn(Optional.of(userFromEntity));
         when(userRepository.findById(userToEntity.getId())).thenReturn(Optional.of(userToEntity));
+        when(userRepository.findByUsername(any())).thenReturn(userFromEntity);
         when(followingRequestRepository.save(any())).thenReturn(followingRequestEntity);
 
         followingRequest = followingRequestService.createFollowingRequest(followingRequest);
@@ -200,6 +200,9 @@ class FollowingRequestServiceTest {
 
     @Test
     void testCreateFollowingRequest_UnfollowUserIfAlreadyFollowed() {
+
+        setupAuthenticatedUser();
+
         UserEntity userFromEntity = getUserEntity();
         userFromEntity.setId(randomUUID());
 
@@ -207,11 +210,11 @@ class FollowingRequestServiceTest {
         userToEntity.setId(randomUUID());
 
         UUID followingRequestId = UUID.randomUUID();
-        FollowingRequestEntity followingRequestEntity = createFollowingRequestEntity(followingRequestId, userFromEntity, userToEntity);
-        FollowingRequest followingRequest = createFollowingRequest(followingRequestId, userFromEntity, userToEntity);
+        FollowingRequestEntity followingRequestEntity = buildFollowingRequestEntity(followingRequestId, userFromEntity, userToEntity);
+        FollowingRequest followingRequest = buildFollowingRequest(followingRequestId, userToEntity);
 
-        when(userRepository.findById(userFromEntity.getId())).thenReturn(Optional.of(userFromEntity));
         when(userRepository.findById(userToEntity.getId())).thenReturn(Optional.of(userToEntity));
+        when(userRepository.findByUsername(any())).thenReturn(userFromEntity);
         when(followingRequestRepository.findByUserFromIdAndUserToId(any(), any())).thenReturn(Optional.of(followingRequestEntity));
 
         assertThrows(FollowingRelationshipDeletedException.class, () -> followingRequestService.createFollowingRequest(followingRequest));
@@ -227,13 +230,9 @@ class FollowingRequestServiceTest {
         UserEntity userToEntity = getUserEntity();
         userToEntity.setId(randomUUID());
 
-        when(userRepository.findById(userFromEntity.getId())).thenReturn(Optional.empty());
         when(userRepository.findById(userToEntity.getId())).thenReturn(Optional.of(userToEntity));
 
-        FollowingRequest followingRequest = FollowingRequest.builder()
-                .userFromId(userFromEntity.getId())
-                .userToId(userToEntity.getId())
-                .build();
+        FollowingRequest followingRequest = FollowingRequest.builder().userFromId(userFromEntity.getId()).userToId(userToEntity.getId()).build();
 
         UserNotFoundException exception =
                 assertThrows(UserNotFoundException.class, () -> followingRequestService.createFollowingRequest(followingRequest));
@@ -244,22 +243,20 @@ class FollowingRequestServiceTest {
     @Test
     void testFollowUser_ThrowsUserExceptionWhenUserToDoesNotExist() {
 
-        UUID userFromId = UUID.fromString("1bfff94a-b70e-4b39-bd2a-be1c0f898589");
-        UUID userToId = UUID.fromString("2afff94a-b70e-4b39-bd2a-be1c0f898589");
+        setupAuthenticatedUser();
+
+        UUID userFromId = randomUUID();
+        UUID userToId = randomUUID();
         UserEntity userFromEntity = getUserEntity();
         userFromEntity.setId(userFromId);
 
         UserEntity userToEntity = getUserEntity();
         userToEntity.setId(userToId);
 
-        when(userRepository.findById(userFromId)).thenReturn(Optional.of(userFromEntity));
         when(userRepository.findById(userToId)).thenReturn(Optional.empty());
+        when(userRepository.findByUsername(any())).thenReturn(null);
 
-        FollowingRequest followingRequest = FollowingRequest.builder()
-                .userFromId(userFromId)
-                .userToId(userToId)
-                .build();
-
+        FollowingRequest followingRequest = FollowingRequest.builder().userFromId(userFromId).userToId(userToId).build();
         UserNotFoundException exception =
                 assertThrows(UserNotFoundException.class, () -> followingRequestService.createFollowingRequest(followingRequest));
 
@@ -267,20 +264,33 @@ class FollowingRequestServiceTest {
     }
 
     // Helpers
-    private FollowingRequest createFollowingRequest(UUID followingRequestId, UserEntity userFromEntity, UserEntity userToEntity) {
+    private FollowingRequest buildFollowingRequest(UUID followingRequestId, UserEntity userToEntity) {
         return FollowingRequest.builder()
                 .id(followingRequestId)
-                .userFromId(userFromEntity.getId())
                 .userToId(userToEntity.getId())
                 .build();
     }
 
-    private FollowingRequestEntity createFollowingRequestEntity(UUID followingRequestId, UserEntity userFromEntity, UserEntity userToEntity) {
+    private FollowingRequestEntity buildFollowingRequestEntity(UUID followingRequestId, UserEntity userFromEntity, UserEntity userToEntity) {
         return FollowingRequestEntity.builder()
                 .id(followingRequestId)
                 .userFromEntity(userFromEntity)
                 .userToEntity(userToEntity)
                 .build();
+    }
+
+    private UserEntity getUserEntity() {
+        return UserEntity.builder()
+                .id(userId)
+                .build();
+    }
+
+    public static void setupAuthenticatedUser() {
+        // Mocking the SecurityContextHolder and Authentication objects
+        SecurityContextHolder.setContext(Mockito.mock(SecurityContext.class));
+        Authentication authentication = Mockito.mock(Authentication.class);
+        when(SecurityContextHolder.getContext().getAuthentication()).thenReturn(authentication);
+        when(authentication.getName()).thenReturn("authorizedUser");
     }
 
 }

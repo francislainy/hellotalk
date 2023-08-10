@@ -32,7 +32,7 @@ public class FollowStep {
     private final FollowingRequestRepository followingRequestRepository;
 
     @And("the authenticated user triggers the request to follow another user")
-    public void theUserTriggersTheFollowingRequest() {
+    public void theUserTriggersTheFollowingRequestToStartFollowingAnotherUser() {
         UUID userFromId = uc.getUserDB().getId();
         UUID userToId = uc.getSecondUserDB().getId();
 
@@ -44,6 +44,21 @@ public class FollowStep {
 
         apiStep.setResponse(response);
     }
+
+    @And("the authenticated user triggers the request to stop following the other user")
+    public void theUserTriggersTheFollowingRequestToStopFollowingOtherUser() {
+        UUID userFromId = uc.getUserDB().getId();
+        UUID userToId = uc.getSecondUserDB().getId();
+
+        FollowingRequest followingRequest = FollowingRequest.builder().userFromId(userFromId).userToId(userToId).build();
+
+        RequestSpecification rq = apiStep.getRqWithAuth();
+        Response response = rq.body(followingRequest).post("/api/v1/ht/follow/");
+        assertEquals(206, response.getStatusCode());
+
+        apiStep.setResponse(response);
+    }
+
 
     @And("the follower user should have their list of users they follow updated to include the user they are following")
     public void theListOfFolloweesShouldUpdateToIncludeUser() {

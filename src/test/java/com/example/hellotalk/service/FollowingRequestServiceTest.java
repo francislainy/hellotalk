@@ -301,9 +301,7 @@ class FollowingRequestServiceTest {
     }
 
     private UserEntity getUserEntity() {
-        return UserEntity.builder()
-                .id(userId)
-                .build();
+        return UserEntity.builder().id(userId).build();
     }
 
     public static void setupAuthenticatedUser() {

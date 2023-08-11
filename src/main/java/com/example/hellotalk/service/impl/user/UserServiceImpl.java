@@ -4,7 +4,7 @@ import com.example.hellotalk.entity.user.HobbyAndInterestEntity;
 import com.example.hellotalk.entity.user.HometownEntity;
 import com.example.hellotalk.entity.user.UserEntity;
 import com.example.hellotalk.exception.UserNotFoundException;
-import com.example.hellotalk.model.HobbyAndInterest;
+import com.example.hellotalk.mapper.UserMapper;
 import com.example.hellotalk.model.user.User;
 import com.example.hellotalk.repository.HobbyAndInterestRepository;
 import com.example.hellotalk.repository.HometownRepository;
@@ -16,11 +16,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static com.example.hellotalk.entity.user.UserEntity.buildUserEntityFromModel;
 import static com.example.hellotalk.exception.AppExceptionHandler.USER_NOT_FOUND_EXCEPTION;
-import static com.example.hellotalk.model.Hometown.buildHometownFromEntity;
 import static com.example.hellotalk.model.user.User.buildUserFromEntity;
 
 @RequiredArgsConstructor
@@ -33,37 +31,14 @@ public class UserServiceImpl implements UserService {
     final LikeRepository likeRepository;
     final MomentRepository momentRepository;
 
-    @Override
-    public User getUser(UUID userId) {
+    private final UserMapper userMapper = UserMapper.INSTANCE;
 
+    public User getUser(UUID userId) {
         Optional<UserEntity> userEntityOptional = userRepository.findById(userId);
 
         if (userEntityOptional.isPresent()) {
-
             UserEntity userEntity = userEntityOptional.get();
-
-            Set<HobbyAndInterest> hobbyAndInterestEntities =
-                    userEntity.getHobbyAndInterestEntities().stream()
-                            .map(HobbyAndInterest::buildHobbyAndInterestFromEntity)
-                            .collect(Collectors.toSet());
-
-            return User.builder()
-                    .id(userEntity.getId())
-                    .name(userEntity.getName())
-                    .dob(userEntity.getDob())
-                    .status(userEntity.getStatus())
-                    .gender(userEntity.getGender())
-                    .subscriptionType(userEntity.getSubscriptionType())
-                    .creationDate(userEntity.getCreationDate())
-                    .handle(userEntity.getHandle())
-                    .nativeLanguage(userEntity.getNativeLanguage())
-                    .targetLanguage(userEntity.getTargetLanguage())
-                    .selfIntroduction(userEntity.getSelfIntroduction())
-                    .occupation(userEntity.getOccupation())
-                    .placesToVisit(userEntity.getPlacesToVisit())
-                    .hometown(buildHometownFromEntity(userEntity.getHometownEntity()))
-                    .hobbyAndInterests(hobbyAndInterestEntities)
-                    .build();
+            return userMapper.userEntityToUser(userEntity);
         } else {
             throw new UserNotFoundException(USER_NOT_FOUND_EXCEPTION);
         }

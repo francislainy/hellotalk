@@ -22,7 +22,7 @@ public class HobbyAndInterest {
     private UUID id;
     private String title;
 
-    public static HobbyAndInterest buildHobbyAndInterestFromEntity(HobbyAndInterestEntity hobbyAndInterestEntity) {
+    public static HobbyAndInterest fromEntity(HobbyAndInterestEntity hobbyAndInterestEntity) {
         return modelMapper.map(hobbyAndInterestEntity, HobbyAndInterest.class);
     }
 }

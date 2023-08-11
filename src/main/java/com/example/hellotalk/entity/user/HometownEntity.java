@@ -1,13 +1,13 @@
 package com.example.hellotalk.entity.user;
 
+import com.example.hellotalk.mapper.HometownMapper;
 import com.example.hellotalk.model.Hometown;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.modelmapper.ModelMapper;
 
-import jakarta.persistence.*;
 import java.util.Set;
 import java.util.UUID;
 
@@ -18,8 +18,6 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 public class HometownEntity {
-
-    private static final ModelMapper modelMapper = new ModelMapper();
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -35,7 +33,7 @@ public class HometownEntity {
     @OneToMany(mappedBy = "hometownEntity", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = false)
     private Set<UserEntity> userEntitySet;
 
-    public static HometownEntity buildHometownEntity(Hometown hometown) {
-        return modelMapper.map(hometown, HometownEntity.class);
+    public static HometownEntity fromEntity(Hometown hometown) {
+        return HometownMapper.INSTANCE.toEntity(hometown);
     }
 }

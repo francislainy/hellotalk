@@ -2,12 +2,11 @@ package com.example.hellotalk.entity.comment;
 
 import com.example.hellotalk.entity.moment.MomentEntity;
 import com.example.hellotalk.entity.user.UserEntity;
+import com.example.hellotalk.mapper.CommentMapper;
 import com.example.hellotalk.model.comment.Comment;
-import com.example.hellotalk.model.moment.Moment;
-import lombok.*;
-import org.modelmapper.ModelMapper;
-
 import jakarta.persistence.*;
+import lombok.*;
+
 import java.time.ZonedDateTime;
 import java.util.UUID;
 
@@ -19,8 +18,6 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CommentEntity {
-
-    private static final ModelMapper modelMapper = new ModelMapper();
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -44,14 +41,7 @@ public class CommentEntity {
     @JoinColumn(name = "moment_id", referencedColumnName = "id")
     private MomentEntity momentEntity;
 
-    static {
-        modelMapper.typeMap(Moment.class, CommentEntity.class)
-                .addMappings(mapper -> {
-                    mapper.map(Moment::getUserCreatorId, (dest, value) -> dest.setUserEntity(UserEntity.builder().id((UUID) value).build()));
-                });
-    }
-
-    public static CommentEntity buildCommentEntityFromModel(Comment comment) {
-        return modelMapper.map(comment, CommentEntity.class);
+    public static CommentEntity fromModel(Comment comment) {
+        return CommentMapper.INSTANCE.toEntity(comment);
     }
 }

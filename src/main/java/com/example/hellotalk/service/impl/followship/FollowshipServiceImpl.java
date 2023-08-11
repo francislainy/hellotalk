@@ -20,7 +20,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static com.example.hellotalk.exception.AppExceptionHandler.*;
-import static com.example.hellotalk.model.followship.Followship.buildFollowshipFromEntity;
+import static com.example.hellotalk.model.followship.Followship.fromEntity;
 
 @RequiredArgsConstructor
 @Service
@@ -51,7 +51,7 @@ public class FollowshipServiceImpl implements FollowshipService {
         List<FollowshipEntity> followshipEntityList = followshipRepository.findAll();
 
         if (!followshipEntityList.isEmpty()) {
-            followshipEntityList.forEach(userEntity -> followshipList.add(buildFollowshipFromEntity(userEntity)));
+            followshipEntityList.forEach(userEntity -> followshipList.add(fromEntity(userEntity)));
         }
 
         return followshipList;
@@ -63,7 +63,7 @@ public class FollowshipServiceImpl implements FollowshipService {
         List<FollowshipEntity> followshipEntityList = followshipRepository.findFollowshipsByUserFromId(userFromId);
 
         if (!followshipEntityList.isEmpty()) {
-            followshipEntityList.forEach(userEntity -> followshipList.add(buildFollowshipFromEntity(userEntity)));
+            followshipEntityList.forEach(userEntity -> followshipList.add(fromEntity(userEntity)));
         }
 
         return followshipList;
@@ -75,7 +75,7 @@ public class FollowshipServiceImpl implements FollowshipService {
         List<FollowshipEntity> followshipEntityList = followshipRepository.findFollowingsByUserToId(userToId);
 
         if (!followshipEntityList.isEmpty()) {
-            followshipEntityList.forEach(userEntity -> followshipList.add(buildFollowshipFromEntity(userEntity)));
+            followshipEntityList.forEach(userEntity -> followshipList.add(fromEntity(userEntity)));
         }
 
         return followshipList;

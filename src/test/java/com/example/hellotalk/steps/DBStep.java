@@ -9,7 +9,7 @@ import io.cucumber.java.en.Given;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-import static com.example.hellotalk.entity.user.HometownEntity.buildHometownEntity;
+import static com.example.hellotalk.entity.user.HometownEntity.fromEntity;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -80,7 +80,7 @@ public class DBStep {
                 .selfIntroduction("anySelfIntroduction")
                 .placesToVisit("anyPlacesToVisit")
                 .subscriptionType("anySubscriptionType")
-                .hometownEntity(buildHometownEntity(hometown))
+                .hometownEntity(fromEntity(hometown))
                 .build();
     }
 }

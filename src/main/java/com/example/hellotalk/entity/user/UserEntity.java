@@ -2,10 +2,10 @@ package com.example.hellotalk.entity.user;
 
 import com.example.hellotalk.entity.followship.FollowshipEntity;
 import com.example.hellotalk.entity.moment.MomentEntity;
+import com.example.hellotalk.mapper.UserMapper;
 import com.example.hellotalk.model.user.User;
 import jakarta.persistence.*;
 import lombok.*;
-import org.modelmapper.ModelMapper;
 
 import java.util.Set;
 import java.util.UUID;
@@ -18,8 +18,6 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserEntity {
-
-    private static final ModelMapper modelMapper = new ModelMapper();
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -88,15 +86,7 @@ public class UserEntity {
     @OneToMany(mappedBy = "userEntity", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = false)
     private Set<MomentEntity> momentEntitySet;
 
-    static {
-        modelMapper.createTypeMap(User.class, UserEntity.class)
-                .addMappings(mapper -> {
-                    mapper.map(User::getHometown, UserEntity::setHometownEntity);
-                    mapper.map(User::getHobbyAndInterests, UserEntity::setHobbyAndInterestEntities);
-                });
-    }
-
-    public static UserEntity buildUserEntityFromModel(User user) {
-        return modelMapper.map(user, UserEntity.class);
+    public static UserEntity fromModel(User user) {
+        return UserMapper.INSTANCE.toEntity(user);
     }
 }

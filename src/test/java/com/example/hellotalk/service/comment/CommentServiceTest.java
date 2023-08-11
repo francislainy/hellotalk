@@ -28,7 +28,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static com.example.hellotalk.exception.AppExceptionHandler.*;
-import static com.example.hellotalk.model.comment.Comment.buildCommentFromEntity;
+import static com.example.hellotalk.model.comment.Comment.fromEntity;
 import static java.util.UUID.randomUUID;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -146,7 +146,7 @@ class CommentServiceTest {
         when(commentRepository.save(any())).thenReturn(commentEntity);
         when(momentRepository.findById(any())).thenReturn(Optional.ofNullable(momentEntity));
 
-        Comment comment = commentService.createComment(momentId, buildCommentFromEntity(commentEntity));
+        Comment comment = commentService.createComment(momentId, fromEntity(commentEntity));
         assertAll(
                 () -> assertEquals(commentId, comment.getId()),
                 () -> assertEquals("anyText", comment.getText()),
@@ -169,7 +169,7 @@ class CommentServiceTest {
         when(momentRepository.findById(any())).thenReturn(Optional.empty());
 
         MomentNotFoundException exception =
-                assertThrows(MomentNotFoundException.class, () -> commentService.createComment(momentId, buildCommentFromEntity(commentEntity)));
+                assertThrows(MomentNotFoundException.class, () -> commentService.createComment(momentId, fromEntity(commentEntity)));
 
         assertEquals(MOMENT_NOT_FOUND_EXCEPTION, exception.getMessage());
     }
@@ -197,7 +197,7 @@ class CommentServiceTest {
         when(commentRepository.findById(any())).thenReturn(Optional.of(commentEntity));
         when(commentRepository.save(any())).thenReturn(commentEntityUpdated);
 
-        Comment comment = buildCommentFromEntity(commentEntity);
+        Comment comment = fromEntity(commentEntity);
         comment = commentService.updateComment(commentId, comment);
 
         Comment finalComment = comment;
@@ -213,7 +213,7 @@ class CommentServiceTest {
     void testUpdateCommentDetails_ThrowsExceptionWhenCommentIsNotFound() {
 
         UUID commentId = randomUUID();
-        Comment comment = buildCommentFromEntity(getCommentEntity(commentId));
+        Comment comment = fromEntity(getCommentEntity(commentId));
         CommentNotFoundException exception =
                 assertThrows(CommentNotFoundException.class, () -> commentService.updateComment(commentId, comment));
 
@@ -231,7 +231,7 @@ class CommentServiceTest {
         when(userRepository.findByUsername(any())).thenReturn(userEntity);
 
         UUID commentId = randomUUID();
-        Comment comment = buildCommentFromEntity(getCommentEntity(commentId));
+        Comment comment = fromEntity(getCommentEntity(commentId));
 
         CommentEntity commentEntity = getCommentEntity(commentId);
         commentEntity.setUserEntity(userEntity);

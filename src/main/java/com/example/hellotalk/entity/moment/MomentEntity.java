@@ -3,17 +3,15 @@ package com.example.hellotalk.entity.moment;
 import com.example.hellotalk.entity.comment.CommentEntity;
 import com.example.hellotalk.entity.user.LikeEntity;
 import com.example.hellotalk.entity.user.UserEntity;
+import com.example.hellotalk.mapper.MomentMapper;
 import com.example.hellotalk.model.moment.Moment;
-import lombok.*;
-import org.modelmapper.ModelMapper;
-
 import jakarta.persistence.*;
+import lombok.*;
+
 import java.time.ZonedDateTime;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
-
-import static org.springframework.beans.BeanUtils.copyProperties;
 
 @Entity
 @Table(name = "moment")
@@ -23,8 +21,6 @@ import static org.springframework.beans.BeanUtils.copyProperties;
 @AllArgsConstructor
 @NoArgsConstructor
 public class MomentEntity {
-
-    private static final ModelMapper modelMapper = new ModelMapper();
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -59,10 +55,7 @@ public class MomentEntity {
     @Transient
     private Integer numLikes = 0;
 
-    public static MomentEntity buildMomentEntityFromModel(Moment moment) {
-        MomentEntity momentEntity = new MomentEntity();
-        copyProperties(moment, momentEntity);
-        momentEntity.setUserEntity(UserEntity.builder().id(moment.getUserCreatorId()).build());
-        return momentEntity;
+    public static MomentEntity fromModel(Moment moment) {
+        return MomentMapper.INSTANCE.toEntity(moment);
     }
 }

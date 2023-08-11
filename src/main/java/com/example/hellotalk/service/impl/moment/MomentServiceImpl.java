@@ -21,7 +21,7 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
-import static com.example.hellotalk.entity.moment.MomentEntity.buildMomentEntityFromModel;
+import static com.example.hellotalk.entity.moment.MomentEntity.fromModel;
 import static com.example.hellotalk.exception.AppExceptionHandler.ENTITY_DOES_NOT_BELONG_TO_USER_EXCEPTION;
 import static com.example.hellotalk.exception.AppExceptionHandler.MOMENT_NOT_FOUND_EXCEPTION;
 import static com.example.hellotalk.model.moment.Moment.buildMomentFromEntity;
@@ -78,7 +78,7 @@ public class MomentServiceImpl implements MomentService {
         String username = authentication.getName();
         UserEntity userEntity = userRepository.findByUsername(username);
 
-        MomentEntity momentEntity = buildMomentEntityFromModel(moment).toBuilder()
+        MomentEntity momentEntity = fromModel(moment).toBuilder()
                 .userEntity(userEntity)
                 .creationDate(ZonedDateTime.now().withZoneSameInstant(ZoneOffset.UTC))
                 .build();

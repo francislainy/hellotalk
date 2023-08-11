@@ -1,6 +1,7 @@
 package com.example.hellotalk.model.comment;
 
 import com.example.hellotalk.entity.comment.CommentEntity;
+import com.example.hellotalk.mapper.CommentMapper;
 import com.example.hellotalk.model.user.UserSmall;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -8,7 +9,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.modelmapper.ModelMapper;
 
 import java.time.ZonedDateTime;
 import java.util.UUID;
@@ -18,8 +18,6 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Comment {
-
-    private static final ModelMapper modelMapper = new ModelMapper();
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private UUID id;
@@ -36,7 +34,7 @@ public class Comment {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private UserSmall user;
 
-    public static Comment buildCommentFromEntity(CommentEntity commentEntity) {
-        return modelMapper.map(commentEntity, Comment.class);
+    public static Comment fromEntity(CommentEntity commentEntity) {
+        return CommentMapper.INSTANCE.toModel(commentEntity);
     }
 }

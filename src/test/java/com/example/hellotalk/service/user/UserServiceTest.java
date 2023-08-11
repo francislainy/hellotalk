@@ -23,7 +23,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.*;
 
-import static com.example.hellotalk.entity.user.HometownEntity.buildHometownEntity;
+import static com.example.hellotalk.entity.user.HometownEntity.fromEntity;
 import static com.example.hellotalk.exception.AppExceptionHandler.*;
 import static java.util.UUID.randomUUID;
 import static org.junit.jupiter.api.Assertions.*;
@@ -84,7 +84,7 @@ class UserServiceTest {
                 .selfIntroduction("anySelfIntroduction")
                 .placesToVisit("anyPlacesToVisit")
                 .subscriptionType("anySubscriptionType")
-                .hometownEntity(buildHometownEntity(hometown))
+                .hometownEntity(fromEntity(hometown))
                 .hobbyAndInterestEntities(hobbyAndInterestEntities)
                 .build();
     }
@@ -213,7 +213,7 @@ class UserServiceTest {
                 .targetLanguage("anyUpdatedTargetLanguage")
                 .occupation("anyUpdatedOccupation")
                 .placesToVisit("anyUpdatedPlacesToVisit")
-                .hometownEntity(buildHometownEntity(updatedHometown))
+                .hometownEntity(fromEntity(updatedHometown))
                 .hobbyAndInterestEntities(hobbyAndInterestEntitiesUpdated)
                 .build();
 

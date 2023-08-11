@@ -24,7 +24,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static com.example.hellotalk.exception.AppExceptionHandler.*;
-import static com.example.hellotalk.model.comment.Comment.buildCommentFromEntity;
+import static com.example.hellotalk.model.comment.Comment.fromEntity;
 
 @RequiredArgsConstructor
 @Service
@@ -40,7 +40,7 @@ public class CommentServiceImpl implements CommentService {
         CommentEntity commentEntity = commentRepository.findById(commentId)
                 .orElseThrow(() -> new CommentNotFoundException(COMMENT_NOT_FOUND_EXCEPTION));
 
-        return buildCommentFromEntity(commentEntity);
+        return fromEntity(commentEntity);
     }
 
     @Override
@@ -49,7 +49,7 @@ public class CommentServiceImpl implements CommentService {
         List<CommentEntity> commentEntityList = commentRepository.findAllByMomentEntity_IdContains(momentId);
 
         return commentEntityList.stream()
-                .map(Comment::buildCommentFromEntity)
+                .map(Comment::fromEntity)
                 .toList();
     }
 
@@ -64,14 +64,14 @@ public class CommentServiceImpl implements CommentService {
         if (optionalMomentEntity.isPresent()) {
 
             MomentEntity momentEntity = optionalMomentEntity.get();
-            CommentEntity commentEntity = CommentEntity.buildCommentEntityFromModel(comment).toBuilder()
+            CommentEntity commentEntity = CommentEntity.fromModel(comment).toBuilder()
                     .userEntity(userEntity)
                     .creationDate(ZonedDateTime.now().withZoneSameInstant(ZoneOffset.UTC))
                     .momentEntity(momentEntity)
                     .build();
             commentEntity = commentRepository.save(commentEntity);
 
-            return buildCommentFromEntity(commentEntity);
+            return fromEntity(commentEntity);
         } else
             throw new MomentNotFoundException(MOMENT_NOT_FOUND_EXCEPTION);
     }
@@ -100,7 +100,7 @@ public class CommentServiceImpl implements CommentService {
 
         commentEntity = commentRepository.save(commentEntity);
 
-        return buildCommentFromEntity(commentEntity);
+        return fromEntity(commentEntity);
     }
 
     @Override

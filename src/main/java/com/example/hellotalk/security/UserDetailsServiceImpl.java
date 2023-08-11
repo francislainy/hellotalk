@@ -1,7 +1,7 @@
 package com.example.hellotalk.security;
 
 import com.example.hellotalk.entity.user.UserEntity;
-import com.example.hellotalk.repository.UserRepository;
+import com.example.hellotalk.repository.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;

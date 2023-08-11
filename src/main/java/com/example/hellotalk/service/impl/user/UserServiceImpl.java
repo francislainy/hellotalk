@@ -9,7 +9,7 @@ import com.example.hellotalk.model.user.User;
 import com.example.hellotalk.repository.HobbyAndInterestRepository;
 import com.example.hellotalk.repository.HometownRepository;
 import com.example.hellotalk.repository.LikeRepository;
-import com.example.hellotalk.repository.UserRepository;
+import com.example.hellotalk.repository.user.UserRepository;
 import com.example.hellotalk.repository.moment.MomentRepository;
 import com.example.hellotalk.service.user.UserService;
 import lombok.RequiredArgsConstructor;

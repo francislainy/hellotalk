@@ -1,4 +1,4 @@
-package com.example.hellotalk.service;
+package com.example.hellotalk.service.moment;
 
 import com.example.hellotalk.entity.moment.MomentEntity;
 import com.example.hellotalk.entity.user.LikeEntity;
@@ -8,7 +8,7 @@ import com.example.hellotalk.exception.MomentNotFoundException;
 import com.example.hellotalk.model.ResultInfo;
 import com.example.hellotalk.model.moment.Moment;
 import com.example.hellotalk.repository.LikeRepository;
-import com.example.hellotalk.repository.UserRepository;
+import com.example.hellotalk.repository.user.UserRepository;
 import com.example.hellotalk.repository.moment.MomentRepository;
 import com.example.hellotalk.service.impl.moment.MomentServiceImpl;
 import org.junit.jupiter.api.Test;

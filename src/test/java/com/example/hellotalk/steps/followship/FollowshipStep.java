@@ -3,7 +3,7 @@ package com.example.hellotalk.steps.followship;
 import com.example.hellotalk.client.RestClient;
 import com.example.hellotalk.model.followship.Followship;
 import com.example.hellotalk.repository.followship.FollowshipRepository;
-import com.example.hellotalk.repository.UserRepository;
+import com.example.hellotalk.repository.user.UserRepository;
 import com.example.hellotalk.steps.ApiStep;
 import com.example.hellotalk.steps.user.UserContext;
 import io.cucumber.java.en.And;

@@ -4,7 +4,7 @@ import com.example.hellotalk.client.RestClient;
 import com.example.hellotalk.entity.user.UserEntity;
 import com.example.hellotalk.model.comment.Comment;
 import com.example.hellotalk.model.moment.Moment;
-import com.example.hellotalk.repository.UserRepository;
+import com.example.hellotalk.repository.user.UserRepository;
 import com.example.hellotalk.steps.ApiStep;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;

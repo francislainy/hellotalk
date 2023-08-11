@@ -1,4 +1,4 @@
-package com.example.hellotalk.service;
+package com.example.hellotalk.service.user;
 
 import com.example.hellotalk.entity.user.HobbyAndInterestEntity;
 import com.example.hellotalk.entity.user.UserEntity;
@@ -8,7 +8,7 @@ import com.example.hellotalk.model.user.User;
 import com.example.hellotalk.repository.HobbyAndInterestRepository;
 import com.example.hellotalk.repository.HometownRepository;
 import com.example.hellotalk.repository.LikeRepository;
-import com.example.hellotalk.repository.UserRepository;
+import com.example.hellotalk.repository.user.UserRepository;
 import com.example.hellotalk.repository.moment.MomentRepository;
 import com.example.hellotalk.service.impl.moment.MomentServiceImpl;
 import com.example.hellotalk.service.impl.user.UserServiceImpl;

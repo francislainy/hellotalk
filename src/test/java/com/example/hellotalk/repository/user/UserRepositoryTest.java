@@ -1,10 +1,12 @@
-package com.example.hellotalk.repository;
+package com.example.hellotalk.repository.user;
 
 import com.example.hellotalk.config.BasePostgresConfig;
 import com.example.hellotalk.entity.followship.FollowshipEntity;
 import com.example.hellotalk.entity.user.HobbyAndInterestEntity;
 import com.example.hellotalk.entity.user.HometownEntity;
 import com.example.hellotalk.entity.user.UserEntity;
+import com.example.hellotalk.repository.HobbyAndInterestRepository;
+import com.example.hellotalk.repository.HometownRepository;
 import com.example.hellotalk.repository.followship.FollowshipRepository;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;

@@ -1,7 +1,7 @@
 package com.example.hellotalk.controller.followship;
 
 import com.example.hellotalk.model.followship.Followship;
-import com.example.hellotalk.service.FollowshipService;
+import com.example.hellotalk.service.followship.FollowshipService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

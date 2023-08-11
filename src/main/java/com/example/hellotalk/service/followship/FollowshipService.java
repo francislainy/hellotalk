@@ -1,4 +1,4 @@
-package com.example.hellotalk.service;
+package com.example.hellotalk.service.followship;
 
 import com.example.hellotalk.model.followship.Followship;
 

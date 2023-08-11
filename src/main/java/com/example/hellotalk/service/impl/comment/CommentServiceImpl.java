@@ -7,7 +7,7 @@ import com.example.hellotalk.exception.CommentNotFoundException;
 import com.example.hellotalk.exception.EntityDoesNotBelongToUserException;
 import com.example.hellotalk.exception.MomentNotFoundException;
 import com.example.hellotalk.model.comment.Comment;
-import com.example.hellotalk.repository.UserRepository;
+import com.example.hellotalk.repository.user.UserRepository;
 import com.example.hellotalk.repository.comment.CommentRepository;
 import com.example.hellotalk.repository.moment.MomentRepository;
 import com.example.hellotalk.service.comment.CommentService;

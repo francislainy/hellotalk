@@ -157,7 +157,8 @@ class FunctionalIT extends BasePostgresConfig {
         assertEquals(206, response.getStatusCode());
 
         response = rq.get("/api/v1/ht/users/" + userId);
-//        todo: This test is failing when the expectation is for 404 as the app is allowing a user to delete themself! :( Changing it temporarily to 401- 10/08/2023
+        // todo: This test is failing when the expectation is for 404 as the app is allowing a user to delete themself! :( Changing it temporarily to 401-
+        // 10/08/2023
         assertEquals(401, response.getStatusCode()); // Deleted item no longer found -
     }
 

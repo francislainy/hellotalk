@@ -1,4 +1,4 @@
-package com.example.hellotalk.repository;
+package com.example.hellotalk.repository.user;
 
 import com.example.hellotalk.entity.user.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;

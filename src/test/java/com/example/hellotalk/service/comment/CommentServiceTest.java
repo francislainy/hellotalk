@@ -1,4 +1,4 @@
-package com.example.hellotalk.service;
+package com.example.hellotalk.service.comment;
 
 import com.example.hellotalk.entity.comment.CommentEntity;
 import com.example.hellotalk.entity.moment.MomentEntity;
@@ -7,7 +7,7 @@ import com.example.hellotalk.exception.CommentNotFoundException;
 import com.example.hellotalk.exception.EntityDoesNotBelongToUserException;
 import com.example.hellotalk.exception.MomentNotFoundException;
 import com.example.hellotalk.model.comment.Comment;
-import com.example.hellotalk.repository.UserRepository;
+import com.example.hellotalk.repository.user.UserRepository;
 import com.example.hellotalk.repository.comment.CommentRepository;
 import com.example.hellotalk.repository.moment.MomentRepository;
 import com.example.hellotalk.service.impl.comment.CommentServiceImpl;
@@ -15,7 +15,11 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -25,7 +29,6 @@ import java.util.UUID;
 
 import static com.example.hellotalk.exception.AppExceptionHandler.*;
 import static com.example.hellotalk.model.comment.Comment.buildCommentFromEntity;
-import static com.example.hellotalk.service.MomentServiceTest.setupAuthenticatedUser;
 import static java.util.UUID.randomUUID;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -273,7 +276,7 @@ class CommentServiceTest {
     void testDeleteComment_ThrowsExceptionWhenCommentDoesNorBelongToUser() {
 
         setupAuthenticatedUser();
-        UUID userId = randomUUID();
+        UUID userId = UUID.randomUUID();
         UserEntity userEntity = UserEntity.builder().id(userId).username("unauthorizedUser").build();
 
         UUID commentId = randomUUID();
@@ -299,5 +302,13 @@ class CommentServiceTest {
                 .creationDate(creationDate)
                 .lastUpdatedDate(lastUpdatedDate)
                 .build();
+    }
+
+    public static void setupAuthenticatedUser() {
+        // Mocking the SecurityContextHolder and Authentication objects
+        SecurityContextHolder.setContext(Mockito.mock(SecurityContext.class));
+        Authentication authentication = Mockito.mock(Authentication.class);
+        when(SecurityContextHolder.getContext().getAuthentication()).thenReturn(authentication);
+        when(authentication.getName()).thenReturn("authorizedUser");
     }
 }

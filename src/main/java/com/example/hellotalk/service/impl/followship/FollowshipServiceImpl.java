@@ -1,4 +1,4 @@
-package com.example.hellotalk.service.impl;
+package com.example.hellotalk.service.impl.followship;
 
 import com.example.hellotalk.entity.followship.FollowshipEntity;
 import com.example.hellotalk.entity.user.UserEntity;
@@ -6,9 +6,9 @@ import com.example.hellotalk.exception.FollowshipDeletedException;
 import com.example.hellotalk.exception.FollowshipNotCreatedUserCantFollowThemselfException;
 import com.example.hellotalk.exception.UserNotFoundException;
 import com.example.hellotalk.model.followship.Followship;
-import com.example.hellotalk.repository.UserRepository;
+import com.example.hellotalk.repository.user.UserRepository;
 import com.example.hellotalk.repository.followship.FollowshipRepository;
-import com.example.hellotalk.service.FollowshipService;
+import com.example.hellotalk.service.followship.FollowshipService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;

@@ -44,7 +44,6 @@
         <pact.version>4.3.15</pact.version>
         <pact.plugin.version>4.0.10</pact.plugin.version>
 
-        <junit-platform-suite.version>1.9.1</junit-platform-suite.version>
         <maven-failsafe-plugin.version>3.1.2</maven-failsafe-plugin.version>
     </properties>
     <dependencies>
@@ -121,14 +120,13 @@
         <dependency>
             <groupId>org.junit.platform</groupId>
             <artifactId>junit-platform-suite</artifactId>
-            <version>${junit-platform-suite.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>
+            <scope>test</scope>
         </dependency>
-
 
         <dependency>
             <groupId>org.springframework.boot</groupId>

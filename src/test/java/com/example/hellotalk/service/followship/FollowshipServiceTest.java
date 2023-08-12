@@ -25,7 +25,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 import static com.example.hellotalk.exception.AppExceptionHandler.*;
 import static java.util.UUID.randomUUID;
@@ -166,14 +169,11 @@ class FollowshipServiceTest {
         UUID userFromId = randomUUID();
         UUID userToId = randomUUID();
 
-        UserEntity userFromEntity = getUserEntity();
-        userFromEntity.setId(userFromId);
-
-        UserEntity userToEntity = getUserEntity();
-        userToEntity.setId(userToId);
+        UserEntity userFromEntity = UserEntity.builder().id(userFromId).build();
+        UserEntity userToEntity = UserEntity.builder().id(userToId).build();
 
         FollowshipEntity followshipEntity = buildFollowshipEntity(followshipId, userFromId, userToId);
-        Followship followship = buildfollowship(followshipId, userToEntity);
+        Followship followship = buildFollowship(followshipId, userToEntity);
 
         when(userRepository.findById(userToEntity.getId())).thenReturn(Optional.of(userToEntity));
         when(userRepository.findByUsername(any())).thenReturn(userFromEntity);
@@ -195,14 +195,11 @@ class FollowshipServiceTest {
         UUID userFromId = randomUUID();
         UUID userToId = randomUUID();
 
-        UserEntity userFromEntity = getUserEntity();
-        userFromEntity.setId(userFromId);
-
-        UserEntity userToEntity = getUserEntity();
-        userToEntity.setId(userToId);
+        UserEntity userFromEntity = UserEntity.builder().id(userFromId).build();
+        UserEntity userToEntity = UserEntity.builder().id(userToId).build();
 
         FollowshipEntity followshipEntity = buildFollowshipEntity(followshipId, userFromId, userToId);
-        Followship followship = buildfollowship(followshipId, userToEntity);
+        Followship followship = buildFollowship(followshipId, userToEntity);
 
         when(userRepository.findById(userToEntity.getId())).thenReturn(Optional.of(userToEntity));
         when(userRepository.findByUsername(any())).thenReturn(userFromEntity);
@@ -215,11 +212,11 @@ class FollowshipServiceTest {
     @Test
     void testFollowUser_ThrowsUserExceptionWhenUserFromDoesNotExist() {
 
-        UserEntity userFromEntity = getUserEntity();
-        userFromEntity.setId(randomUUID());
+        UUID userFromId = randomUUID();
+        UUID userToId = randomUUID();
 
-        UserEntity userToEntity = getUserEntity();
-        userToEntity.setId(randomUUID());
+        UserEntity userFromEntity = UserEntity.builder().id(userFromId).build();
+        UserEntity userToEntity = UserEntity.builder().id(userToId).build();
 
         when(userRepository.findById(userToEntity.getId())).thenReturn(Optional.of(userToEntity));
 
@@ -238,11 +235,6 @@ class FollowshipServiceTest {
 
         UUID userFromId = randomUUID();
         UUID userToId = randomUUID();
-        UserEntity userFromEntity = getUserEntity();
-        userFromEntity.setId(userFromId);
-
-        UserEntity userToEntity = getUserEntity();
-        userToEntity.setId(userToId);
 
         when(userRepository.findById(userToId)).thenReturn(Optional.empty());
         when(userRepository.findByUsername(any())).thenReturn(null);
@@ -261,9 +253,7 @@ class FollowshipServiceTest {
 
         UUID userToId = randomUUID();
 
-        UserEntity userToEntity = getUserEntity();
-        userToEntity.setId(userToId);
-
+        UserEntity userToEntity = UserEntity.builder().id(userToId).build();
         when(userRepository.findById(userToId)).thenReturn(Optional.of(userToEntity));
         when(userRepository.findByUsername(any())).thenReturn(userToEntity);
 
@@ -275,7 +265,7 @@ class FollowshipServiceTest {
     }
 
     // Helpers
-    private Followship buildfollowship(UUID followshipId, UserEntity userToEntity) {
+    private Followship buildFollowship(UUID followshipId, UserEntity userToEntity) {
         return Followship.builder()
                 .id(followshipId)
                 .userToId(userToEntity.getId())
@@ -287,10 +277,6 @@ class FollowshipServiceTest {
                 .userFromId(userFromId)
                 .userToId(userToId)
                 .build());
-    }
-
-    private UserEntity getUserEntity() {
-        return UserEntity.builder().id(userId).build();
     }
 
     public static void setupAuthenticatedUser() {

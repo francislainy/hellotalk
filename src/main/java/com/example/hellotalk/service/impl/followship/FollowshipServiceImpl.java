@@ -5,6 +5,7 @@ import com.example.hellotalk.entity.user.UserEntity;
 import com.example.hellotalk.exception.FollowshipDeletedException;
 import com.example.hellotalk.exception.FollowshipNotCreatedUserCantFollowThemselfException;
 import com.example.hellotalk.exception.UserNotFoundException;
+import com.example.hellotalk.mapper.FollowshipMapper;
 import com.example.hellotalk.model.followship.Followship;
 import com.example.hellotalk.repository.user.UserRepository;
 import com.example.hellotalk.repository.followship.FollowshipRepository;
@@ -20,7 +21,6 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static com.example.hellotalk.exception.AppExceptionHandler.*;
-import static com.example.hellotalk.model.followship.Followship.fromEntity;
 
 @RequiredArgsConstructor
 @Service
@@ -29,16 +29,14 @@ public class FollowshipServiceImpl implements FollowshipService {
     final UserRepository userRepository;
     final FollowshipRepository followshipRepository;
 
+    final FollowshipMapper followshipMapper;
+
     @Override
     public Followship getFollowship(UUID followshipId) {
 
         Optional<FollowshipEntity> followshipEntity = followshipRepository.findById(followshipId);
         if (followshipEntity.isPresent()) {
-            return Followship.builder()
-                    .id(followshipId)
-                    .userFromId(followshipEntity.get().getUserFromEntity().getId())
-                    .userToId(followshipEntity.get().getUserToEntity().getId())
-                    .build();
+            return followshipMapper.toModel(followshipEntity.get());
         } else {
             throw new FollowshipNotCreatedUserCantFollowThemselfException(FOLLOWSHIP_DOES_NOT_EXIST_EXCEPTION);
         }
@@ -51,7 +49,7 @@ public class FollowshipServiceImpl implements FollowshipService {
         List<FollowshipEntity> followshipEntityList = followshipRepository.findAll();
 
         if (!followshipEntityList.isEmpty()) {
-            followshipEntityList.forEach(userEntity -> followshipList.add(fromEntity(userEntity)));
+            followshipEntityList.forEach(userEntity -> followshipList.add(followshipMapper.toModel(userEntity)));
         }
 
         return followshipList;
@@ -63,7 +61,7 @@ public class FollowshipServiceImpl implements FollowshipService {
         List<FollowshipEntity> followshipEntityList = followshipRepository.findFollowshipsByUserFromId(userFromId);
 
         if (!followshipEntityList.isEmpty()) {
-            followshipEntityList.forEach(userEntity -> followshipList.add(fromEntity(userEntity)));
+            followshipEntityList.forEach(userEntity -> followshipList.add(followshipMapper.toModel(userEntity)));
         }
 
         return followshipList;
@@ -75,7 +73,7 @@ public class FollowshipServiceImpl implements FollowshipService {
         List<FollowshipEntity> followshipEntityList = followshipRepository.findFollowingsByUserToId(userToId);
 
         if (!followshipEntityList.isEmpty()) {
-            followshipEntityList.forEach(userEntity -> followshipList.add(fromEntity(userEntity)));
+            followshipEntityList.forEach(userEntity -> followshipList.add(followshipMapper.toModel(userEntity)));
         }
 
         return followshipList;
@@ -106,14 +104,9 @@ public class FollowshipServiceImpl implements FollowshipService {
             throw new FollowshipDeletedException(FOLLOWSHIP_ALREADY_EXISTS_EXCEPTION);
         }
 
-        UserEntity userEntityTo = userEntityOptionalTo.get();
-        FollowshipEntity followshipEntity = FollowshipEntity.builder().userFromEntity(userFromEntity).userToEntity(userEntityTo).build();
-        followshipEntity = followshipRepository.save(followshipEntity);
+        UserEntity userToEntity = userEntityOptionalTo.get();
+        FollowshipEntity followshipEntity = followshipRepository.save(followshipMapper.fromUserEntities(userFromEntity, userToEntity));
 
-        return Followship.builder()
-                .id(followshipEntity.getId())
-                .userFromId(followshipEntity.getUserFromEntity().getId())
-                .userToId(followshipEntity.getUserToEntity().getId())
-                .build();
+        return followshipMapper.toModel(followshipEntity);
     }
 }

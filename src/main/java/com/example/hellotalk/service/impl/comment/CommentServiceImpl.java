@@ -65,7 +65,7 @@ public class CommentServiceImpl implements CommentService {
         if (optionalMomentEntity.isPresent()) {
 
             MomentEntity momentEntity = optionalMomentEntity.get();
-            CommentEntity commentEntity = CommentEntity.fromModel(comment).toBuilder()
+            CommentEntity commentEntity = commentMapper.toEntity(comment).toBuilder()
                     .userEntity(userEntity)
                     .creationDate(ZonedDateTime.now().withZoneSameInstant(ZoneOffset.UTC))
                     .momentEntity(momentEntity)

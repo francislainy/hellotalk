@@ -1,7 +1,5 @@
 package com.example.hellotalk.entity.user;
 
-import com.example.hellotalk.mapper.HometownMapper;
-import com.example.hellotalk.model.Hometown;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -32,8 +30,4 @@ public class HometownEntity {
 
     @OneToMany(mappedBy = "hometownEntity", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = false)
     private Set<UserEntity> userEntitySet;
-
-    public static HometownEntity fromEntity(Hometown hometown) {
-        return HometownMapper.INSTANCE.toEntity(hometown);
-    }
 }

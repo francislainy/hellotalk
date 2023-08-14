@@ -3,6 +3,7 @@ package com.example.hellotalk.service.user;
 import com.example.hellotalk.entity.user.HobbyAndInterestEntity;
 import com.example.hellotalk.entity.user.UserEntity;
 import com.example.hellotalk.exception.UserNotFoundException;
+import com.example.hellotalk.mapper.HometownMapper;
 import com.example.hellotalk.mapper.UserMapper;
 import com.example.hellotalk.model.Hometown;
 import com.example.hellotalk.model.user.User;
@@ -23,7 +24,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.*;
 
-import static com.example.hellotalk.entity.user.HometownEntity.fromEntity;
 import static com.example.hellotalk.exception.AppExceptionHandler.USER_NOT_FOUND_EXCEPTION;
 import static java.util.UUID.randomUUID;
 import static org.junit.jupiter.api.Assertions.*;
@@ -50,6 +50,7 @@ class UserServiceTest {
     UserServiceImpl userService;
 
     UserMapper userMapper = Mappers.getMapper(UserMapper.class);
+    HometownMapper hometownMapper = Mappers.getMapper(HometownMapper.class);
 
     final UUID userId = randomUUID();
 
@@ -80,7 +81,7 @@ class UserServiceTest {
                 .selfIntroduction("anySelfIntroduction")
                 .placesToVisit("anyPlacesToVisit")
                 .subscriptionType("anySubscriptionType")
-                .hometownEntity(fromEntity(hometown))
+                .hometownEntity(hometownMapper.toEntity(hometown))
                 .hobbyAndInterestEntities(hobbyAndInterestEntities)
                 .build();
     }
@@ -209,7 +210,7 @@ class UserServiceTest {
                 .targetLanguage("anyUpdatedTargetLanguage")
                 .occupation("anyUpdatedOccupation")
                 .placesToVisit("anyUpdatedPlacesToVisit")
-                .hometownEntity(fromEntity(updatedHometown))
+                .hometownEntity(hometownMapper.toEntity(updatedHometown))
                 .hobbyAndInterestEntities(hobbyAndInterestEntitiesUpdated)
                 .build();
 

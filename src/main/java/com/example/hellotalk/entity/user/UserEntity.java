@@ -2,8 +2,6 @@ package com.example.hellotalk.entity.user;
 
 import com.example.hellotalk.entity.followship.FollowshipEntity;
 import com.example.hellotalk.entity.moment.MomentEntity;
-import com.example.hellotalk.mapper.UserMapper;
-import com.example.hellotalk.model.user.User;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -85,8 +83,4 @@ public class UserEntity {
 
     @OneToMany(mappedBy = "userEntity", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = false)
     private Set<MomentEntity> momentEntitySet;
-
-    public static UserEntity fromModel(User user) {
-        return UserMapper.INSTANCE.toEntity(user);
-    }
 }

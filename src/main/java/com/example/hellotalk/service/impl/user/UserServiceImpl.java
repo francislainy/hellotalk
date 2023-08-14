@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.*;
 
-import static com.example.hellotalk.entity.user.UserEntity.fromModel;
 import static com.example.hellotalk.exception.AppExceptionHandler.USER_NOT_FOUND_EXCEPTION;
 
 @RequiredArgsConstructor
@@ -54,7 +53,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public User createUser(User user) {
 
-        UserEntity userEntity = fromModel(user);
+        UserEntity userEntity = userMapper.toEntity(user);
 
         List<HobbyAndInterestEntity> hobbyAndInterestEntityList = hobbyAndInterestRepository.saveAll(userEntity.getHobbyAndInterestEntities());
         HometownEntity hometownEntity = hometownRepository.save(userEntity.getHometownEntity());
@@ -73,7 +72,7 @@ public class UserServiceImpl implements UserService {
 
         Optional<UserEntity> userEntityOptional = userRepository.findById(userId);
         if (userEntityOptional.isPresent()) {
-            UserEntity userEntity = UserEntity.fromModel(user);
+            UserEntity userEntity = userMapper.toEntity(user);
             userEntity.setId(userId);
 
             HometownEntity hometownEntity = userEntityOptional.get().getHometownEntity();

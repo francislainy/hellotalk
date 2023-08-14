@@ -2,8 +2,6 @@ package com.example.hellotalk.entity.comment;
 
 import com.example.hellotalk.entity.moment.MomentEntity;
 import com.example.hellotalk.entity.user.UserEntity;
-import com.example.hellotalk.mapper.CommentMapper;
-import com.example.hellotalk.model.comment.Comment;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -41,7 +39,4 @@ public class CommentEntity {
     @JoinColumn(name = "moment_id", referencedColumnName = "id")
     private MomentEntity momentEntity;
 
-    public static CommentEntity fromModel(Comment comment) {
-        return CommentMapper.INSTANCE.toEntity(comment);
-    }
 }

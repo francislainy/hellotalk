@@ -10,4 +10,6 @@ public interface HometownMapper {
     HometownMapper INSTANCE = Mappers.getMapper(HometownMapper.class);
 
     HometownEntity toEntity(Hometown hometown);
+
+    Hometown toModel(HometownEntity hometownEntity);
 }

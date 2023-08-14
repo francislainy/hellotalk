@@ -13,7 +13,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
-import org.springframework.test.web.servlet.MvcResult;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,8 +45,8 @@ class CommentControllerTest extends BaseDocTestConfig {
 
     @BeforeAll
     void initData() {
-        commentId = UUID.fromString("1bfff94a-b70e-4b39-bd2a-be1c0f898589");
-        userCreatorId = UUID.fromString("2cfff94a-b70e-4b39-bd2a-be1c0f898541");
+        commentId = randomUUID();
+        userCreatorId = randomUUID();
 
         commentRequest = Comment.builder()
                 .text("anyText")
@@ -121,7 +120,7 @@ class CommentControllerTest extends BaseDocTestConfig {
         when(commentService.updateComment(any(), any())).thenReturn(comment);
         UUID momentId = randomUUID();
 
-        MvcResult mvcResult = mockMvc.perform(RestDocumentationRequestBuilders.put("/api/v1/ht/moments/{momentId}/comments/{commentId}", momentId, commentId)
+        mockMvc.perform(RestDocumentationRequestBuilders.put("/api/v1/ht/moments/{momentId}/comments/{commentId}", momentId, commentId)
                 .content(jsonRequest)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is2xxSuccessful())

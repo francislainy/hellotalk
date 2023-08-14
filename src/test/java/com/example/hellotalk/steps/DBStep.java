@@ -2,14 +2,14 @@ package com.example.hellotalk.steps;
 
 import com.example.hellotalk.client.DBClient;
 import com.example.hellotalk.entity.user.UserEntity;
+import com.example.hellotalk.mapper.HometownMapper;
 import com.example.hellotalk.model.Hometown;
 import com.example.hellotalk.repository.user.UserRepository;
 import com.example.hellotalk.steps.user.UserContext;
 import io.cucumber.java.en.Given;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
-import static com.example.hellotalk.entity.user.HometownEntity.fromEntity;
+import org.mapstruct.factory.Mappers;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -17,6 +17,9 @@ public class DBStep {
 
     private final DBClient dbClient;
     private final UserRepository userRepository;
+
+    private final HometownMapper hometownMapper = Mappers.getMapper(HometownMapper.class);
+
     private final UserContext uc;
 
     @Given("I add a user to the DB with username {string} and password {string}")
@@ -80,7 +83,7 @@ public class DBStep {
                 .selfIntroduction("anySelfIntroduction")
                 .placesToVisit("anyPlacesToVisit")
                 .subscriptionType("anySubscriptionType")
-                .hometownEntity(fromEntity(hometown))
+                .hometownEntity(hometownMapper.toEntity(hometown))
                 .build();
     }
 }

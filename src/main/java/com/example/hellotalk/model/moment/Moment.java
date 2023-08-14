@@ -33,5 +33,4 @@ public class Moment {
     private Integer numLikes = 0;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private Set<UUID> likedByIds;
-
 }

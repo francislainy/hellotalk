@@ -26,7 +26,6 @@ import java.util.*;
 
 import static com.example.hellotalk.exception.AppExceptionHandler.ENTITY_DOES_NOT_BELONG_TO_USER_EXCEPTION;
 import static com.example.hellotalk.exception.AppExceptionHandler.MOMENT_NOT_FOUND_EXCEPTION;
-import static com.example.hellotalk.model.moment.Moment.fromEntity;
 import static java.util.UUID.randomUUID;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -197,7 +196,7 @@ class MomentServiceTest {
         tagsSet.add("anyTag1");
         tagsSet.add("anyTag2");
 
-        Moment moment = momentService.createMoment(fromEntity(momentEntity));
+        Moment moment = momentService.createMoment(momentMapper.toModel(momentEntity));
 
         assertAll(
                 () -> assertEquals(momentId, moment.getId()),
@@ -242,7 +241,7 @@ class MomentServiceTest {
         when(likeRepository.countLikesByMomentId(any())).thenReturn(1);
         when(likeRepository.findAllByMomentEntity_Id(any())).thenReturn(List.of(likeEntity));
 
-        Moment moment = fromEntity(momentEntity);
+        Moment moment = momentMapper.toModel(momentEntity);
         moment = momentService.updateMoment(momentId, moment);
 
         Moment finalMoment = moment;
@@ -261,7 +260,7 @@ class MomentServiceTest {
     void testUpdateMomentDetails_ThrowsExceptionWhenMomentIsNotFound() {
 
         UUID momentId = randomUUID();
-        Moment moment = fromEntity(getMomentEntity(momentId));
+        Moment moment = momentMapper.toModel(getMomentEntity(momentId));
         MomentNotFoundException exception =
                 assertThrows(MomentNotFoundException.class, () -> momentService.updateMoment(momentId, moment));
 
@@ -277,7 +276,7 @@ class MomentServiceTest {
         UserEntity userEntity = UserEntity.builder().id(randomUUID()).build();
 
         UUID momentId = randomUUID();
-        Moment moment = fromEntity(getMomentEntity(momentId));
+        Moment moment = momentMapper.toModel(getMomentEntity(momentId));
 
         MomentEntity momentEntity = getMomentEntity(momentId);
         momentEntity.setUserEntity(userEntity);

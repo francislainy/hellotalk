@@ -22,7 +22,6 @@ import java.util.*;
 
 import static com.example.hellotalk.exception.AppExceptionHandler.ENTITY_DOES_NOT_BELONG_TO_USER_EXCEPTION;
 import static com.example.hellotalk.exception.AppExceptionHandler.MOMENT_NOT_FOUND_EXCEPTION;
-import static com.example.hellotalk.model.moment.Moment.fromEntity;
 
 @RequiredArgsConstructor
 @Service
@@ -54,7 +53,7 @@ public class MomentServiceImpl implements MomentService {
         return momentEntityList.stream()
                 .map(momentEntity -> {
                     setLikesInfo(momentEntity);
-                    return fromEntity(momentEntity);
+                    return momentMapper.toModel(momentEntity);
                 })
                 .toList();
     }
@@ -67,7 +66,7 @@ public class MomentServiceImpl implements MomentService {
         return momentEntityList.stream()
                 .map(momentEntity -> {
                     setLikesInfo(momentEntity);
-                    return fromEntity(momentEntity);
+                    return momentMapper.toModel(momentEntity);
                 })
                 .toList();
     }
@@ -85,7 +84,7 @@ public class MomentServiceImpl implements MomentService {
 
         setLikesInfo(momentEntity);
 
-        return fromEntity(momentEntity);
+        return momentMapper.toModel(momentEntity);
     }
 
     @Override
@@ -113,7 +112,7 @@ public class MomentServiceImpl implements MomentService {
 
         setLikesInfo(momentEntity);
 
-        return fromEntity(momentEntity);
+        return momentMapper.toModel(momentEntity);
     }
 
     @Override
@@ -125,9 +124,7 @@ public class MomentServiceImpl implements MomentService {
                 """;
 
         if (optionalMomentEntity.isPresent()) {
-
             MomentEntity momentEntity = optionalMomentEntity.get();
-
             UserEntity userEntity = userService.getCurrentUser();
 
             if (!userEntity.getId().toString().equals(momentEntity.getUserEntity().getId().toString())) {

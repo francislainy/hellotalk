@@ -3,19 +3,19 @@ package com.example.hellotalk.service.user;
 import com.example.hellotalk.entity.user.HobbyAndInterestEntity;
 import com.example.hellotalk.entity.user.UserEntity;
 import com.example.hellotalk.exception.UserNotFoundException;
+import com.example.hellotalk.mapper.UserMapper;
 import com.example.hellotalk.model.Hometown;
 import com.example.hellotalk.model.user.User;
 import com.example.hellotalk.repository.HobbyAndInterestRepository;
 import com.example.hellotalk.repository.HometownRepository;
 import com.example.hellotalk.repository.LikeRepository;
 import com.example.hellotalk.repository.user.UserRepository;
-import com.example.hellotalk.repository.moment.MomentRepository;
-import com.example.hellotalk.service.impl.moment.MomentServiceImpl;
 import com.example.hellotalk.service.impl.user.UserServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mapstruct.factory.Mappers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -24,7 +24,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.*;
 
 import static com.example.hellotalk.entity.user.HometownEntity.fromEntity;
-import static com.example.hellotalk.exception.AppExceptionHandler.*;
+import static com.example.hellotalk.exception.AppExceptionHandler.USER_NOT_FOUND_EXCEPTION;
 import static java.util.UUID.randomUUID;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -38,9 +38,6 @@ class UserServiceTest {
     UserRepository userRepository;
 
     @Mock
-    MomentRepository momentRepository;
-
-    @Mock
     LikeRepository likeRepository;
 
     @Mock
@@ -52,16 +49,15 @@ class UserServiceTest {
     @InjectMocks
     UserServiceImpl userService;
 
-    @InjectMocks
-    MomentServiceImpl momentService;
+    UserMapper userMapper = Mappers.getMapper(UserMapper.class);
 
-    private final UUID userId = UUID.fromString("1bfff94a-b70e-4b39-bd2a-be1c0f898589");
+    final UUID userId = randomUUID();
 
     @BeforeEach
     void setUp() {
         userRepository = Mockito.mock(UserRepository.class);
         likeRepository = Mockito.mock(LikeRepository.class);
-        userService = new UserServiceImpl(userRepository, hobbyAndInterestRepository, hometownRepository, likeRepository, momentRepository);
+        userService = new UserServiceImpl(userRepository, hobbyAndInterestRepository, hometownRepository, userMapper);
     }
 
     private UserEntity getUserEntity() {
@@ -170,7 +166,7 @@ class UserServiceTest {
         when(hobbyAndInterestRepository.saveAll(any())).thenReturn(hobbyAndInterestEntityList);
         when(userRepository.save(any())).thenReturn(userEntity);
 
-        User user = userService.createUser(User.buildUserFromEntity(userEntity));
+        User user = userService.createUser(userMapper.toModel(userEntity));
         assertAll(
                 () -> assertNotNull(user.getId()),
                 () -> assertEquals("anyName", user.getName()),
@@ -217,10 +213,11 @@ class UserServiceTest {
                 .hobbyAndInterestEntities(hobbyAndInterestEntitiesUpdated)
                 .build();
 
-        when(userRepository.findById(any())).thenReturn(Optional.of(getUserEntity()));
+        UserEntity userEntity = getUserEntity();
+        when(userRepository.findById(any())).thenReturn(Optional.of(userEntity));
         when(userRepository.save(any())).thenReturn(userEntityUpdated);
 
-        User user = User.buildUserFromEntity(getUserEntity());
+        User user = userMapper.toModel(userEntity);
         user = userService.updateUser(userId, user);
 
         User finalUser = user;
@@ -246,7 +243,7 @@ class UserServiceTest {
     @Test
     void testUpdateUserDetails_ThrowsExceptionWhenUserIsNotFound() {
 
-        User user = User.buildUserFromEntity(getUserEntity());
+        User user = userMapper.toModel(getUserEntity());
         UserNotFoundException exception =
                 assertThrows(UserNotFoundException.class, () -> userService.updateUser(userId, user));
 
@@ -266,7 +263,7 @@ class UserServiceTest {
     @Test
     void testDeleteUser_ThrowsExceptionUserNotFound() {
 
-        UUID userId = UUID.fromString("1bfff94a-b70e-4b39-bd2a-be1c0f898589");
+        UUID userId = randomUUID();
 
         UserNotFoundException exception =
                 assertThrows(UserNotFoundException.class, () -> userService.deleteUser(userId));

@@ -3,8 +3,6 @@ package com.example.hellotalk.entity.moment;
 import com.example.hellotalk.entity.comment.CommentEntity;
 import com.example.hellotalk.entity.user.LikeEntity;
 import com.example.hellotalk.entity.user.UserEntity;
-import com.example.hellotalk.mapper.MomentMapper;
-import com.example.hellotalk.model.moment.Moment;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -54,8 +52,4 @@ public class MomentEntity {
 
     @Transient
     private Integer numLikes = 0;
-
-    public static MomentEntity fromModel(Moment moment) {
-        return MomentMapper.INSTANCE.toEntity(moment);
-    }
 }

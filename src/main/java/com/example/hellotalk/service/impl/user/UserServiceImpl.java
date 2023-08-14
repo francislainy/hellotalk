@@ -8,9 +8,7 @@ import com.example.hellotalk.mapper.UserMapper;
 import com.example.hellotalk.model.user.User;
 import com.example.hellotalk.repository.HobbyAndInterestRepository;
 import com.example.hellotalk.repository.HometownRepository;
-import com.example.hellotalk.repository.LikeRepository;
 import com.example.hellotalk.repository.user.UserRepository;
-import com.example.hellotalk.repository.moment.MomentRepository;
 import com.example.hellotalk.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -19,19 +17,15 @@ import java.util.*;
 
 import static com.example.hellotalk.entity.user.UserEntity.fromModel;
 import static com.example.hellotalk.exception.AppExceptionHandler.USER_NOT_FOUND_EXCEPTION;
-import static com.example.hellotalk.model.user.User.buildUserFromEntity;
 
 @RequiredArgsConstructor
 @Service
 public class UserServiceImpl implements UserService {
 
-    final UserRepository userRepository;
-    final HobbyAndInterestRepository hobbyAndInterestRepository;
-    final HometownRepository hometownRepository;
-    final LikeRepository likeRepository;
-    final MomentRepository momentRepository;
-
-    private final UserMapper userMapper = UserMapper.INSTANCE;
+    private final UserRepository userRepository;
+    private final HobbyAndInterestRepository hobbyAndInterestRepository;
+    private final HometownRepository hometownRepository;
+    private final UserMapper userMapper;
 
     public User getUser(UUID userId) {
         Optional<UserEntity> userEntityOptional = userRepository.findById(userId);
@@ -51,7 +45,7 @@ public class UserServiceImpl implements UserService {
         List<UserEntity> userEntityList = userRepository.findAll();
 
         if (!userEntityList.isEmpty()) {
-            userEntityList.forEach(userEntity -> userList.add(buildUserFromEntity(userEntity)));
+            userEntityList.forEach(userEntity -> userList.add(userMapper.toModel(userEntity)));
         }
 
         return userList;
@@ -71,7 +65,7 @@ public class UserServiceImpl implements UserService {
 
         userEntity = userRepository.save(userEntity);
 
-        return buildUserFromEntity(userEntity);
+        return userMapper.toModel(userEntity);
     }
 
     @Override
@@ -93,7 +87,7 @@ public class UserServiceImpl implements UserService {
             }
 
             userEntity = userRepository.save(userEntity);
-            return buildUserFromEntity(userEntity);
+            return userMapper.toModel(userEntity);
         } else {
             throw new UserNotFoundException(USER_NOT_FOUND_EXCEPTION);
         }

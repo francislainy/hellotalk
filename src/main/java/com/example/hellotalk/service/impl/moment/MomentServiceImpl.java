@@ -5,6 +5,7 @@ import com.example.hellotalk.entity.user.LikeEntity;
 import com.example.hellotalk.entity.user.UserEntity;
 import com.example.hellotalk.exception.EntityDoesNotBelongToUserException;
 import com.example.hellotalk.exception.MomentNotFoundException;
+import com.example.hellotalk.mapper.MomentMapper;
 import com.example.hellotalk.model.ResultInfo;
 import com.example.hellotalk.model.moment.Moment;
 import com.example.hellotalk.repository.LikeRepository;
@@ -21,7 +22,6 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
-import static com.example.hellotalk.entity.moment.MomentEntity.fromModel;
 import static com.example.hellotalk.exception.AppExceptionHandler.ENTITY_DOES_NOT_BELONG_TO_USER_EXCEPTION;
 import static com.example.hellotalk.exception.AppExceptionHandler.MOMENT_NOT_FOUND_EXCEPTION;
 import static com.example.hellotalk.model.moment.Moment.buildMomentFromEntity;
@@ -34,6 +34,8 @@ public class MomentServiceImpl implements MomentService {
     private final UserRepository userRepository;
     private final LikeRepository likeRepository;
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
+
+    private final MomentMapper momentMapper;
 
     @Override
     public Moment getMoment(UUID momentId) {
@@ -78,7 +80,7 @@ public class MomentServiceImpl implements MomentService {
         String username = authentication.getName();
         UserEntity userEntity = userRepository.findByUsername(username);
 
-        MomentEntity momentEntity = fromModel(moment).toBuilder()
+        MomentEntity momentEntity = momentMapper.toEntity(moment).toBuilder()
                 .userEntity(userEntity)
                 .creationDate(ZonedDateTime.now().withZoneSameInstant(ZoneOffset.UTC))
                 .build();

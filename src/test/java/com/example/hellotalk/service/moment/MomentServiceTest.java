@@ -5,14 +5,16 @@ import com.example.hellotalk.entity.user.LikeEntity;
 import com.example.hellotalk.entity.user.UserEntity;
 import com.example.hellotalk.exception.EntityDoesNotBelongToUserException;
 import com.example.hellotalk.exception.MomentNotFoundException;
+import com.example.hellotalk.mapper.MomentMapper;
 import com.example.hellotalk.model.ResultInfo;
 import com.example.hellotalk.model.moment.Moment;
 import com.example.hellotalk.repository.LikeRepository;
-import com.example.hellotalk.repository.user.UserRepository;
 import com.example.hellotalk.repository.moment.MomentRepository;
+import com.example.hellotalk.repository.user.UserRepository;
 import com.example.hellotalk.service.impl.moment.MomentServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mapstruct.factory.Mappers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -25,7 +27,8 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
-import static com.example.hellotalk.exception.AppExceptionHandler.*;
+import static com.example.hellotalk.exception.AppExceptionHandler.ENTITY_DOES_NOT_BELONG_TO_USER_EXCEPTION;
+import static com.example.hellotalk.exception.AppExceptionHandler.MOMENT_NOT_FOUND_EXCEPTION;
 import static com.example.hellotalk.model.moment.Moment.buildMomentFromEntity;
 import static java.util.UUID.randomUUID;
 import static org.junit.jupiter.api.Assertions.*;
@@ -46,6 +49,9 @@ class MomentServiceTest {
 
     @Mock
     LikeRepository likeRepository;
+
+    @Mock
+    MomentMapper momentMapper = Mappers.getMapper(MomentMapper.class);
 
     ZonedDateTime now = ZonedDateTime.parse(ZonedDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")));
     ZonedDateTime creationDate = now;
@@ -190,6 +196,7 @@ class MomentServiceTest {
 
         when(momentRepository.save(any())).thenReturn(momentEntity);
         when(userRepository.findByUsername(any())).thenReturn(userEntity);
+        when(momentMapper.toEntity(any())).thenReturn(momentEntity);
 
         Set<String> tagsSet = new HashSet<>();
         tagsSet.add("anyTag1");

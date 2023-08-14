@@ -1,7 +1,5 @@
 package com.example.hellotalk.model.user;
 
-import com.example.hellotalk.entity.user.UserEntity;
-import com.example.hellotalk.mapper.UserMapper;
 import com.example.hellotalk.model.HobbyAndInterest;
 import com.example.hellotalk.model.Hometown;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -42,8 +40,4 @@ public class User {
     private Set<User> followedBy;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private Set<User> followerOf;
-
-    public static User buildUserFromEntity(UserEntity userEntity) {
-        return UserMapper.INSTANCE.toModel(userEntity);
-    }
 }

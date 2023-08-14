@@ -1,6 +1,6 @@
 package com.example.hellotalk.controller.user;
 
-import com.example.hellotalk.controller.BaseTestConfig;
+import com.example.hellotalk.controller.BaseDocTestConfig;
 import com.example.hellotalk.exception.UserNotFoundException;
 import com.example.hellotalk.model.HobbyAndInterest;
 import com.example.hellotalk.model.Hometown;
@@ -33,7 +33,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(controllers = UserController.class)
 @ExtendWith(MockitoExtension.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class UserControllerTest extends BaseTestConfig {
+class UserControllerTest extends BaseDocTestConfig {
 
     UUID userId;
     User userRequest;

@@ -1,6 +1,6 @@
 package com.example.hellotalk.controller.comment;
 
-import com.example.hellotalk.controller.BaseTestConfig;
+import com.example.hellotalk.controller.BaseDocTestConfig;
 import com.example.hellotalk.model.comment.Comment;
 import com.example.hellotalk.model.user.UserSmall;
 import com.example.hellotalk.service.comment.CommentService;
@@ -32,7 +32,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(controllers = CommentController.class)
 @ExtendWith(MockitoExtension.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class CommentControllerTest extends BaseTestConfig {
+class CommentControllerTest extends BaseDocTestConfig {
 
     UUID commentId;
     UUID userCreatorId;

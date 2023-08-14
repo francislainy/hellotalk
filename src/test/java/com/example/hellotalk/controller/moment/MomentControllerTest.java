@@ -1,6 +1,6 @@
 package com.example.hellotalk.controller.moment;
 
-import com.example.hellotalk.controller.BaseTestConfig;
+import com.example.hellotalk.controller.BaseDocTestConfig;
 import com.example.hellotalk.entity.moment.MomentEntity;
 import com.example.hellotalk.entity.user.LikeEntity;
 import com.example.hellotalk.entity.user.UserEntity;
@@ -42,7 +42,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(controllers = MomentController.class)
 @ExtendWith(MockitoExtension.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class MomentControllerTest extends BaseTestConfig {
+class MomentControllerTest extends BaseDocTestConfig {
 
     UUID momentId;
     UUID userCreatorId;

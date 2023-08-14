@@ -1,6 +1,6 @@
 package com.example.hellotalk.controller.followship;
 
-import com.example.hellotalk.controller.BaseTestConfig;
+import com.example.hellotalk.controller.BaseDocTestConfig;
 import com.example.hellotalk.exception.FollowshipDeletedException;
 import com.example.hellotalk.exception.FollowshipNotCreatedUserCantFollowThemselfException;
 import com.example.hellotalk.model.followship.Followship;
@@ -35,7 +35,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(controllers = FollowshipController.class)
 @ExtendWith(MockitoExtension.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class FollowshipControllerTest extends BaseTestConfig {
+class FollowshipControllerTest extends BaseDocTestConfig {
 
     @MockBean
     FollowshipService followshipService;

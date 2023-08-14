@@ -10,19 +10,15 @@ import com.example.hellotalk.model.ResultInfo;
 import com.example.hellotalk.model.moment.Moment;
 import com.example.hellotalk.repository.LikeRepository;
 import com.example.hellotalk.repository.moment.MomentRepository;
-import com.example.hellotalk.repository.user.UserRepository;
 import com.example.hellotalk.service.impl.moment.MomentServiceImpl;
+import com.example.hellotalk.service.user.UserService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mapstruct.factory.Mappers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -46,13 +42,13 @@ class MomentServiceTest {
     MomentRepository momentRepository;
 
     @Mock
-    UserRepository userRepository;
-
-    @Mock
     LikeRepository likeRepository;
 
     @Spy
     MomentMapper momentMapper = Mappers.getMapper(MomentMapper.class);
+
+    @Mock
+    UserService userService;
 
     ZonedDateTime now = ZonedDateTime.parse(ZonedDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")));
     ZonedDateTime creationDate = now;
@@ -185,8 +181,6 @@ class MomentServiceTest {
     @Test
     void testCreateMoment() {
 
-        setupAuthenticatedUser();
-
         UUID momentId = randomUUID();
         UUID userId = randomUUID();
         UserEntity userEntity = UserEntity.builder().id(userId).build();
@@ -195,8 +189,8 @@ class MomentServiceTest {
         momentEntity.setNumLikes(0);
         momentEntity.setLikes(new HashSet<>());
 
+        when(userService.getCurrentUser()).thenReturn(userEntity);
         when(momentRepository.save(any())).thenReturn(momentEntity);
-        when(userRepository.findByUsername(any())).thenReturn(userEntity);
         when(momentMapper.toEntity(any())).thenReturn(momentEntity);
 
         Set<String> tagsSet = new HashSet<>();
@@ -219,11 +213,8 @@ class MomentServiceTest {
     @Test
     void testUpdateMomentDetails() {
 
-        setupAuthenticatedUser();
-
         UUID userId = randomUUID();
-        UserEntity userEntity = UserEntity.builder().id(userId).username("authorizedUser").build();
-        when(userRepository.findByUsername(any())).thenReturn(userEntity);
+        UserEntity userEntity = UserEntity.builder().id(userId).build();
 
         UUID momentId = UUID.randomUUID();
         MomentEntity momentEntity = getMomentEntity(momentId);
@@ -245,6 +236,7 @@ class MomentServiceTest {
 
         LikeEntity likeEntity = LikeEntity.builder().userEntity(userEntity).momentEntity(momentEntity).build();
 
+        when(userService.getCurrentUser()).thenReturn(userEntity);
         when(momentRepository.findById(any())).thenReturn(Optional.of(momentEntity));
         when(momentRepository.save(any())).thenReturn(momentEntityUpdated);
         when(likeRepository.countLikesByMomentId(any())).thenReturn(1);
@@ -279,12 +271,10 @@ class MomentServiceTest {
     @Test
     void testUpdateMomentDetails_ThrowsExceptionWhenUserIsUnauthorized() {
 
-        setupAuthenticatedUser();
+        UserEntity unauthorizedUserEntity = UserEntity.builder().id(randomUUID()).build();
+        when(userService.getCurrentUser()).thenReturn(unauthorizedUserEntity);
 
-        UUID userId = randomUUID();
-        UserEntity userEntity = UserEntity.builder().id(userId).username("unauthorizedUser").build();
-
-        when(userRepository.findByUsername(any())).thenReturn(userEntity);
+        UserEntity userEntity = UserEntity.builder().id(randomUUID()).build();
 
         UUID momentId = randomUUID();
         Moment moment = fromEntity(getMomentEntity(momentId));
@@ -302,14 +292,10 @@ class MomentServiceTest {
     @Test
     void testLikeMoment_ThrowsExceptionMomentNotFound() {
 
-        setupAuthenticatedUser();
-
-        UUID userId = randomUUID();
-        UserEntity userEntity = UserEntity.builder().id(userId).username("authorizedUser").build();
-        when(userRepository.findByUsername(any())).thenReturn(userEntity);
+        UserEntity userEntity = UserEntity.builder().id(randomUUID()).build();
+        when(userService.getCurrentUser()).thenReturn(userEntity);
 
         UUID momentId = randomUUID();
-
         MomentNotFoundException exception =
                 assertThrows(MomentNotFoundException.class, () -> momentService.likeMoment(momentId));
 
@@ -319,11 +305,9 @@ class MomentServiceTest {
     @Test
     void testLikeMoment_RemovesLikeIfMomentAlreadyLiked() {
 
-        setupAuthenticatedUser();
-
         UUID userId = randomUUID();
-        UserEntity userEntity = UserEntity.builder().id(userId).username("authorizedUser").build();
-        when(userRepository.findByUsername(any())).thenReturn(userEntity);
+        UserEntity userEntity = UserEntity.builder().id(userId).build();
+        when(userService.getCurrentUser()).thenReturn(userEntity);
 
         UUID userIdMomentCreator = randomUUID();
         UUID momentId = randomUUID();
@@ -355,11 +339,9 @@ class MomentServiceTest {
     @Test
     void testLikeMoment_DoesNotThrowExceptionIfMomentBelongsToTheSameUser() {
 
-        setupAuthenticatedUser();
-
         UUID userId = randomUUID();
-        UserEntity userEntity = UserEntity.builder().id(userId).username("authorizedUser").build();
-        when(userRepository.findByUsername(any())).thenReturn(userEntity);
+        UserEntity userEntity = UserEntity.builder().id(userId).build();
+        when(userService.getCurrentUser()).thenReturn(userEntity);
 
         UUID momentId = randomUUID();
 
@@ -380,11 +362,9 @@ class MomentServiceTest {
     @Test
     void testLikeMoment() {
 
-        setupAuthenticatedUser();
-
         UUID userId = randomUUID();
-        UserEntity userEntity = UserEntity.builder().id(userId).username("authorizedUser").build();
-        when(userRepository.findByUsername(any())).thenReturn(userEntity);
+        UserEntity userEntity = UserEntity.builder().id(userId).build();
+        when(userService.getCurrentUser()).thenReturn(userEntity);
 
         UUID userIdMomentCreator = randomUUID();
         UUID momentId = randomUUID();
@@ -414,9 +394,9 @@ class MomentServiceTest {
     @Test
     void testDeleteMoment() {
 
-        setupAuthenticatedUser();
         UUID userId = randomUUID();
-        UserEntity userEntity = UserEntity.builder().id(userId).username("authorizedUser").build();
+        UserEntity userEntity = UserEntity.builder().id(userId).build();
+        when(userService.getCurrentUser()).thenReturn(userEntity);
 
         UUID momentId = randomUUID();
         MomentEntity momentEntity = getMomentEntity(momentId);
@@ -443,10 +423,10 @@ class MomentServiceTest {
     @Test
     void testDeleteMoment_ThrowsExceptionWhenMomentDoesNorBelongToUser() {
 
-        setupAuthenticatedUser();
-        UUID userId = randomUUID();
-        UserEntity userEntity = UserEntity.builder().id(userId).username("unauthorizedUser").build();
+        UserEntity userEntityNotOwner = UserEntity.builder().id(randomUUID()).build();
+        when(userService.getCurrentUser()).thenReturn(userEntityNotOwner);
 
+        UserEntity userEntity = UserEntity.builder().id(randomUUID()).build();
         UUID momentId = randomUUID();
         MomentEntity momentEntity = getMomentEntity(momentId);
         momentEntity.setUserEntity(userEntity);
@@ -459,13 +439,6 @@ class MomentServiceTest {
     }
 
     // Helpers
-    public static void setupAuthenticatedUser() {
-        // Mocking the SecurityContextHolder and Authentication objects
-        SecurityContextHolder.setContext(Mockito.mock(SecurityContext.class));
-        Authentication authentication = Mockito.mock(Authentication.class);
-        when(SecurityContextHolder.getContext().getAuthentication()).thenReturn(authentication);
-        when(authentication.getName()).thenReturn("authorizedUser");
-    }
 
     private MomentEntity getMomentEntity(UUID momentId) {
 

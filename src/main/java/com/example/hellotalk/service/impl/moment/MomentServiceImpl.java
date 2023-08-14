@@ -9,12 +9,10 @@ import com.example.hellotalk.mapper.MomentMapper;
 import com.example.hellotalk.model.ResultInfo;
 import com.example.hellotalk.model.moment.Moment;
 import com.example.hellotalk.repository.LikeRepository;
-import com.example.hellotalk.repository.user.UserRepository;
 import com.example.hellotalk.repository.moment.MomentRepository;
 import com.example.hellotalk.service.moment.MomentService;
+import com.example.hellotalk.service.user.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.ZoneOffset;
@@ -31,11 +29,12 @@ import static com.example.hellotalk.model.moment.Moment.fromEntity;
 public class MomentServiceImpl implements MomentService {
 
     private final MomentRepository momentRepository;
-    private final UserRepository userRepository;
     private final LikeRepository likeRepository;
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
 
     private final MomentMapper momentMapper;
+
+    private final UserService userService;
 
     @Override
     public Moment getMoment(UUID momentId) {
@@ -76,9 +75,7 @@ public class MomentServiceImpl implements MomentService {
     @Override
     public Moment createMoment(Moment moment) {
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
-        UserEntity userEntity = userRepository.findByUsername(username);
+        UserEntity userEntity = userService.getCurrentUser();
 
         MomentEntity momentEntity = momentMapper.toEntity(moment).toBuilder()
                 .userEntity(userEntity)
@@ -97,11 +94,9 @@ public class MomentServiceImpl implements MomentService {
         MomentEntity momentEntity = momentRepository.findById(momentId)
                 .orElseThrow(() -> new MomentNotFoundException(MOMENT_NOT_FOUND_EXCEPTION));
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
-        UserEntity userEntity = userRepository.findByUsername(username);
+        UserEntity userEntity = userService.getCurrentUser();
 
-        if (!username.equals(momentEntity.getUserEntity().getUsername())) {
+        if (!userEntity.getId().toString().equals(momentEntity.getUserEntity().getId().toString())) {
             throw new EntityDoesNotBelongToUserException(ENTITY_DOES_NOT_BELONG_TO_USER_EXCEPTION);
         }
 
@@ -133,10 +128,9 @@ public class MomentServiceImpl implements MomentService {
 
             MomentEntity momentEntity = optionalMomentEntity.get();
 
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            String username = authentication.getName();
+            UserEntity userEntity = userService.getCurrentUser();
 
-            if (!username.equals(momentEntity.getUserEntity().getUsername())) {
+            if (!userEntity.getId().toString().equals(momentEntity.getUserEntity().getId().toString())) {
                 throw new EntityDoesNotBelongToUserException(ENTITY_DOES_NOT_BELONG_TO_USER_EXCEPTION);
             } else {
                 momentRepository.deleteById(momentId);
@@ -151,9 +145,7 @@ public class MomentServiceImpl implements MomentService {
     @Override
     public Map<String, Object> likeMoment(UUID momentId) {
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
-        UserEntity userEntity = userRepository.findByUsername(username);
+        UserEntity userEntity = userService.getCurrentUser();
 
         MomentEntity momentEntity = momentRepository.findById(momentId)
                 .orElseThrow(() -> new MomentNotFoundException(MOMENT_NOT_FOUND_EXCEPTION));

@@ -9,8 +9,11 @@ import com.example.hellotalk.model.user.User;
 import com.example.hellotalk.repository.HobbyAndInterestRepository;
 import com.example.hellotalk.repository.HometownRepository;
 import com.example.hellotalk.repository.user.UserRepository;
+import com.example.hellotalk.security.CustomUser;
 import com.example.hellotalk.service.user.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -25,6 +28,13 @@ public class UserServiceImpl implements UserService {
     private final HobbyAndInterestRepository hobbyAndInterestRepository;
     private final HometownRepository hometownRepository;
     private final UserMapper userMapper;
+
+    // todo: unit test 14/08/2023
+    public UserEntity getCurrentUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        CustomUser customUser = (CustomUser) authentication.getPrincipal();
+        return customUser.getUserEntity();
+    }
 
     public User getUser(UUID userId) {
         Optional<UserEntity> userEntityOptional = userRepository.findById(userId);

@@ -1,6 +1,6 @@
 package com.example.hellotalk.controller.followship;
 
-import com.example.hellotalk.controller.BaseDocTestConfig;
+import com.example.hellotalk.config.BaseDocTestConfig;
 import com.example.hellotalk.exception.FollowshipDeletedException;
 import com.example.hellotalk.exception.FollowshipNotCreatedUserCantFollowThemselfException;
 import com.example.hellotalk.model.followship.Followship;

@@ -1,4 +1,4 @@
-package com.example.hellotalk.controller;
+package com.example.hellotalk.config;
 
 import capital.scalable.restdocs.AutoDocumentation;
 import org.junit.jupiter.api.BeforeEach;

@@ -6,29 +6,31 @@ import com.example.hellotalk.entity.user.UserEntity;
 import com.example.hellotalk.exception.CommentNotFoundException;
 import com.example.hellotalk.exception.EntityDoesNotBelongToUserException;
 import com.example.hellotalk.exception.MomentNotFoundException;
+import com.example.hellotalk.mapper.CommentMapper;
 import com.example.hellotalk.model.comment.Comment;
-import com.example.hellotalk.repository.user.UserRepository;
 import com.example.hellotalk.repository.comment.CommentRepository;
 import com.example.hellotalk.repository.moment.MomentRepository;
+import com.example.hellotalk.repository.user.UserRepository;
 import com.example.hellotalk.service.impl.comment.CommentServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mapstruct.factory.Mappers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 import static com.example.hellotalk.exception.AppExceptionHandler.*;
-import static com.example.hellotalk.model.comment.Comment.fromEntity;
+import static java.time.format.DateTimeFormatter.ofPattern;
 import static java.util.UUID.randomUUID;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -49,7 +51,10 @@ class CommentServiceTest {
     @Mock
     UserRepository userRepository;
 
-    ZonedDateTime now = ZonedDateTime.parse(ZonedDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")));
+    @Spy
+    CommentMapper commentMapper = Mappers.getMapper(CommentMapper.class);
+
+    ZonedDateTime now = ZonedDateTime.parse(ZonedDateTime.now().format(ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")));
     ZonedDateTime creationDate = now;
     ZonedDateTime lastUpdatedDate = now;
 
@@ -106,7 +111,10 @@ class CommentServiceTest {
         commentEntity.setUserEntity(userEntity);
         commentEntity.setMomentEntity(momentEntity);
 
+        Comment commentToReturn = commentMapper.toModel(commentEntity);
+
         when(commentRepository.findAllByMomentEntity_IdContains(any())).thenReturn(List.of(commentEntity));
+        when(commentMapper.toModel(any())).thenReturn(commentToReturn);
 
         List<Comment> allComments = commentService.getAllCommentsForMoment(momentId);
         assertEquals(1, allComments.size());
@@ -146,7 +154,7 @@ class CommentServiceTest {
         when(commentRepository.save(any())).thenReturn(commentEntity);
         when(momentRepository.findById(any())).thenReturn(Optional.ofNullable(momentEntity));
 
-        Comment comment = commentService.createComment(momentId, fromEntity(commentEntity));
+        Comment comment = commentService.createComment(momentId, commentMapper.toModel(commentEntity));
         assertAll(
                 () -> assertEquals(commentId, comment.getId()),
                 () -> assertEquals("anyText", comment.getText()),
@@ -169,7 +177,7 @@ class CommentServiceTest {
         when(momentRepository.findById(any())).thenReturn(Optional.empty());
 
         MomentNotFoundException exception =
-                assertThrows(MomentNotFoundException.class, () -> commentService.createComment(momentId, fromEntity(commentEntity)));
+                assertThrows(MomentNotFoundException.class, () -> commentService.createComment(momentId, commentMapper.toModel(commentEntity)));
 
         assertEquals(MOMENT_NOT_FOUND_EXCEPTION, exception.getMessage());
     }
@@ -197,7 +205,7 @@ class CommentServiceTest {
         when(commentRepository.findById(any())).thenReturn(Optional.of(commentEntity));
         when(commentRepository.save(any())).thenReturn(commentEntityUpdated);
 
-        Comment comment = fromEntity(commentEntity);
+        Comment comment = commentMapper.toModel(commentEntity);
         comment = commentService.updateComment(commentId, comment);
 
         Comment finalComment = comment;
@@ -213,7 +221,7 @@ class CommentServiceTest {
     void testUpdateCommentDetails_ThrowsExceptionWhenCommentIsNotFound() {
 
         UUID commentId = randomUUID();
-        Comment comment = fromEntity(getCommentEntity(commentId));
+        Comment comment = commentMapper.toModel(getCommentEntity(commentId));
         CommentNotFoundException exception =
                 assertThrows(CommentNotFoundException.class, () -> commentService.updateComment(commentId, comment));
 
@@ -231,10 +239,9 @@ class CommentServiceTest {
         when(userRepository.findByUsername(any())).thenReturn(userEntity);
 
         UUID commentId = randomUUID();
-        Comment comment = fromEntity(getCommentEntity(commentId));
-
         CommentEntity commentEntity = getCommentEntity(commentId);
         commentEntity.setUserEntity(userEntity);
+        Comment comment = commentMapper.toModel(commentEntity);
 
         when(commentRepository.findById(any())).thenReturn(Optional.of(commentEntity));
         EntityDoesNotBelongToUserException exception =
@@ -294,7 +301,7 @@ class CommentServiceTest {
     private CommentEntity getCommentEntity(UUID commentId) {
 
         ZonedDateTime now = ZonedDateTime.now();
-        creationDate = ZonedDateTime.parse(now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")));
+        creationDate = ZonedDateTime.parse(now.format(ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")));
 
         return CommentEntity.builder()
                 .id(commentId)

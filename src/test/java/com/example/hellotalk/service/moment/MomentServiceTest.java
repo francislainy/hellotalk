@@ -18,6 +18,7 @@ import org.mapstruct.factory.Mappers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
@@ -29,7 +30,7 @@ import java.util.*;
 
 import static com.example.hellotalk.exception.AppExceptionHandler.ENTITY_DOES_NOT_BELONG_TO_USER_EXCEPTION;
 import static com.example.hellotalk.exception.AppExceptionHandler.MOMENT_NOT_FOUND_EXCEPTION;
-import static com.example.hellotalk.model.moment.Moment.buildMomentFromEntity;
+import static com.example.hellotalk.model.moment.Moment.fromEntity;
 import static java.util.UUID.randomUUID;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -50,7 +51,7 @@ class MomentServiceTest {
     @Mock
     LikeRepository likeRepository;
 
-    @Mock
+    @Spy
     MomentMapper momentMapper = Mappers.getMapper(MomentMapper.class);
 
     ZonedDateTime now = ZonedDateTime.parse(ZonedDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")));
@@ -202,7 +203,7 @@ class MomentServiceTest {
         tagsSet.add("anyTag1");
         tagsSet.add("anyTag2");
 
-        Moment moment = momentService.createMoment(buildMomentFromEntity(momentEntity));
+        Moment moment = momentService.createMoment(fromEntity(momentEntity));
 
         assertAll(
                 () -> assertEquals(momentId, moment.getId()),
@@ -249,7 +250,7 @@ class MomentServiceTest {
         when(likeRepository.countLikesByMomentId(any())).thenReturn(1);
         when(likeRepository.findAllByMomentEntity_Id(any())).thenReturn(List.of(likeEntity));
 
-        Moment moment = buildMomentFromEntity(momentEntity);
+        Moment moment = fromEntity(momentEntity);
         moment = momentService.updateMoment(momentId, moment);
 
         Moment finalMoment = moment;
@@ -268,7 +269,7 @@ class MomentServiceTest {
     void testUpdateMomentDetails_ThrowsExceptionWhenMomentIsNotFound() {
 
         UUID momentId = randomUUID();
-        Moment moment = buildMomentFromEntity(getMomentEntity(momentId));
+        Moment moment = fromEntity(getMomentEntity(momentId));
         MomentNotFoundException exception =
                 assertThrows(MomentNotFoundException.class, () -> momentService.updateMoment(momentId, moment));
 
@@ -286,7 +287,7 @@ class MomentServiceTest {
         when(userRepository.findByUsername(any())).thenReturn(userEntity);
 
         UUID momentId = randomUUID();
-        Moment moment = buildMomentFromEntity(getMomentEntity(momentId));
+        Moment moment = fromEntity(getMomentEntity(momentId));
 
         MomentEntity momentEntity = getMomentEntity(momentId);
         momentEntity.setUserEntity(userEntity);

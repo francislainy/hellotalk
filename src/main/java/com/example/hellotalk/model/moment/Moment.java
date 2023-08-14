@@ -38,7 +38,7 @@ public class Moment {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private Set<UUID> likedByIds;
 
-    public static Moment buildMomentFromEntity(MomentEntity momentEntity) {
+    public static Moment fromEntity(MomentEntity momentEntity) {
         Moment moment = new Moment();
         copyProperties(momentEntity, moment);
         moment.setUserCreatorId(momentEntity.getUserEntity().getId());

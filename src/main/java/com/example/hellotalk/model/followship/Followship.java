@@ -18,5 +18,4 @@ public class Followship {
     private UUID id;
     private UUID userToId;
     private UUID userFromId;
-
 }

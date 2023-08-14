@@ -1,7 +1,5 @@
 package com.example.hellotalk.model.comment;
 
-import com.example.hellotalk.entity.comment.CommentEntity;
-import com.example.hellotalk.mapper.CommentMapper;
 import com.example.hellotalk.model.user.UserSmall;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -33,8 +31,4 @@ public class Comment {
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private UserSmall user;
-
-    public static Comment fromEntity(CommentEntity commentEntity) {
-        return CommentMapper.INSTANCE.toModel(commentEntity);
-    }
 }

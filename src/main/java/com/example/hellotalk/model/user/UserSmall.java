@@ -1,7 +1,5 @@
 package com.example.hellotalk.model.user;
 
-import com.example.hellotalk.entity.user.UserEntity;
-import com.example.hellotalk.mapper.UserSmallMapper;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -25,8 +23,4 @@ public class UserSmall {
     private String status;
     private String nativeLanguage;
     private String targetLanguage;
-
-    public static UserSmall fromEntity(UserEntity userEntity) {
-        return UserSmallMapper.INSTANCE.toModel(userEntity);
-    }
 }

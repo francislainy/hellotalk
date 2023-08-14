@@ -4,12 +4,16 @@ import com.example.hellotalk.entity.moment.MomentEntity;
 import com.example.hellotalk.model.moment.Moment;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.factory.Mappers;
 
-@Mapper
+import java.util.stream.Collectors;
+
+@Mapper(imports = Collectors.class)
 public interface MomentMapper {
-    MomentMapper INSTANCE = Mappers.getMapper(MomentMapper.class);
 
     @Mapping(source = "userCreatorId", target = "userEntity.id")
     MomentEntity toEntity(Moment moment);
+
+    @Mapping(source = "userEntity.id", target = "userCreatorId")
+    @Mapping(expression = "java(momentEntity.getLikes().stream().map(like -> like.getUserEntity().getId()).collect(Collectors.toSet()))", target = "likedByIds")
+    Moment toModel(MomentEntity momentEntity);
 }

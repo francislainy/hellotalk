@@ -24,7 +24,7 @@ import java.util.*;
 
 import static com.example.hellotalk.exception.AppExceptionHandler.ENTITY_DOES_NOT_BELONG_TO_USER_EXCEPTION;
 import static com.example.hellotalk.exception.AppExceptionHandler.MOMENT_NOT_FOUND_EXCEPTION;
-import static com.example.hellotalk.model.moment.Moment.buildMomentFromEntity;
+import static com.example.hellotalk.model.moment.Moment.fromEntity;
 
 @RequiredArgsConstructor
 @Service
@@ -44,7 +44,7 @@ public class MomentServiceImpl implements MomentService {
 
         setLikesInfo(momentEntity);
 
-        return buildMomentFromEntity(momentEntity);
+        return momentMapper.toModel(momentEntity);
     }
 
     @Override
@@ -55,7 +55,7 @@ public class MomentServiceImpl implements MomentService {
         return momentEntityList.stream()
                 .map(momentEntity -> {
                     setLikesInfo(momentEntity);
-                    return buildMomentFromEntity(momentEntity);
+                    return fromEntity(momentEntity);
                 })
                 .toList();
     }
@@ -68,7 +68,7 @@ public class MomentServiceImpl implements MomentService {
         return momentEntityList.stream()
                 .map(momentEntity -> {
                     setLikesInfo(momentEntity);
-                    return buildMomentFromEntity(momentEntity);
+                    return fromEntity(momentEntity);
                 })
                 .toList();
     }
@@ -88,7 +88,7 @@ public class MomentServiceImpl implements MomentService {
 
         setLikesInfo(momentEntity);
 
-        return buildMomentFromEntity(momentEntity);
+        return fromEntity(momentEntity);
     }
 
     @Override
@@ -118,7 +118,7 @@ public class MomentServiceImpl implements MomentService {
 
         setLikesInfo(momentEntity);
 
-        return buildMomentFromEntity(momentEntity);
+        return fromEntity(momentEntity);
     }
 
     @Override

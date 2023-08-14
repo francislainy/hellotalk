@@ -6,10 +6,11 @@ import com.example.hellotalk.entity.user.UserEntity;
 import com.example.hellotalk.exception.CommentNotFoundException;
 import com.example.hellotalk.exception.EntityDoesNotBelongToUserException;
 import com.example.hellotalk.exception.MomentNotFoundException;
+import com.example.hellotalk.mapper.CommentMapper;
 import com.example.hellotalk.model.comment.Comment;
-import com.example.hellotalk.repository.user.UserRepository;
 import com.example.hellotalk.repository.comment.CommentRepository;
 import com.example.hellotalk.repository.moment.MomentRepository;
+import com.example.hellotalk.repository.user.UserRepository;
 import com.example.hellotalk.service.comment.CommentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
@@ -24,7 +25,6 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static com.example.hellotalk.exception.AppExceptionHandler.*;
-import static com.example.hellotalk.model.comment.Comment.fromEntity;
 
 @RequiredArgsConstructor
 @Service
@@ -34,13 +34,14 @@ public class CommentServiceImpl implements CommentService {
     private final MomentRepository momentRepository;
     private final UserRepository userRepository;
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
+    private final CommentMapper commentMapper;
 
     @Override
     public Comment getComment(UUID commentId) {
         CommentEntity commentEntity = commentRepository.findById(commentId)
                 .orElseThrow(() -> new CommentNotFoundException(COMMENT_NOT_FOUND_EXCEPTION));
 
-        return fromEntity(commentEntity);
+        return commentMapper.toModel(commentEntity);
     }
 
     @Override
@@ -49,7 +50,7 @@ public class CommentServiceImpl implements CommentService {
         List<CommentEntity> commentEntityList = commentRepository.findAllByMomentEntity_IdContains(momentId);
 
         return commentEntityList.stream()
-                .map(Comment::fromEntity)
+                .map(commentMapper::toModel)
                 .toList();
     }
 
@@ -71,7 +72,7 @@ public class CommentServiceImpl implements CommentService {
                     .build();
             commentEntity = commentRepository.save(commentEntity);
 
-            return fromEntity(commentEntity);
+            return commentMapper.toModel(commentEntity);
         } else
             throw new MomentNotFoundException(MOMENT_NOT_FOUND_EXCEPTION);
     }
@@ -100,7 +101,7 @@ public class CommentServiceImpl implements CommentService {
 
         commentEntity = commentRepository.save(commentEntity);
 
-        return fromEntity(commentEntity);
+        return commentMapper.toModel(commentEntity);
     }
 
     @Override

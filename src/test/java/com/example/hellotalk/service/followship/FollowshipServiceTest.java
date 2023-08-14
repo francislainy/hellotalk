@@ -52,7 +52,6 @@ class FollowshipServiceTest {
     @InjectMocks
     FollowshipServiceImpl followshipService;
 
-    final UUID userId = randomUUID();
     final UUID followshipId = randomUUID();
 
     @BeforeEach

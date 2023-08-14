@@ -11,6 +11,7 @@ import com.example.hellotalk.model.followship.Followship;
 import com.example.hellotalk.repository.followship.FollowshipRepository;
 import com.example.hellotalk.repository.user.UserRepository;
 import com.example.hellotalk.service.impl.followship.FollowshipServiceImpl;
+import com.example.hellotalk.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,9 +22,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,6 +45,9 @@ class FollowshipServiceTest {
     @Mock
     FollowshipRepository followshipRepository;
 
+    @Mock
+    UserService userService;
+
     FollowshipMapper followshipMapper = Mappers.getMapper(FollowshipMapper.class);
 
     @InjectMocks
@@ -57,7 +58,7 @@ class FollowshipServiceTest {
     @BeforeEach
     void setUp() {
         userRepository = Mockito.mock(UserRepository.class);
-        followshipService = new FollowshipServiceImpl(userRepository, followshipRepository, followshipMapper);
+        followshipService = new FollowshipServiceImpl(userRepository, followshipRepository, userService, followshipMapper);
     }
 
     @Test
@@ -163,19 +164,18 @@ class FollowshipServiceTest {
     @Test
     void testCreateFollowship() {
 
-        setupAuthenticatedUser();
         UUID followshipId = randomUUID();
         UUID userFromId = randomUUID();
         UUID userToId = randomUUID();
 
         UserEntity userFromEntity = UserEntity.builder().id(userFromId).build();
         UserEntity userToEntity = UserEntity.builder().id(userToId).build();
+        when(userService.getCurrentUser()).thenReturn(userFromEntity);
 
         FollowshipEntity followshipEntity = buildFollowshipEntity(followshipId, userFromId, userToId);
         Followship followship = buildFollowship(followshipId, userToEntity);
 
         when(userRepository.findById(userToEntity.getId())).thenReturn(Optional.of(userToEntity));
-        when(userRepository.findByUsername(any())).thenReturn(userFromEntity);
         when(followshipRepository.save(any())).thenReturn(followshipEntity);
 
         followship = followshipService.createFollowship(followship);
@@ -189,7 +189,6 @@ class FollowshipServiceTest {
     @Test
     void testCreateFollowship_UnfollowUserIfAlreadyFollowed() {
 
-        setupAuthenticatedUser();
         UUID followshipId = randomUUID();
         UUID userFromId = randomUUID();
         UUID userToId = randomUUID();
@@ -197,11 +196,12 @@ class FollowshipServiceTest {
         UserEntity userFromEntity = UserEntity.builder().id(userFromId).build();
         UserEntity userToEntity = UserEntity.builder().id(userToId).build();
 
+        when(userService.getCurrentUser()).thenReturn(userFromEntity);
+
         FollowshipEntity followshipEntity = buildFollowshipEntity(followshipId, userFromId, userToId);
         Followship followship = buildFollowship(followshipId, userToEntity);
 
         when(userRepository.findById(userToEntity.getId())).thenReturn(Optional.of(userToEntity));
-        when(userRepository.findByUsername(any())).thenReturn(userFromEntity);
         when(followshipRepository.findByUserFromIdAndUserToId(any(), any())).thenReturn(Optional.of(followshipEntity));
 
         assertThrows(FollowshipDeletedException.class, () -> followshipService.createFollowship(followship));
@@ -230,13 +230,12 @@ class FollowshipServiceTest {
     @Test
     void testFollowUser_ThrowsUserExceptionWhenUserToDoesNotExist() {
 
-        setupAuthenticatedUser();
+        when(userService.getCurrentUser()).thenReturn(null);
 
         UUID userFromId = randomUUID();
         UUID userToId = randomUUID();
 
         when(userRepository.findById(userToId)).thenReturn(Optional.empty());
-        when(userRepository.findByUsername(any())).thenReturn(null);
 
         Followship followship = Followship.builder().userFromId(userFromId).userToId(userToId).build();
         UserNotFoundException exception =
@@ -248,15 +247,14 @@ class FollowshipServiceTest {
     @Test
     void testFollowUser_ThrowsExceptionWhenUserTriesToFollowThemself() {
 
-        setupAuthenticatedUser();
+        UUID userFromId = randomUUID();
 
-        UUID userToId = randomUUID();
+        UserEntity userFromEntity = UserEntity.builder().id(userFromId).build();
+        when(userRepository.findById(userFromId)).thenReturn(Optional.of(userFromEntity));
 
-        UserEntity userToEntity = UserEntity.builder().id(userToId).build();
-        when(userRepository.findById(userToId)).thenReturn(Optional.of(userToEntity));
-        when(userRepository.findByUsername(any())).thenReturn(userToEntity);
+        when(userService.getCurrentUser()).thenReturn(userFromEntity);
 
-        Followship followship = Followship.builder().userFromId(userToId).userToId(userToId).build();
+        Followship followship = Followship.builder().userFromId(userFromId).userToId(userFromId).build();
         FollowshipNotCreatedUserCantFollowThemselfException exception =
                 assertThrows(FollowshipNotCreatedUserCantFollowThemselfException.class, () -> followshipService.createFollowship(followship));
 
@@ -276,14 +274,6 @@ class FollowshipServiceTest {
                 .userFromId(userFromId)
                 .userToId(userToId)
                 .build());
-    }
-
-    public static void setupAuthenticatedUser() {
-        // Mocking the SecurityContextHolder and Authentication objects
-        SecurityContextHolder.setContext(Mockito.mock(SecurityContext.class));
-        Authentication authentication = Mockito.mock(Authentication.class);
-        when(SecurityContextHolder.getContext().getAuthentication()).thenReturn(authentication);
-        when(authentication.getName()).thenReturn("authorizedUser");
     }
 
 }

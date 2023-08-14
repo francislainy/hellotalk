@@ -7,12 +7,11 @@ import com.example.hellotalk.exception.FollowshipNotCreatedUserCantFollowThemsel
 import com.example.hellotalk.exception.UserNotFoundException;
 import com.example.hellotalk.mapper.FollowshipMapper;
 import com.example.hellotalk.model.followship.Followship;
-import com.example.hellotalk.repository.user.UserRepository;
 import com.example.hellotalk.repository.followship.FollowshipRepository;
+import com.example.hellotalk.repository.user.UserRepository;
 import com.example.hellotalk.service.followship.FollowshipService;
+import com.example.hellotalk.service.user.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -26,10 +25,11 @@ import static com.example.hellotalk.exception.AppExceptionHandler.*;
 @Service
 public class FollowshipServiceImpl implements FollowshipService {
 
-    final UserRepository userRepository;
-    final FollowshipRepository followshipRepository;
+    private final UserRepository userRepository;
+    private final FollowshipRepository followshipRepository;
 
-    final FollowshipMapper followshipMapper;
+    private final UserService userService;
+    private final FollowshipMapper followshipMapper;
 
     @Override
     public Followship getFollowship(UUID followshipId) {
@@ -83,9 +83,7 @@ public class FollowshipServiceImpl implements FollowshipService {
     public Followship createFollowship(Followship followship) {
 
         UUID userToId = followship.getUserToId();
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
-        UserEntity userFromEntity = userRepository.findByUsername(username);
+        UserEntity userFromEntity = userService.getCurrentUser();
 
         Optional<UserEntity> userEntityOptionalTo = userRepository.findById(userToId);
 

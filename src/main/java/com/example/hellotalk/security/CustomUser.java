@@ -1,10 +1,8 @@
 package com.example.hellotalk.security;
 
 import com.example.hellotalk.entity.user.UserEntity;
-import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 

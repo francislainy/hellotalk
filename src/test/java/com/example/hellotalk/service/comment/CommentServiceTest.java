@@ -55,7 +55,7 @@ class CommentServiceTest {
     ZonedDateTime lastUpdatedDate = now;
 
     @Test
-    void testGetComment_ValidComment_ReturnsComment() {
+    void testGetComment_ValidCommentId_ReturnsComment() {
 
         UUID commentId = randomUUID();
         UUID userId = randomUUID();
@@ -135,7 +135,7 @@ class CommentServiceTest {
     }
 
     @Test
-    void testGetAllCommentsForMoment_ReturnsEmptyListForMomentWithNoMoments() {
+    void testGetAllCommentsForMoment_MomentWithNoMoments_ReturnsEmptyList() {
 
         List<Comment> comments = commentService.getAllCommentsForMoment(randomUUID());
         assertTrue(comments.isEmpty());
@@ -191,7 +191,7 @@ class CommentServiceTest {
     }
 
     @Test
-    void testUpdateComment_ValidCommentIdAndComment_ReturnsUpdatedComment() {
+    void testUpdateComment_ValidCommentIdAndCommentBody_ReturnsUpdatedComment() {
 
         UUID userId = randomUUID();
         UserEntity userEntity = UserEntity.builder().id(userId).build();
@@ -244,7 +244,7 @@ class CommentServiceTest {
     }
 
     @Test
-    void testUpdateCommentDetails_ThrowsExceptionWhenUserIsUnauthorized() {
+    void testUpdateCommentDetails_UnauthorizedUser_ThrowsEntityDoesNotBelongToUserException() {
 
         UUID userId = randomUUID();
         UserEntity userEntity = UserEntity.builder().id(userId).build();

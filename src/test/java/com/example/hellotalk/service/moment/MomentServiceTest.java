@@ -54,7 +54,7 @@ class MomentServiceTest {
     ZonedDateTime lastUpdatedDate = now;
 
     @Test
-    void testGetMoment_ValidMoment_ReturnsMoment() {
+    void testGetMoment_ValidMomentId_ReturnsMoment() {
 
         UUID momentId = randomUUID();
         UUID userId = randomUUID();
@@ -171,7 +171,7 @@ class MomentServiceTest {
     }
 
     @Test
-    void testGetAllMomentsForUser_ReturnsEmptyListForUserWithNoMoments() {
+    void testGetAllMomentsForUser_UserWithNoMoments_ReturnsEmptyList() {
 
         List<Moment> moments = momentService.getAllMomentsForUser(randomUUID());
         assertTrue(moments.isEmpty());
@@ -210,7 +210,7 @@ class MomentServiceTest {
     }
 
     @Test
-    void testUpdateMoment_ValidMomentIdAndMoment_ReturnsUpdatedMoment() {
+    void testUpdateMoment_ValidMomentIdAndMomentBody_ReturnsUpdatedMoment() {
 
         UUID userId = randomUUID();
         UserEntity userEntity = UserEntity.builder().id(userId).build();
@@ -289,7 +289,7 @@ class MomentServiceTest {
     }
 
     @Test
-    void testLikeMoment_ThrowsExceptionMomentNotFound() {
+    void testLikeMoment_MomentNotFound_ThrowsMomentNotFoundException() {
 
         UserEntity userEntity = UserEntity.builder().id(randomUUID()).build();
         when(userService.getCurrentUser()).thenReturn(userEntity);
@@ -336,7 +336,7 @@ class MomentServiceTest {
     }
 
     @Test
-    void testLikeMoment_DoesNotThrowExceptionIfMomentBelongsToTheSameUser() {
+    void testLikeMoment_MomentBelongsToTheSameActionUser_DoesNotThrowException() {
 
         UUID userId = randomUUID();
         UserEntity userEntity = UserEntity.builder().id(userId).build();
@@ -410,7 +410,7 @@ class MomentServiceTest {
     }
 
     @Test
-    void testDeleteMoment_ThrowsExceptionWhenMomentIsNotFound() {
+    void testDeleteMoment_MomentNotFound_MomentNotFoundException() {
 
         UUID momentId = randomUUID();
         MomentNotFoundException exception =

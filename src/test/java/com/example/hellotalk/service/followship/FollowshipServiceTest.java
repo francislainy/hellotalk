@@ -20,7 +20,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mapstruct.factory.Mappers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.*;
@@ -54,7 +53,6 @@ class FollowshipServiceTest {
 
     @BeforeEach
     void setUp() {
-        userRepository = Mockito.mock(UserRepository.class);
         followshipService = new FollowshipServiceImpl(userRepository, followshipRepository, userService, followshipMapper);
     }
 

@@ -179,8 +179,9 @@ class CommentServiceTest {
 
         when(momentRepository.findById(any())).thenReturn(Optional.empty());
 
+        Comment commentModel = commentMapper.toModel(commentEntity);
         MomentNotFoundException exception =
-                assertThrows(MomentNotFoundException.class, () -> commentService.createComment(momentId, commentMapper.toModel(commentEntity)));
+                assertThrows(MomentNotFoundException.class, () -> commentService.createComment(momentId, commentModel));
 
         assertEquals(MOMENT_NOT_FOUND_EXCEPTION, exception.getMessage());
 

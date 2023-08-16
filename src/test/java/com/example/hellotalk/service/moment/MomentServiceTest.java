@@ -43,11 +43,11 @@ class MomentServiceTest {
     @Mock
     LikeRepository likeRepository;
 
-    @Spy
-    MomentMapper momentMapper = Mappers.getMapper(MomentMapper.class);
-
     @Mock
     UserService userService;
+
+    @Spy
+    MomentMapper momentMapper = Mappers.getMapper(MomentMapper.class);
 
     ZonedDateTime now = ZonedDateTime.parse(ZonedDateTime.now().format(ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")));
     ZonedDateTime creationDate = now;

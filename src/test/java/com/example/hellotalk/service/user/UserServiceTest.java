@@ -9,7 +9,6 @@ import com.example.hellotalk.model.Hometown;
 import com.example.hellotalk.model.user.User;
 import com.example.hellotalk.repository.HobbyAndInterestRepository;
 import com.example.hellotalk.repository.HometownRepository;
-import com.example.hellotalk.repository.LikeRepository;
 import com.example.hellotalk.repository.user.UserRepository;
 import com.example.hellotalk.service.impl.user.UserServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,7 +18,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mapstruct.factory.Mappers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.*;
@@ -41,9 +39,6 @@ class UserServiceTest {
     UserRepository userRepository;
 
     @Mock
-    LikeRepository likeRepository;
-
-    @Mock
     HobbyAndInterestRepository hobbyAndInterestRepository;
 
     @Mock
@@ -56,8 +51,6 @@ class UserServiceTest {
 
     @BeforeEach
     void setUp() {
-        userRepository = Mockito.mock(UserRepository.class);
-        likeRepository = Mockito.mock(LikeRepository.class);
         userService = new UserServiceImpl(userRepository, hobbyAndInterestRepository, hometownRepository, userMapper);
     }
 

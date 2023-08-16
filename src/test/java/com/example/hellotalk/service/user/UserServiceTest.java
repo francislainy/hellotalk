@@ -28,11 +28,14 @@ import static com.example.hellotalk.exception.AppExceptionHandler.USER_NOT_FOUND
 import static java.util.UUID.randomUUID;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class UserServiceTest {
+
+    @InjectMocks
+    UserServiceImpl userService;
 
     @Mock
     UserRepository userRepository;
@@ -46,9 +49,6 @@ class UserServiceTest {
     @Mock
     HometownRepository hometownRepository;
 
-    @InjectMocks
-    UserServiceImpl userService;
-
     UserMapper userMapper = Mappers.getMapper(UserMapper.class);
     HometownMapper hometownMapper = Mappers.getMapper(HometownMapper.class);
 
@@ -61,33 +61,8 @@ class UserServiceTest {
         userService = new UserServiceImpl(userRepository, hobbyAndInterestRepository, hometownRepository, userMapper);
     }
 
-    private UserEntity getUserEntity() {
-        Hometown hometown = Hometown.builder().city("anyCity").country("anyCountry").build();
-        HobbyAndInterestEntity hobbyAndInterestEntity = HobbyAndInterestEntity.builder().title("anyInterest").build();
-        Set<HobbyAndInterestEntity> hobbyAndInterestEntities = new HashSet<>();
-        hobbyAndInterestEntities.add(hobbyAndInterestEntity);
-
-        return UserEntity.builder()
-                .id(userId)
-                .name("anyName")
-                .dob("anyDob")
-                .gender("anyGender")
-                .creationDate("anyCreationDate")
-                .handle("anyHandle")
-                .status("anyStatus")
-                .nativeLanguage("anyNativeLanguage")
-                .targetLanguage("anyTargetLanguage")
-                .occupation("anyOccupation")
-                .selfIntroduction("anySelfIntroduction")
-                .placesToVisit("anyPlacesToVisit")
-                .subscriptionType("anySubscriptionType")
-                .hometownEntity(hometownMapper.toEntity(hometown))
-                .hobbyAndInterestEntities(hobbyAndInterestEntities)
-                .build();
-    }
-
     @Test
-    void testGetUser() {
+    void testGetUser_ValidUserId_ReturnsUser() {
 
         Optional<UserEntity> userEntity = Optional.of(getUserEntity());
         when(userRepository.findById(any())).thenReturn(userEntity);
@@ -115,7 +90,7 @@ class UserServiceTest {
     }
 
     @Test
-    void testGetAllUsers() {
+    void testGetAllUsers_ExistingUsersAlreadyLoadedToTheSystem_ReturnsListWithDetailsForEachUser() {
 
         UserEntity userEntity = getUserEntity();
         List<UserEntity> userEntityList = new ArrayList<>();
@@ -148,16 +123,14 @@ class UserServiceTest {
     }
 
     @Test
-    void testGetAllUsers_ReturnsEmptyListIfThereAreNoUsersToBeReturned() {
+    void testGetAllUsers_NoExistentUsers_ReturnsEmptyList() {
 
-        List<UserEntity> userEntityList = new ArrayList<>();
-        when(userRepository.findAll()).thenReturn(userEntityList);
-
+        when(userRepository.findAll()).thenReturn(Collections.emptyList());
         assertTrue(userService.getAllUsers().isEmpty());
     }
 
     @Test
-    void testCreateUser() {
+    void testCreateUser_ValidUserBody_ReturnsValidUser() {
 
         UserEntity userEntity = getUserEntity();
         when(hometownRepository.save(any())).thenReturn(userEntity.getHometownEntity());
@@ -190,7 +163,7 @@ class UserServiceTest {
     }
 
     @Test
-    void testUpdateUserDetails() {
+    void testUpdateUserDetails_ValidUserBody_UpdatesAndReturnsTheNewUserDetails() {
 
         HobbyAndInterestEntity hobbyAndInterestEntityUpdated = HobbyAndInterestEntity.builder().title("anyUpdatedInterest").build();
         Set<HobbyAndInterestEntity> hobbyAndInterestEntitiesUpdated = new HashSet<>();
@@ -242,7 +215,7 @@ class UserServiceTest {
     }
 
     @Test
-    void testUpdateUserDetails_ThrowsExceptionWhenUserIsNotFound() {
+    void testUpdateUserDetails_UserNotFound_ThrowsUserNotFoundException() {
 
         User user = userMapper.toModel(getUserEntity());
         UserNotFoundException exception =
@@ -252,23 +225,50 @@ class UserServiceTest {
     }
 
     @Test
-    void testDeleteUser() {
+    void testDeleteUser_DeletionSuccessful_DoesNotThrowException() {
 
         String json = """
                 {"message": "User Deleted"}
                 """;
         when(userRepository.findById(any())).thenReturn(Optional.of(getUserEntity()));
         assertEquals(json, assertDoesNotThrow(() -> userService.deleteUser(userId)));
+        verify(userRepository, times(1)).deleteById(userId);
     }
 
     @Test
     void testDeleteUser_ThrowsExceptionUserNotFound() {
 
         UUID userId = randomUUID();
-
         UserNotFoundException exception =
                 assertThrows(UserNotFoundException.class, () -> userService.deleteUser(userId));
 
         assertEquals(USER_NOT_FOUND_EXCEPTION, exception.getMessage());
+        verify(userRepository, never()).deleteById(userId);
+    }
+
+    // Helpers
+    private UserEntity getUserEntity() {
+        Hometown hometown = Hometown.builder().city("anyCity").country("anyCountry").build();
+        HobbyAndInterestEntity hobbyAndInterestEntity = HobbyAndInterestEntity.builder().title("anyInterest").build();
+        Set<HobbyAndInterestEntity> hobbyAndInterestEntities = new HashSet<>();
+        hobbyAndInterestEntities.add(hobbyAndInterestEntity);
+
+        return UserEntity.builder()
+                .id(userId)
+                .name("anyName")
+                .dob("anyDob")
+                .gender("anyGender")
+                .creationDate("anyCreationDate")
+                .handle("anyHandle")
+                .status("anyStatus")
+                .nativeLanguage("anyNativeLanguage")
+                .targetLanguage("anyTargetLanguage")
+                .occupation("anyOccupation")
+                .selfIntroduction("anySelfIntroduction")
+                .placesToVisit("anyPlacesToVisit")
+                .subscriptionType("anySubscriptionType")
+                .hometownEntity(hometownMapper.toEntity(hometown))
+                .hobbyAndInterestEntities(hobbyAndInterestEntities)
+                .build();
     }
 }

@@ -23,10 +23,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 import static com.example.hellotalk.exception.AppExceptionHandler.*;
 import static java.util.UUID.randomUUID;
@@ -62,7 +59,7 @@ class FollowshipServiceTest {
     }
 
     @Test
-    void testGetFollowship() {
+    void testGetFollowship_ValidFollowshipId_ReturnsMoment() {
 
         UUID userToId = randomUUID();
         UUID userFromId = randomUUID();
@@ -79,7 +76,7 @@ class FollowshipServiceTest {
     }
 
     @Test
-    void testGetAllFollowships() {
+    void testGetAllFollowships_ReturnsListOfFollowships() {
 
         UUID followshipId = randomUUID();
         UUID userFromId = randomUUID();
@@ -101,16 +98,14 @@ class FollowshipServiceTest {
     }
 
     @Test
-    void testGetAllFollowships_ReturnsEmptyListWhenThereAreNoRequestsToBeReturned() {
+    void testGetAllFollowships_UserWithNoFollowships_ReturnsEmptyList() {
 
-        List<FollowshipEntity> followshipEntityList = new ArrayList<>();
-        when(followshipRepository.findAll()).thenReturn(followshipEntityList);
-
+        when(followshipRepository.findAll()).thenReturn(Collections.emptyList());
         assertTrue(followshipService.getAllFollowships().isEmpty());
     }
 
     @Test
-    void testGetAllFollowshipsFromUser() {
+    void testGetAllFollowshipsFromUser_UserFollowingOtherUsers_ReturnsUsersFollowedByTheActionUser() {
 
         UUID followshipId = randomUUID();
         UUID userFromId = randomUUID();
@@ -132,7 +127,7 @@ class FollowshipServiceTest {
     }
 
     @Test
-    void testGetAllFollowshipsToUser() {
+    void testGetAllFollowshipsToUser_UserFollowedByOtherUsers_ReturnsUsersFollowersOfTheActionUser() {
 
         UUID followshipId = randomUUID();
         UUID userFromId = randomUUID();
@@ -154,7 +149,7 @@ class FollowshipServiceTest {
     }
 
     @Test
-    void testGetUser_ThrowsExceptionRelationshipDoesNotExist() {
+    void testGetUser_FollowshipDoesNotExist_ThrowsFollowshipDoesNotExistException() {
 
         when(followshipRepository.findById(any())).thenThrow(new FollowshipDoesNotExistException(FOLLOWSHIP_DOES_NOT_EXIST_EXCEPTION));
         FollowshipDoesNotExistException exception = assertThrows(FollowshipDoesNotExistException.class, () -> followshipService.getFollowship(followshipId));
@@ -162,7 +157,7 @@ class FollowshipServiceTest {
     }
 
     @Test
-    void testCreateFollowship() {
+    void testCreateFollowship_ValidFollowshipBody_ReturnsCreatedFollowship() {
 
         UUID followshipId = randomUUID();
         UUID userFromId = randomUUID();
@@ -187,7 +182,7 @@ class FollowshipServiceTest {
     }
 
     @Test
-    void testCreateFollowship_UnfollowUserIfAlreadyFollowed() {
+    void testCreateFollowship_FollowshipAlreadyExists_DeletesFollowshipAndUnfollowUser() {
 
         UUID followshipId = randomUUID();
         UUID userFromId = randomUUID();
@@ -209,7 +204,7 @@ class FollowshipServiceTest {
     }
 
     @Test
-    void testFollowUser_ThrowsUserExceptionWhenUserFromDoesNotExist() {
+    void testFollowUser_ReceiverFromUserDoesNotExist_UserNotFoundException() {
 
         UUID userFromId = randomUUID();
         UUID userToId = randomUUID();
@@ -228,7 +223,7 @@ class FollowshipServiceTest {
     }
 
     @Test
-    void testFollowUser_ThrowsUserExceptionWhenUserToDoesNotExist() {
+    void testFollowUser_SenderUserDoesNotExist_ThrowsUserNotFoundException() { //todo: refactor the code so that the to user is not passed into the followship object - 16/08/2023
 
         when(userService.getCurrentUser()).thenReturn(null);
 
@@ -245,7 +240,7 @@ class FollowshipServiceTest {
     }
 
     @Test
-    void testFollowUser_ThrowsExceptionWhenUserTriesToFollowThemself() {
+    void testFollowUser_UserTriesToFollowThemself_ThrowsFollowshipNotCreatedUserCantFollowThemselfExceptionlf() {
 
         UUID userFromId = randomUUID();
 

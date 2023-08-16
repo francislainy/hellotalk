@@ -26,6 +26,7 @@ import java.util.*;
 
 import static com.example.hellotalk.exception.AppExceptionHandler.ENTITY_DOES_NOT_BELONG_TO_USER_EXCEPTION;
 import static com.example.hellotalk.exception.AppExceptionHandler.MOMENT_NOT_FOUND_EXCEPTION;
+import static java.time.format.DateTimeFormatter.ofPattern;
 import static java.util.UUID.randomUUID;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -49,7 +50,7 @@ class MomentServiceTest {
     @Mock
     UserService userService;
 
-    ZonedDateTime now = ZonedDateTime.parse(ZonedDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")));
+    ZonedDateTime now = ZonedDateTime.parse(ZonedDateTime.now().format(ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")));
     ZonedDateTime creationDate = now;
     ZonedDateTime lastUpdatedDate = now;
 
@@ -178,7 +179,7 @@ class MomentServiceTest {
     }
 
     @Test
-    void testCreateMoment_ValidMoment_ReturnsCreatedMoment() {
+    void testCreateMoment_ValidMomentBody_ReturnsCreatedMoment() {
 
         UUID momentId = randomUUID();
         UUID userId = randomUUID();
@@ -302,7 +303,7 @@ class MomentServiceTest {
     }
 
     @Test
-    void testLikeMoment_RemovesLikeIfMomentAlreadyLiked() {
+    void testLikeMoment_MomentAlreadyLiked_RemovesExistingLikeForMoment() {
 
         UUID userId = randomUUID();
         UserEntity userEntity = UserEntity.builder().id(userId).build();
@@ -410,7 +411,7 @@ class MomentServiceTest {
     }
 
     @Test
-    void testDeleteMoment_MomentNotFound_MomentNotFoundException() {
+    void testDeleteMoment_MomentNotFound_ThrowsMomentNotFoundException() {
 
         UUID momentId = randomUUID();
         MomentNotFoundException exception =
@@ -441,7 +442,7 @@ class MomentServiceTest {
     private MomentEntity getMomentEntity(UUID momentId) {
 
         ZonedDateTime now = ZonedDateTime.now();
-        creationDate = ZonedDateTime.parse(now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")));
+        creationDate = ZonedDateTime.parse(now.format(ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")));
         Set<String> tagsSet = new HashSet<>();
         tagsSet.add("anyTag1");
         tagsSet.add("anyTag2");

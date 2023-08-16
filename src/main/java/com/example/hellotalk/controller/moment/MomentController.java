@@ -49,6 +49,6 @@ public class MomentController {
 
     @DeleteMapping({"/{momentId}", "/{momentId}/"})
     public ResponseEntity<Object> deleteMoment(@PathVariable UUID momentId) {
-        return new ResponseEntity<>(momentService.deleteMoment(momentId), HttpStatus.PARTIAL_CONTENT);
+        return new ResponseEntity<>(momentService.deleteMoment(momentId), HttpStatus.OK);
     }
 }

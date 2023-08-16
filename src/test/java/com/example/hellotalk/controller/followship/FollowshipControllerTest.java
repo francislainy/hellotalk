@@ -141,7 +141,7 @@ class FollowshipControllerTest extends BaseDocTestConfig {
 
         String jsonRequest = jsonStringFromObject(followship);
         mockMvc.perform(RestDocumentationRequestBuilders.post("/api/v1/ht/followship/").content(jsonRequest).contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isPartialContent())
+                .andExpect(status().is2xxSuccessful())
                 .andDo(document("unfollow-user-by-deleting-existing-followship",
                         resource("Unfollow a user by deleting existing followship")))
                 .andReturn();

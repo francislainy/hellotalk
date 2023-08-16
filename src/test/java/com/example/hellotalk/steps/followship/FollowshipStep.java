@@ -66,7 +66,7 @@ public class FollowshipStep {
 
         RequestSpecification rq = apiStep.getRqWithAuth();
         Response response = rq.body(followship).post("/api/v1/ht/followship/");
-        assertEquals(206, response.getStatusCode());
+        assertEquals(200, response.getStatusCode());
 
         apiStep.setResponse(response);
     }

@@ -59,7 +59,7 @@ public class MomentStep {
     public void theUserDeletesTheMoment() {
         RequestSpecification rq = apiStep.getRqWithAuth();
         Response response = rq.delete("/api/v1/ht/moments/" + mc.getMoment().getId());
-        assertEquals(206, response.getStatusCode());
+        assertEquals(200, response.getStatusCode());
     }
 
     @And("the user attempts to delete the moment")

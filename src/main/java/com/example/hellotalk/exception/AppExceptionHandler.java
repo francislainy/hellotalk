@@ -54,7 +54,7 @@ public class AppExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(FollowshipDeletedException.class)
     public ResponseEntity<Object> handleFollowshipDeletedException(FollowshipDeletedException ex) {
-        return new ResponseEntity<>(new ApiError(ex.getMessage(), PARTIAL_CONTENT, LocalDateTime.now()), PARTIAL_CONTENT);
+        return new ResponseEntity<>(new ApiError(ex.getMessage(), OK, LocalDateTime.now()), OK);
     }
 
     @ExceptionHandler(FollowshipNotCreatedUserCantFollowThemselfException.class)

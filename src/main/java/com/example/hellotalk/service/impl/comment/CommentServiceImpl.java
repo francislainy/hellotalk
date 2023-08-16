@@ -57,11 +57,10 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public Comment createComment(UUID momentId, Comment comment) {
 
-        UserEntity userEntity = userService.getCurrentUser();
-
         Optional<MomentEntity> optionalMomentEntity = momentRepository.findById(momentId);
         if (optionalMomentEntity.isPresent()) {
 
+            UserEntity userEntity = userService.getCurrentUser();
             MomentEntity momentEntity = optionalMomentEntity.get();
             CommentEntity commentEntity = commentMapper.toEntity(comment).toBuilder()
                     .userEntity(userEntity)

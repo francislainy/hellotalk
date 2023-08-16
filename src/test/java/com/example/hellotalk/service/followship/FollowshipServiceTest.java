@@ -223,7 +223,7 @@ class FollowshipServiceTest {
     }
 
     @Test
-    void testFollowUser_SenderUserDoesNotExist_ThrowsUserNotFoundException() { //todo: refactor the code so that the to user is not passed into the followship object - 16/08/2023
+    void testFollowUser_SenderUserDoesNotExist_ThrowsUserNotFoundException() { // todo: refactor the code so that the to user is not passed into the followship object - 16/08/2023
 
         when(userService.getCurrentUser()).thenReturn(null);
 

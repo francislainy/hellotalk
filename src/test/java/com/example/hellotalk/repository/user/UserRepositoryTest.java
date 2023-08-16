@@ -1,6 +1,5 @@
 package com.example.hellotalk.repository.user;
 
-import com.example.hellotalk.config.BasePostgresConfig;
 import com.example.hellotalk.entity.followship.FollowshipEntity;
 import com.example.hellotalk.entity.user.HobbyAndInterestEntity;
 import com.example.hellotalk.entity.user.HometownEntity;
@@ -22,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-class UserRepositoryTest extends BasePostgresConfig {
+class UserRepositoryTest {
 
     @Autowired
     UserRepository userRepository;

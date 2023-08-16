@@ -2,7 +2,6 @@ package com.example.hellotalk.repository.moment;
 
 import com.example.hellotalk.entity.moment.MomentEntity;
 import com.example.hellotalk.entity.user.UserEntity;
-import com.example.hellotalk.config.BasePostgresConfig;
 import com.example.hellotalk.repository.user.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-class MomentRepositoryTest extends BasePostgresConfig {
+class MomentRepositoryTest {
 
     @Autowired
     private MomentRepository momentRepository;

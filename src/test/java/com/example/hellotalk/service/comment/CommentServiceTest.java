@@ -177,7 +177,6 @@ class CommentServiceTest {
         CommentEntity commentEntity = getCommentEntity(randomUUID());
         commentEntity.setUserEntity(userEntity);
 
-        when(userService.getCurrentUser()).thenReturn(userEntity);
         when(momentRepository.findById(any())).thenReturn(Optional.empty());
 
         MomentNotFoundException exception =
@@ -185,7 +184,7 @@ class CommentServiceTest {
 
         assertEquals(MOMENT_NOT_FOUND_EXCEPTION, exception.getMessage());
 
-        verify(userService, times(1)).getCurrentUser();
+        verify(userService, never()).getCurrentUser();
         verify(momentRepository, times(1)).findById(momentId);
         verify(commentRepository, never()).save(any(CommentEntity.class));
     }

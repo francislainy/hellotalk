@@ -54,7 +54,7 @@ class MomentServiceTest {
     ZonedDateTime lastUpdatedDate = now;
 
     @Test
-    void testGetMoment() {
+    void testGetMoment_ValidMoment_ReturnsMoment() {
 
         UUID momentId = randomUUID();
         UUID userId = randomUUID();
@@ -86,7 +86,7 @@ class MomentServiceTest {
     }
 
     @Test
-    void testGetMoment_ThrowsExceptionMomentDoesNotExist() {
+    void testGetMoment_MomentDoesNotExist_ThrowsMomentNotFoundException() {
 
         UUID momentId = randomUUID();
         when(momentRepository.findById(any())).thenReturn(Optional.empty());
@@ -98,7 +98,7 @@ class MomentServiceTest {
     }
 
     @Test
-    void testGetAllMoments() {
+    void testGetAllMoments_ReturnsListOfMoments() {
 
         UUID userId = randomUUID();
         UserEntity userEntity = UserEntity.builder().id(userId).build();
@@ -132,7 +132,7 @@ class MomentServiceTest {
     }
 
     @Test
-    void testGetAllMomentsForUser_ReturnsOnlyMomentsThatBelongToTheAuthorizedUser() {
+    void testGetAllMomentsForUser_ValidUserId_ReturnsListOfMomentsForUser() {
 
         UUID momentId = randomUUID();
         UUID momentDoesNotBelongToUserId = randomUUID();
@@ -178,7 +178,7 @@ class MomentServiceTest {
     }
 
     @Test
-    void testCreateMoment() {
+    void testCreateMoment_ValidMoment_ReturnsCreatedMoment() {
 
         UUID momentId = randomUUID();
         UUID userId = randomUUID();
@@ -210,7 +210,7 @@ class MomentServiceTest {
     }
 
     @Test
-    void testUpdateMomentDetails() {
+    void testUpdateMoment_ValidMomentIdAndMoment_ReturnsUpdatedMoment() {
 
         UUID userId = randomUUID();
         UserEntity userEntity = UserEntity.builder().id(userId).build();
@@ -257,7 +257,7 @@ class MomentServiceTest {
     }
 
     @Test
-    void testUpdateMomentDetails_ThrowsExceptionWhenMomentIsNotFound() {
+    void testUpdateMoment_MomentNotFound_ThrowsMomentNotFoundException() {
 
         UUID momentId = randomUUID();
         Moment moment = momentMapper.toModel(getMomentEntity(momentId));
@@ -268,7 +268,7 @@ class MomentServiceTest {
     }
 
     @Test
-    void testUpdateMomentDetails_ThrowsExceptionWhenUserIsUnauthorized() {
+    void testUpdateMoment_MomentDoesNotBelongToUser_ThrowsEntityDoesNotBelongToUserException() {
 
         UserEntity unauthorizedUserEntity = UserEntity.builder().id(randomUUID()).build();
         when(userService.getCurrentUser()).thenReturn(unauthorizedUserEntity);
@@ -359,7 +359,7 @@ class MomentServiceTest {
     }
 
     @Test
-    void testLikeMoment() {
+    void testLikeMoment_ValidMoment_ReturnsSuccessMessage() {
 
         UUID userId = randomUUID();
         UserEntity userEntity = UserEntity.builder().id(userId).build();
@@ -391,7 +391,7 @@ class MomentServiceTest {
     }
 
     @Test
-    void testDeleteMoment() {
+    void testDeleteMoment_ValidMoment_ReturnsSuccessMessage() {
 
         UUID userId = randomUUID();
         UserEntity userEntity = UserEntity.builder().id(userId).build();
@@ -420,7 +420,7 @@ class MomentServiceTest {
     }
 
     @Test
-    void testDeleteMoment_ThrowsExceptionWhenMomentDoesNorBelongToUser() {
+    void testDeleteMoment_MomentDoesNotBelongToUser_ThrowsEntityDoesNotBelongToUserException() {
 
         UserEntity userEntityNotOwner = UserEntity.builder().id(randomUUID()).build();
         when(userService.getCurrentUser()).thenReturn(userEntityNotOwner);
@@ -438,7 +438,6 @@ class MomentServiceTest {
     }
 
     // Helpers
-
     private MomentEntity getMomentEntity(UUID momentId) {
 
         ZonedDateTime now = ZonedDateTime.now();

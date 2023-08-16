@@ -10,19 +10,15 @@ import com.example.hellotalk.mapper.CommentMapper;
 import com.example.hellotalk.model.comment.Comment;
 import com.example.hellotalk.repository.comment.CommentRepository;
 import com.example.hellotalk.repository.moment.MomentRepository;
-import com.example.hellotalk.repository.user.UserRepository;
 import com.example.hellotalk.service.impl.comment.CommentServiceImpl;
+import com.example.hellotalk.service.user.UserService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mapstruct.factory.Mappers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -48,11 +44,11 @@ class CommentServiceTest {
     @Mock
     MomentRepository momentRepository;
 
-    @Mock
-    UserRepository userRepository;
-
     @Spy
     CommentMapper commentMapper = Mappers.getMapper(CommentMapper.class);
+
+    @Mock
+    UserService userService;
 
     ZonedDateTime now = ZonedDateTime.parse(ZonedDateTime.now().format(ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")));
     ZonedDateTime creationDate = now;
@@ -66,6 +62,7 @@ class CommentServiceTest {
         String username = "anyUsername";
         String name = "anyName";
         UserEntity userEntity = UserEntity.builder().id(userId).username(username).name(name).build();
+
         UUID momentId = randomUUID();
         MomentEntity momentEntity = MomentEntity.builder().id(momentId).build();
         CommentEntity commentEntity = getCommentEntity(commentId);
@@ -141,8 +138,6 @@ class CommentServiceTest {
     @Test
     void testCreateComment() {
 
-        setupAuthenticatedUser();
-
         UUID commentId = randomUUID();
         UUID momentId = randomUUID();
         UUID userId = randomUUID();
@@ -151,6 +146,7 @@ class CommentServiceTest {
         commentEntity.setUserEntity(userEntity);
         MomentEntity momentEntity = MomentEntity.builder().id(momentId).userEntity(userEntity).build();
 
+        when(userService.getCurrentUser()).thenReturn(userEntity);
         when(commentRepository.save(any())).thenReturn(commentEntity);
         when(momentRepository.findById(any())).thenReturn(Optional.ofNullable(momentEntity));
 
@@ -166,14 +162,13 @@ class CommentServiceTest {
     @Test
     void testCreateComment_ThrowsExceptionMomentDoesNotExist() {
 
-        setupAuthenticatedUser();
-
         UUID commentId = randomUUID();
         UUID momentId = randomUUID();
         UUID userId = randomUUID();
         UserEntity userEntity = UserEntity.builder().id(userId).build();
         CommentEntity commentEntity = getCommentEntity(commentId);
         commentEntity.setUserEntity(userEntity);
+        when(userService.getCurrentUser()).thenReturn(userEntity);
         when(momentRepository.findById(any())).thenReturn(Optional.empty());
 
         MomentNotFoundException exception =
@@ -185,10 +180,9 @@ class CommentServiceTest {
     @Test
     void testUpdateCommentDetails() {
 
-        setupAuthenticatedUser();
         UUID userId = randomUUID();
-        UserEntity userEntity = UserEntity.builder().id(userId).username("authorizedUser").build();
-        when(userRepository.findByUsername(any())).thenReturn(userEntity);
+        UserEntity userEntity = UserEntity.builder().id(userId).build();
+        when(userService.getCurrentUser()).thenReturn(userEntity);
 
         UUID commentId = randomUUID();
         CommentEntity commentEntity = getCommentEntity(commentId);
@@ -231,12 +225,10 @@ class CommentServiceTest {
     @Test
     void testUpdateCommentDetails_ThrowsExceptionWhenUserIsUnauthorized() {
 
-        setupAuthenticatedUser();
-
         UUID userId = randomUUID();
-        UserEntity userEntity = UserEntity.builder().id(userId).username("unauthorizedUser").build();
-
-        when(userRepository.findByUsername(any())).thenReturn(userEntity);
+        UserEntity userEntity = UserEntity.builder().id(userId).build();
+        UserEntity unauthorizedUserEntity = UserEntity.builder().id(randomUUID()).build();
+        when(userService.getCurrentUser()).thenReturn(unauthorizedUserEntity);
 
         UUID commentId = randomUUID();
         CommentEntity commentEntity = getCommentEntity(commentId);
@@ -253,9 +245,9 @@ class CommentServiceTest {
     @Test
     void testDeleteComment() {
 
-        setupAuthenticatedUser();
         UUID userId = randomUUID();
-        UserEntity userEntity = UserEntity.builder().id(userId).username("authorizedUser").build();
+        UserEntity userEntity = UserEntity.builder().id(userId).build();
+        when(userService.getCurrentUser()).thenReturn(userEntity);
 
         UUID commentId = randomUUID();
         CommentEntity commentEntity = getCommentEntity(commentId);
@@ -282,9 +274,10 @@ class CommentServiceTest {
     @Test
     void testDeleteComment_ThrowsExceptionWhenCommentDoesNorBelongToUser() {
 
-        setupAuthenticatedUser();
         UUID userId = UUID.randomUUID();
-        UserEntity userEntity = UserEntity.builder().id(userId).username("unauthorizedUser").build();
+        UserEntity userEntity = UserEntity.builder().id(userId).build();
+        UserEntity unauthorizedUserEntity = UserEntity.builder().id(randomUUID()).build();
+        when(userService.getCurrentUser()).thenReturn(unauthorizedUserEntity);
 
         UUID commentId = randomUUID();
         CommentEntity commentEntity = getCommentEntity(commentId);
@@ -311,11 +304,4 @@ class CommentServiceTest {
                 .build();
     }
 
-    public static void setupAuthenticatedUser() {
-        // Mocking the SecurityContextHolder and Authentication objects
-        SecurityContextHolder.setContext(Mockito.mock(SecurityContext.class));
-        Authentication authentication = Mockito.mock(Authentication.class);
-        when(SecurityContextHolder.getContext().getAuthentication()).thenReturn(authentication);
-        when(authentication.getName()).thenReturn("authorizedUser");
-    }
 }

@@ -10,11 +10,9 @@ import com.example.hellotalk.mapper.CommentMapper;
 import com.example.hellotalk.model.comment.Comment;
 import com.example.hellotalk.repository.comment.CommentRepository;
 import com.example.hellotalk.repository.moment.MomentRepository;
-import com.example.hellotalk.repository.user.UserRepository;
 import com.example.hellotalk.service.comment.CommentService;
+import com.example.hellotalk.service.user.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.ZoneOffset;
@@ -32,7 +30,9 @@ public class CommentServiceImpl implements CommentService {
 
     private final CommentRepository commentRepository;
     private final MomentRepository momentRepository;
-    private final UserRepository userRepository;
+
+    private final UserService userService;
+
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
     private final CommentMapper commentMapper;
 
@@ -57,9 +57,7 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public Comment createComment(UUID momentId, Comment comment) {
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
-        UserEntity userEntity = userRepository.findByUsername(username);
+        UserEntity userEntity = userService.getCurrentUser();
 
         Optional<MomentEntity> optionalMomentEntity = momentRepository.findById(momentId);
         if (optionalMomentEntity.isPresent()) {
@@ -85,11 +83,8 @@ public class CommentServiceImpl implements CommentService {
         CommentEntity commentEntity = commentRepository.findById(commentId)
                 .orElseThrow(() -> new CommentNotFoundException(COMMENT_NOT_FOUND_EXCEPTION));
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
-        UserEntity userEntity = userRepository.findByUsername(username);
-
-        if (!username.equals(commentEntity.getUserEntity().getUsername())) {
+        UserEntity userEntity = userService.getCurrentUser();
+        if (!userEntity.getId().toString().equals(commentEntity.getUserEntity().getId().toString())) {
             throw new EntityDoesNotBelongToUserException(ENTITY_DOES_NOT_BELONG_TO_USER_EXCEPTION);
         }
 
@@ -113,13 +108,10 @@ public class CommentServiceImpl implements CommentService {
                 """;
 
         if (optionalCommentEntity.isPresent()) {
-
             CommentEntity commentEntity = optionalCommentEntity.get();
 
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            String username = authentication.getName();
-
-            if (!username.equals(commentEntity.getUserEntity().getUsername())) {
+            UserEntity userEntity = userService.getCurrentUser();
+            if (!userEntity.getId().toString().equals(commentEntity.getUserEntity().getId().toString())) {
                 throw new EntityDoesNotBelongToUserException(ENTITY_DOES_NOT_BELONG_TO_USER_EXCEPTION);
             } else {
                 commentRepository.deleteById(commentId);

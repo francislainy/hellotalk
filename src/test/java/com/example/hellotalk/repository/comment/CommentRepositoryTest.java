@@ -25,7 +25,6 @@ class CommentRepositoryTest {
 
     @Test
     void testFindAllByMomentEntity_IdContains_ReturnsListForMoment() {
-
         List<CommentEntity> expectedComments = new ArrayList<>();
         CommentEntity commentEntity = CommentEntity.builder().build();
         expectedComments.add(commentEntity);

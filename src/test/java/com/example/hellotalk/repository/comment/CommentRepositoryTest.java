@@ -35,7 +35,7 @@ class CommentRepositoryTest {
 
         commentRepository.save(commentEntity);
 
-        List<CommentEntity> actualComments = commentRepository.findAllByMomentEntity_IdContains(momentEntity.getId());
+        List<CommentEntity> actualComments = commentRepository.findAllByMomentEntityId(momentEntity.getId());
 
         assertEquals(expectedComments, actualComments);
     }
@@ -45,7 +45,7 @@ class CommentRepositoryTest {
         MomentEntity momentEntity = MomentEntity.builder().build();
         momentEntity = momentRepository.save(momentEntity);
 
-        List<CommentEntity> actualComments = commentRepository.findAllByMomentEntity_IdContains(momentEntity.getId());
+        List<CommentEntity> actualComments = commentRepository.findAllByMomentEntityId(momentEntity.getId());
 
         assertEquals(0, actualComments.size());
     }

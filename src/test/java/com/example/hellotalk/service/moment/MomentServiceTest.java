@@ -146,7 +146,7 @@ class MomentServiceTest {
         MomentEntity momentEntityDoesNotBelongToUser = getMomentEntity(momentDoesNotBelongToUserId);
         momentEntityDoesNotBelongToUser.setUserEntity(UserEntity.builder().id(anotherUserId).build());
 
-        when(momentRepository.findAllByUserEntity_IdContains((any()))).thenReturn(List.of(momentEntityBelongsToUser));
+        when(momentRepository.findAllByUserEntityId((any()))).thenReturn(List.of(momentEntityBelongsToUser));
         when(likeRepository.countLikesByMomentId(any())).thenReturn(1);
         LikeEntity likeEntity = LikeEntity.builder().userEntity(UserEntity.builder().id(userId).build()).momentEntity(momentEntityDoesNotBelongToUser).build();
         when(likeRepository.findAllByMomentEntity_Id(any())).thenReturn(List.of(likeEntity));

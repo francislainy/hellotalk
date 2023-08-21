@@ -61,7 +61,7 @@ public class MomentServiceImpl implements MomentService {
     @Override
     public List<Moment> getAllMomentsForUser(UUID userId) {
 
-        List<MomentEntity> momentEntityList = momentRepository.findAllByUserEntity_IdContains(userId);
+        List<MomentEntity> momentEntityList = momentRepository.findAllByUserEntityId(userId);
 
         return momentEntityList.stream()
                 .map(momentEntity -> {

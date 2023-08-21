@@ -47,7 +47,7 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public List<Comment> getAllCommentsForMoment(UUID momentId) {
 
-        List<CommentEntity> commentEntityList = commentRepository.findAllByMomentEntity_IdContains(momentId);
+        List<CommentEntity> commentEntityList = commentRepository.findAllByMomentEntityId(momentId);
 
         return commentEntityList.stream()
                 .map(commentMapper::toModel)

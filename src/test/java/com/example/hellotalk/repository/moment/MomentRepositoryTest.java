@@ -39,7 +39,7 @@ class MomentRepositoryTest {
         momentEntity2.setUserEntity(userEntity2);
         momentRepository.save(momentEntity2);
 
-        List<MomentEntity> moments = momentRepository.findAllByUserEntity_IdContains(userEntity1.getId());
+        List<MomentEntity> moments = momentRepository.findAllByUserEntityId(userEntity1.getId());
 
         assertEquals(1, moments.size());
         assertEquals(moments.get(0).getId(), momentEntity1.getId());

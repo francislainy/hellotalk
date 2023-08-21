@@ -114,7 +114,7 @@ class CommentServiceTest {
 
         Comment commentToReturn = commentMapper.toModel(commentEntity);
 
-        when(commentRepository.findAllByMomentEntity_IdContains(any())).thenReturn(List.of(commentEntity));
+        when(commentRepository.findAllByMomentEntityId(any())).thenReturn(List.of(commentEntity));
         when(commentMapper.toModel(any())).thenReturn(commentToReturn);
 
         List<Comment> allComments = commentService.getAllCommentsForMoment(momentId);
@@ -131,7 +131,7 @@ class CommentServiceTest {
                 () -> assertEquals(String.valueOf(creationDate), String.valueOf(comment.getCreationDate())),
                 () -> assertEquals(String.valueOf(lastUpdatedDate), String.valueOf(comment.getLastUpdatedDate())));
 
-        verify(commentRepository, times(1)).findAllByMomentEntity_IdContains(momentId);
+        verify(commentRepository, times(1)).findAllByMomentEntityId(momentId);
     }
 
     @Test

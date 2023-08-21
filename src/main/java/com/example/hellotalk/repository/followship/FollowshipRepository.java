@@ -19,7 +19,7 @@ public interface FollowshipRepository extends JpaRepository<FollowshipEntity, UU
 
     List<FollowshipEntity> findByUserToEntityIdOrderByUserToEntityId(UUID userToId);
 
-    default List<FollowshipEntity> findFollowingsByUserToId(UUID userFromId) {
+    default List<FollowshipEntity> findFollowshipsByUserToId(UUID userFromId) {
         return findByUserToEntityIdOrderByUserToEntityId(userFromId);
     }
 

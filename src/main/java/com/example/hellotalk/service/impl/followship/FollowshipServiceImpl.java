@@ -70,7 +70,7 @@ public class FollowshipServiceImpl implements FollowshipService {
     @Override
     public List<Followship> getAllFollowshipsToUser(UUID userToId) {
         List<Followship> followshipList = new ArrayList<>();
-        List<FollowshipEntity> followshipEntityList = followshipRepository.findFollowingsByUserToId(userToId);
+        List<FollowshipEntity> followshipEntityList = followshipRepository.findFollowshipsByUserToId(userToId);
 
         if (!followshipEntityList.isEmpty()) {
             followshipEntityList.forEach(userEntity -> followshipList.add(followshipMapper.toModel(userEntity)));

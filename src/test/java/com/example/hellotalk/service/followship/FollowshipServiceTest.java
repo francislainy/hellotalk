@@ -134,7 +134,7 @@ class FollowshipServiceTest {
         FollowshipEntity followshipEntity = buildFollowshipEntity(followshipId, userFromId, userToId);
         List<FollowshipEntity> followshipEntityList = new ArrayList<>();
         followshipEntityList.add(followshipEntity);
-        when(followshipRepository.findFollowingsByUserToId(any())).thenReturn(followshipEntityList);
+        when(followshipRepository.findFollowshipsByUserToId(any())).thenReturn(followshipEntityList);
 
         List<Followship> allFollowships = followshipService.getAllFollowshipsToUser(userToId);
         assertFalse(allFollowships.isEmpty());

@@ -57,7 +57,7 @@ class FollowshipRepositoryTest {
         followshipRepository.save(followship1);
         followshipRepository.save(followship2);
 
-        List<FollowshipEntity> followships = followshipRepository.findFollowingsByUserToId(userToEntity.getId());
+        List<FollowshipEntity> followships = followshipRepository.findFollowshipsByUserToId(userToEntity.getId());
 
         assertEquals(2, followships.size());
         assertTrue(followships.contains(followship1));

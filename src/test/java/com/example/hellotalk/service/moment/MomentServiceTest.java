@@ -63,10 +63,10 @@ class MomentServiceTest {
         momentEntity.setUserEntity(userEntity);
 
         when(momentRepository.findById(any())).thenReturn(Optional.of(momentEntity));
-        when(likeRepository.countLikesByMomentId(any())).thenReturn(1);
+        when(likeRepository.countByMomentEntityId(any())).thenReturn(1);
 
         LikeEntity likeEntity = LikeEntity.builder().userEntity(UserEntity.builder().id(userId).build()).momentEntity(momentEntity).build();
-        when(likeRepository.findAllByMomentEntity_Id(any())).thenReturn(List.of(likeEntity));
+        when(likeRepository.findAllByMomentEntityId(any())).thenReturn(List.of(likeEntity));
 
         Set<String> tagsSet = new HashSet<>();
         tagsSet.add("anyTag1");
@@ -107,10 +107,10 @@ class MomentServiceTest {
         momentEntity.setUserEntity(userEntity);
 
         when(momentRepository.findAll()).thenReturn(List.of(momentEntity));
-        when(likeRepository.countLikesByMomentId(any())).thenReturn(1);
+        when(likeRepository.countByMomentEntityId(any())).thenReturn(1);
 
         LikeEntity likeEntity = LikeEntity.builder().userEntity(userEntity).momentEntity(momentEntity).build();
-        when(likeRepository.findAllByMomentEntity_Id(any())).thenReturn(List.of(likeEntity));
+        when(likeRepository.findAllByMomentEntityId(any())).thenReturn(List.of(likeEntity));
 
         Set<String> tagsSet = new HashSet<>();
         tagsSet.add("anyTag1");
@@ -147,9 +147,9 @@ class MomentServiceTest {
         momentEntityDoesNotBelongToUser.setUserEntity(UserEntity.builder().id(anotherUserId).build());
 
         when(momentRepository.findAllByUserEntityId((any()))).thenReturn(List.of(momentEntityBelongsToUser));
-        when(likeRepository.countLikesByMomentId(any())).thenReturn(1);
+        when(likeRepository.countByMomentEntityId(any())).thenReturn(1);
         LikeEntity likeEntity = LikeEntity.builder().userEntity(UserEntity.builder().id(userId).build()).momentEntity(momentEntityDoesNotBelongToUser).build();
-        when(likeRepository.findAllByMomentEntity_Id(any())).thenReturn(List.of(likeEntity));
+        when(likeRepository.findAllByMomentEntityId(any())).thenReturn(List.of(likeEntity));
 
         Set<String> tagsSet = new HashSet<>();
         tagsSet.add("anyTag1");
@@ -238,8 +238,8 @@ class MomentServiceTest {
         when(userService.getCurrentUser()).thenReturn(userEntity);
         when(momentRepository.findById(any())).thenReturn(Optional.of(momentEntity));
         when(momentRepository.save(any())).thenReturn(momentEntityUpdated);
-        when(likeRepository.countLikesByMomentId(any())).thenReturn(1);
-        when(likeRepository.findAllByMomentEntity_Id(any())).thenReturn(List.of(likeEntity));
+        when(likeRepository.countByMomentEntityId(any())).thenReturn(1);
+        when(likeRepository.findAllByMomentEntityId(any())).thenReturn(List.of(likeEntity));
 
         Moment moment = momentMapper.toModel(momentEntity);
         moment = momentService.updateMoment(momentId, moment);
@@ -321,7 +321,7 @@ class MomentServiceTest {
         likeEntity.setMomentEntity(momentEntity);
 
         when(momentRepository.findById(any())).thenReturn(Optional.ofNullable(momentEntity));
-        when(likeRepository.findByUserEntity_IdAndMomentEntity_Id(any(), any())).thenReturn(likeEntity);
+        when(likeRepository.findByUserEntityIdAndMomentEntityId(any(), any())).thenReturn(likeEntity);
 
         assertDoesNotThrow(() -> {
             Map<String, Object> responseMap = momentService.likeMoment(momentId);

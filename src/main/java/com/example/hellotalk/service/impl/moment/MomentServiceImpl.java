@@ -148,7 +148,7 @@ public class MomentServiceImpl implements MomentService {
                 .orElseThrow(() -> new MomentNotFoundException(MOMENT_NOT_FOUND_EXCEPTION));
 
         Map<String, Object> map = new HashMap<>();
-        Optional<LikeEntity> likeEntityOptional = Optional.ofNullable(likeRepository.findByUserEntity_IdAndMomentEntity_Id(userEntity.getId(), momentId));
+        Optional<LikeEntity> likeEntityOptional = Optional.ofNullable(likeRepository.findByUserEntityIdAndMomentEntityId(userEntity.getId(), momentId));
         LikeEntity likeEntity;
         String resultMessage;
 
@@ -181,13 +181,13 @@ public class MomentServiceImpl implements MomentService {
 
     @Override
     public List<LikeEntity> getLikesByMoment(UUID momentId) {
-        return likeRepository.findAllByMomentEntityIdContaining(momentId);
+        return likeRepository.findAllByMomentEntityId(momentId);
     }
 
     private void setLikesInfo(MomentEntity momentEntity) {
-        Integer numLikes = likeRepository.countLikesByMomentId(momentEntity.getId());
+        Integer numLikes = likeRepository.countByMomentEntityId(momentEntity.getId());
         momentEntity.setNumLikes(numLikes);
-        List<LikeEntity> likeEntityList = likeRepository.findAllByMomentEntity_Id(momentEntity.getId());
+        List<LikeEntity> likeEntityList = likeRepository.findAllByMomentEntityId(momentEntity.getId());
         momentEntity.setLikes(new HashSet<>(likeEntityList));
     }
 }

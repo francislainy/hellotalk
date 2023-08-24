@@ -57,22 +57,40 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public Comment createComment(UUID momentId, Comment comment) {
 
-        Optional<MomentEntity> optionalMomentEntity = momentRepository.findById(momentId);
-        if (optionalMomentEntity.isPresent()) {
+        UserEntity userEntity = userService.getCurrentUser();
 
-            UserEntity userEntity = userService.getCurrentUser();
-            MomentEntity momentEntity = optionalMomentEntity.get();
-            CommentEntity commentEntity = commentMapper.toEntity(comment).toBuilder()
-                    .userEntity(userEntity)
-                    .creationDate(ZonedDateTime.now().withZoneSameInstant(ZoneOffset.UTC))
-                    .momentEntity(momentEntity)
-                    .build();
-            commentEntity = commentRepository.save(commentEntity);
+        MomentEntity momentEntity = momentRepository.findById(momentId)
+                .orElseThrow(() -> new MomentNotFoundException(MOMENT_NOT_FOUND_EXCEPTION));
 
-            return commentMapper.toModel(commentEntity);
-        } else
-            throw new MomentNotFoundException(MOMENT_NOT_FOUND_EXCEPTION);
+        CommentEntity commentEntity = commentMapper.toEntity(comment).toBuilder()
+                .userEntity(userEntity)
+                .creationDate(ZonedDateTime.now().withZoneSameInstant(ZoneOffset.UTC))
+                .momentEntity(momentEntity)
+                .build();
+        commentEntity = commentRepository.save(commentEntity);
+
+        return commentMapper.toModel(commentEntity);
     }
+
+    // @Override
+    // public Comment createComment2(UUID momentId, Comment comment) {
+    //
+    // UserEntity userEntity = userService.getCurrentUser();
+    //
+    // MomentEntity momentEntity = momentRepository.findById(momentId)
+    // .orElseThrow(() -> new MomentNotFoundException(MOMENT_NOT_FOUND_EXCEPTION));
+    //
+    // CommentEntity commentEntity = commentMapper.toEntity(comment);
+    // commentMapper.updateEntityFromDto(comment, commentEntity);
+    //
+    // commentEntity.setUserEntity(userEntity);
+    // commentEntity.setCreationDate(ZonedDateTime.now().withZoneSameInstant(ZoneOffset.UTC));
+    // commentEntity.setMomentEntity(momentEntity);
+    //
+    // commentEntity = commentRepository.save(commentEntity);
+    //
+    // return commentMapper.toModel(commentEntity);
+    // }
 
     @Override
     public Comment updateComment(UUID commentId, Comment comment) {

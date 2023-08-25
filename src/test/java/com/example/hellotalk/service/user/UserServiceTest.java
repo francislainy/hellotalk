@@ -126,11 +126,6 @@ class UserServiceTest {
     void testCreateUser_ValidUserBody_ReturnsValidUser() {
 
         UserEntity userEntity = getUserEntity();
-        when(hometownRepository.save(any())).thenReturn(userEntity.getHometownEntity());
-
-        Set<HobbyAndInterestEntity> hobbyAndInterestEntities = userEntity.getHobbyAndInterestEntities();
-        List<HobbyAndInterestEntity> hobbyAndInterestEntityList = new ArrayList<>(hobbyAndInterestEntities);
-        when(hobbyAndInterestRepository.saveAll(any())).thenReturn(hobbyAndInterestEntityList);
         when(userRepository.save(any())).thenReturn(userEntity);
 
         User user = userService.createUser(userMapper.toModel(userEntity));
@@ -220,11 +215,8 @@ class UserServiceTest {
     @Test
     void testDeleteUser_DeletionSuccessful_DoesNotThrowException() {
 
-        String json = """
-                {"message": "User Deleted"}
-                """;
         when(userRepository.findById(any())).thenReturn(Optional.of(getUserEntity()));
-        assertEquals(json, assertDoesNotThrow(() -> userService.deleteUser(userId)));
+        userService.deleteUser(userId);
         verify(userRepository, times(1)).deleteById(userId);
     }
 

@@ -202,7 +202,7 @@ class FollowshipServiceTest {
     }
 
     @Test
-    void testFollowUser_ReceiverFromUserDoesNotExist_UserNotFoundException() {
+    void testFollowUser_ToUserDoesNotExist_UserNotFoundException() {
 
         UUID userFromId = randomUUID();
         UUID userToId = randomUUID();
@@ -210,7 +210,8 @@ class FollowshipServiceTest {
         UserEntity userFromEntity = UserEntity.builder().id(userFromId).build();
         UserEntity userToEntity = UserEntity.builder().id(userToId).build();
 
-        when(userRepository.findById(userToEntity.getId())).thenReturn(Optional.of(userToEntity));
+        when(userService.getCurrentUser()).thenReturn(userFromEntity);
+        when(userRepository.findById(userToEntity.getId())).thenReturn(Optional.empty());
 
         Followship followship = Followship.builder().userFromId(userFromEntity.getId()).userToId(userToEntity.getId()).build();
 
@@ -221,16 +222,14 @@ class FollowshipServiceTest {
     }
 
     @Test
-    void testFollowUser_SenderUserDoesNotExist_ThrowsUserNotFoundException() { // todo: refactor the code so that the to user is not passed into the followship object - 16/08/2023
+    void testFollowUser_FromUserDoesNotExist_ThrowsUserNotFoundException() {
 
         when(userService.getCurrentUser()).thenReturn(null);
 
-        UUID userFromId = randomUUID();
         UUID userToId = randomUUID();
-
         when(userRepository.findById(userToId)).thenReturn(Optional.empty());
 
-        Followship followship = Followship.builder().userFromId(userFromId).userToId(userToId).build();
+        Followship followship = Followship.builder().userToId(userToId).build();
         UserNotFoundException exception =
                 assertThrows(UserNotFoundException.class, () -> followshipService.createFollowship(followship));
 

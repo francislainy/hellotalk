@@ -133,19 +133,14 @@ class CommentControllerTest extends BaseDocTestConfig {
     @Test
     void testDeleteComment() throws Exception {
 
-        String json = """
-                {"message": "Comment Deleted"}
-                """;
         Comment comment = commentResponse;
         UUID momentId = randomUUID();
         when(commentService.getComment(any())).thenReturn(comment);
-        when(commentService.deleteComment(any())).thenReturn(json);
 
         mockMvc.perform(RestDocumentationRequestBuilders.delete("/api/v1/ht/moments/{momentId}/comments/{commentId}", momentId, commentId)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .param("commentId", String.valueOf(commentId)))
+                .contentType(MediaType.APPLICATION_JSON)
+                .param("commentId", String.valueOf(commentId)))
                 .andExpect(status().is2xxSuccessful())
-                .andExpect(content().json(json))
                 .andDo(document("delete-comment",
                         resource("Delete a comment")))
                 .andReturn();

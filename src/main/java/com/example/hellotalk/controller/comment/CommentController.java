@@ -39,6 +39,7 @@ public class CommentController {
 
     @DeleteMapping({"/{momentId}/comments/{commentId}", "/{momentId}/comments/{commentId}/"})
     public ResponseEntity<Object> deleteMoment(@PathVariable UUID momentId, @PathVariable UUID commentId) {
-        return new ResponseEntity<>(commentService.deleteComment(commentId), HttpStatus.PARTIAL_CONTENT);
+        commentService.deleteComment(commentId);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

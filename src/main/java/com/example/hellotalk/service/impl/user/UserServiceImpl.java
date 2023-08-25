@@ -62,18 +62,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User createUser(User user) {
-
-        UserEntity userEntity = userMapper.toEntity(user);
-
-        List<HobbyAndInterestEntity> hobbyAndInterestEntityList = hobbyAndInterestRepository.saveAll(userEntity.getHobbyAndInterestEntities());
-        HometownEntity hometownEntity = hometownRepository.save(userEntity.getHometownEntity());
-
-        Set<HobbyAndInterestEntity> hobbyAndInterestEntitySet = new HashSet<>(hobbyAndInterestEntityList);
-        userEntity.setHobbyAndInterestEntities(hobbyAndInterestEntitySet);
-        userEntity.setHometownEntity(hometownEntity);
-
-        userEntity = userRepository.save(userEntity);
-
+        UserEntity userEntity = userRepository.save(userMapper.toEntity(user));
         return userMapper.toModel(userEntity);
     }
 
@@ -103,18 +92,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public String deleteUser(UUID userId) {
-
-        Optional<UserEntity> optionalUserEntity = userRepository.findById(userId);
-        String json = """
-                {"message": "User Deleted"}
-                """;
-
-        if (optionalUserEntity.isPresent()) {
-            userRepository.deleteById(userId);
-            return json;
-        } else {
-            throw new UserNotFoundException(USER_NOT_FOUND_EXCEPTION);
-        }
+    public void deleteUser(UUID userId) {
+        userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND_EXCEPTION));
+        userRepository.deleteById(userId);
     }
+
 }

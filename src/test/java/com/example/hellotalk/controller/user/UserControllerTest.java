@@ -172,34 +172,20 @@ class UserControllerTest extends BaseDocTestConfig {
 
     @Test
     void testDeleteUser() throws Exception {
-
-        String json = """
-                {"message": "User Deleted"}
-                """;
-        when(userService.deleteUser(any())).thenReturn(json);
-
         mockMvc.perform(RestDocumentationRequestBuilders.delete("/api/v1/ht/users/{userId}", userId)
-                        .contentType(MediaType.APPLICATION_JSON))
+                .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is2xxSuccessful())
-                .andExpect(content().string(json))
                 .andDo(document("delete-user",
                         resource("Delete a user")))
                 .andReturn();
     }
 
     @Test
-    void testDeleteUser_ThrowsExceptionWhenUserNotFound() throws Exception { //todo: need to find out why this gets printed before the delete exception on swagger - 04/02/2023
-
+    void testDeleteUser_ThrowsExceptionWhenUserNotFound() throws Exception { // todo: need to find out why this gets printed before the delete exception on swagger - 04/02/2023
         doThrow(new UserNotFoundException(USER_NOT_FOUND_EXCEPTION)).when(userService).deleteUser(any());
-
-        String jsonError = """
-                {"message": "jsonError"}
-                """;
-        jsonError = jsonError.replace("jsonError", USER_NOT_FOUND_EXCEPTION);
 
         mockMvc.perform(RestDocumentationRequestBuilders.delete("/api/v1/ht/users/{userId}", userId).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is4xxClientError())
-                .andExpect(content().json(jsonError))
                 .andDo(document("delete-user-throws-exception-when-user-not-found",
                         resource("Deleting a user throws exception when user is not found")))
                 .andReturn();

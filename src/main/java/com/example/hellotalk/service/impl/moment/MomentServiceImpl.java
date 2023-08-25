@@ -37,20 +37,17 @@ public class MomentServiceImpl implements MomentService {
 
     @Override
     public Moment getMoment(UUID momentId) {
-        MomentEntity momentEntity = momentRepository.findById(momentId)
+        return momentRepository.findById(momentId)
+                .map(momentEntity -> {
+                    setLikesInfo(momentEntity);
+                    return momentMapper.toModel(momentEntity);
+                })
                 .orElseThrow(() -> new MomentNotFoundException(MOMENT_NOT_FOUND_EXCEPTION));
-
-        setLikesInfo(momentEntity);
-
-        return momentMapper.toModel(momentEntity);
     }
 
     @Override
     public List<Moment> getAllMoments() {
-
-        List<MomentEntity> momentEntityList = momentRepository.findAll();
-
-        return momentEntityList.stream()
+        return momentRepository.findAll().stream()
                 .map(momentEntity -> {
                     setLikesInfo(momentEntity);
                     return momentMapper.toModel(momentEntity);
@@ -60,10 +57,7 @@ public class MomentServiceImpl implements MomentService {
 
     @Override
     public List<Moment> getAllMomentsForUser(UUID userId) {
-
-        List<MomentEntity> momentEntityList = momentRepository.findAllByUserEntityId(userId);
-
-        return momentEntityList.stream()
+        return momentRepository.findAllByUserEntityId(userId).stream()
                 .map(momentEntity -> {
                     setLikesInfo(momentEntity);
                     return momentMapper.toModel(momentEntity);
@@ -73,7 +67,6 @@ public class MomentServiceImpl implements MomentService {
 
     @Override
     public Moment createMoment(Moment moment) {
-
         UserEntity userEntity = userService.getCurrentUser();
 
         MomentEntity momentEntity = momentMapper.toEntity(moment).toBuilder()
@@ -82,7 +75,7 @@ public class MomentServiceImpl implements MomentService {
                 .build();
         momentEntity = momentRepository.save(momentEntity);
 
-        setLikesInfo(momentEntity);
+        setLikesInfo(momentEntity); /// todo: check this: 25/08/2023
 
         return momentMapper.toModel(momentEntity);
     }
@@ -94,13 +87,11 @@ public class MomentServiceImpl implements MomentService {
                 .orElseThrow(() -> new MomentNotFoundException(MOMENT_NOT_FOUND_EXCEPTION));
 
         UserEntity userEntity = userService.getCurrentUser();
-
-        if (!userEntity.getId().toString().equals(momentEntity.getUserEntity().getId().toString())) {
+        if (!userEntity.getId().equals(momentEntity.getUserEntity().getId())) {
             throw new EntityDoesNotBelongToUserException(ENTITY_DOES_NOT_BELONG_TO_USER_EXCEPTION);
         }
 
         ZonedDateTime formattedDate = ZonedDateTime.parse(ZonedDateTime.now().format(formatter));
-
         momentEntity = momentEntity.toBuilder()
                 .text(moment.getText())
                 .tags(moment.getTags())
@@ -116,27 +107,16 @@ public class MomentServiceImpl implements MomentService {
     }
 
     @Override
-    public String deleteMoment(UUID momentId) {
+    public void deleteMoment(UUID momentId) {
 
-        Optional<MomentEntity> optionalMomentEntity = momentRepository.findById(momentId);
-        String json = """
-                {"message": "Moment Deleted"}
-                """;
+        MomentEntity momentEntity = momentRepository.findById(momentId).orElseThrow(() -> new MomentNotFoundException(MOMENT_NOT_FOUND_EXCEPTION));
 
-        if (optionalMomentEntity.isPresent()) {
-            MomentEntity momentEntity = optionalMomentEntity.get();
-            UserEntity userEntity = userService.getCurrentUser();
-
-            if (!userEntity.getId().toString().equals(momentEntity.getUserEntity().getId().toString())) {
-                throw new EntityDoesNotBelongToUserException(ENTITY_DOES_NOT_BELONG_TO_USER_EXCEPTION);
-            } else {
-                momentRepository.deleteById(momentId);
-                return json;
-            }
-
-        } else {
-            throw new MomentNotFoundException(MOMENT_NOT_FOUND_EXCEPTION);
+        UserEntity userEntity = userService.getCurrentUser();
+        if (!userEntity.getId().equals(momentEntity.getUserEntity().getId())) {
+            throw new EntityDoesNotBelongToUserException(ENTITY_DOES_NOT_BELONG_TO_USER_EXCEPTION);
         }
+
+        momentRepository.deleteById(momentId);
     }
 
     @Override
@@ -148,7 +128,7 @@ public class MomentServiceImpl implements MomentService {
                 .orElseThrow(() -> new MomentNotFoundException(MOMENT_NOT_FOUND_EXCEPTION));
 
         Map<String, Object> map = new HashMap<>();
-        Optional<LikeEntity> likeEntityOptional = Optional.ofNullable(likeRepository.findByUserEntityIdAndMomentEntityId(userEntity.getId(), momentId));
+        Optional<LikeEntity> likeEntityOptional = likeRepository.findByUserEntityIdAndMomentEntityId(userEntity.getId(), momentId);
         LikeEntity likeEntity;
         String resultMessage;
 

@@ -14,9 +14,7 @@ import com.example.hellotalk.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 import static com.example.hellotalk.exception.AppExceptionHandler.*;
@@ -33,50 +31,35 @@ public class FollowshipServiceImpl implements FollowshipService {
 
     @Override
     public Followship getFollowship(UUID followshipId) {
+        FollowshipEntity followshipEntity = followshipRepository.findById(followshipId)
+                .orElseThrow(() -> new FollowshipNotCreatedUserCantFollowThemselfException(FOLLOWSHIP_DOES_NOT_EXIST_EXCEPTION));
 
-        Optional<FollowshipEntity> followshipEntity = followshipRepository.findById(followshipId);
-        if (followshipEntity.isPresent()) {
-            return followshipMapper.toModel(followshipEntity.get());
-        } else {
-            throw new FollowshipNotCreatedUserCantFollowThemselfException(FOLLOWSHIP_DOES_NOT_EXIST_EXCEPTION);
-        }
+        return followshipMapper.toModel(followshipEntity);
+
     }
 
     @Override
     public List<Followship> getAllFollowships() {
-
-        List<Followship> followshipList = new ArrayList<>();
-        List<FollowshipEntity> followshipEntityList = followshipRepository.findAll();
-
-        if (!followshipEntityList.isEmpty()) {
-            followshipEntityList.forEach(userEntity -> followshipList.add(followshipMapper.toModel(userEntity)));
-        }
-
-        return followshipList;
+        return followshipRepository.findAll()
+                .stream()
+                .map(followshipMapper::toModel)
+                .toList();
     }
 
     @Override
     public List<Followship> getAllFollowshipsFromUser(UUID userFromId) {
-        List<Followship> followshipList = new ArrayList<>();
-        List<FollowshipEntity> followshipEntityList = followshipRepository.findFollowshipsByUserFromId(userFromId);
-
-        if (!followshipEntityList.isEmpty()) {
-            followshipEntityList.forEach(userEntity -> followshipList.add(followshipMapper.toModel(userEntity)));
-        }
-
-        return followshipList;
+        return followshipRepository.findFollowshipsByUserFromId(userFromId)
+                .stream()
+                .map(followshipMapper::toModel)
+                .toList();
     }
 
     @Override
     public List<Followship> getAllFollowshipsToUser(UUID userToId) {
-        List<Followship> followshipList = new ArrayList<>();
-        List<FollowshipEntity> followshipEntityList = followshipRepository.findFollowshipsByUserToId(userToId);
-
-        if (!followshipEntityList.isEmpty()) {
-            followshipEntityList.forEach(userEntity -> followshipList.add(followshipMapper.toModel(userEntity)));
-        }
-
-        return followshipList;
+        return followshipRepository.findFollowshipsByUserToId(userToId)
+                .stream()
+                .map(followshipMapper::toModel)
+                .toList();
     }
 
     @Override
@@ -85,24 +68,19 @@ public class FollowshipServiceImpl implements FollowshipService {
         UUID userToId = followship.getUserToId();
         UserEntity userFromEntity = userService.getCurrentUser();
 
-        Optional<UserEntity> userEntityOptionalTo = userRepository.findById(userToId);
+        UserEntity userToEntity = userRepository.findById(userToId).orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND_EXCEPTION));
 
-        if (userFromEntity == null || userEntityOptionalTo.isEmpty()) {
-            throw new UserNotFoundException(USER_NOT_FOUND_EXCEPTION);
-        }
-
-        if (userFromEntity.getId().toString().equals(userEntityOptionalTo.get().getId().toString())) {
+        if (userFromEntity.getId().equals(userToEntity.getId())) {
             throw new FollowshipNotCreatedUserCantFollowThemselfException(FOLLOWSHIP_NOT_CREATED_USER_CANT_FOLLOW_THEMSELF);
         }
 
         UUID userFromId = userFromEntity.getId();
-        Optional<FollowshipEntity> optionalFollowship = followshipRepository.findByUserFromIdAndUserToId(userFromId, userToId);
-        if (optionalFollowship.isPresent()) {
-            followshipRepository.delete(optionalFollowship.get());
-            throw new FollowshipDeletedException(FOLLOWSHIP_ALREADY_EXISTS_EXCEPTION);
-        }
+        followshipRepository.findByUserFromIdAndUserToId(userFromId, userToId)
+                .ifPresent(f -> {
+                    followshipRepository.delete(f);
+                    throw new FollowshipDeletedException(FOLLOWSHIP_ALREADY_EXISTS_EXCEPTION);
+                });
 
-        UserEntity userToEntity = userEntityOptionalTo.get();
         FollowshipEntity followshipEntity = followshipRepository.save(followshipMapper.fromUserEntities(userFromEntity, userToEntity));
 
         return followshipMapper.toModel(followshipEntity);

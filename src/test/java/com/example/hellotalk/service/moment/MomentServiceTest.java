@@ -321,7 +321,7 @@ class MomentServiceTest {
         likeEntity.setMomentEntity(momentEntity);
 
         when(momentRepository.findById(any())).thenReturn(Optional.ofNullable(momentEntity));
-        when(likeRepository.findByUserEntityIdAndMomentEntityId(any(), any())).thenReturn(likeEntity);
+        when(likeRepository.findByUserEntityIdAndMomentEntityId(any(), any())).thenReturn(Optional.of(likeEntity));
 
         assertDoesNotThrow(() -> {
             Map<String, Object> responseMap = momentService.likeMoment(momentId);
@@ -400,13 +400,8 @@ class MomentServiceTest {
         UUID momentId = randomUUID();
         MomentEntity momentEntity = getMomentEntity(momentId);
         momentEntity.setUserEntity(userEntity);
-
-        String json = """
-                {"message": "Moment Deleted"}
-                """;
-
         when(momentRepository.findById(any())).thenReturn(Optional.of(momentEntity));
-        assertEquals(json, assertDoesNotThrow(() -> momentService.deleteMoment(momentId)));
+        assertDoesNotThrow(() -> momentService.deleteMoment(momentId));
     }
 
     @Test

@@ -240,7 +240,7 @@ class CommentServiceTest {
         assertEquals(COMMENT_NOT_FOUND_EXCEPTION, exception.getMessage());
 
         verify(commentRepository, times(1)).findById(commentId);
-        verify(userService, never()).getCurrentUser();
+        verify(userService, times(1)).getCurrentUser();
         verify(commentRepository, never()).save(any(CommentEntity.class));
     }
 
@@ -279,17 +279,17 @@ class CommentServiceTest {
         CommentEntity commentEntity = getCommentEntity(commentId);
         commentEntity.setUserEntity(userEntity);
 
-        String json = """
-                {"message": "Comment Deleted"}
-                """;
-
         when(commentRepository.findById(any())).thenReturn(Optional.of(commentEntity));
-        assertEquals(json, assertDoesNotThrow(() -> commentService.deleteComment(commentId)));
+        assertDoesNotThrow(() -> commentService.deleteComment(commentId));
         verify(commentRepository, times(1)).deleteById(commentId);
     }
 
     @Test
     void testDeleteComment_InvalidCommentId_ThrowsCommentNotFoundException() {
+
+        UUID userId = randomUUID();
+        UserEntity userEntity = UserEntity.builder().id(userId).build();
+        when(userService.getCurrentUser()).thenReturn(userEntity);
 
         UUID commentId = randomUUID();
         CommentNotFoundException exception =

@@ -19,7 +19,6 @@ import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 import static com.example.hellotalk.exception.AppExceptionHandler.*;
@@ -72,39 +71,19 @@ public class CommentServiceImpl implements CommentService {
         return commentMapper.toModel(commentEntity);
     }
 
-    // @Override
-    // public Comment createComment2(UUID momentId, Comment comment) {
-    //
-    // UserEntity userEntity = userService.getCurrentUser();
-    //
-    // MomentEntity momentEntity = momentRepository.findById(momentId)
-    // .orElseThrow(() -> new MomentNotFoundException(MOMENT_NOT_FOUND_EXCEPTION));
-    //
-    // CommentEntity commentEntity = commentMapper.toEntity(comment);
-    // commentMapper.updateEntityFromDto(comment, commentEntity);
-    //
-    // commentEntity.setUserEntity(userEntity);
-    // commentEntity.setCreationDate(ZonedDateTime.now().withZoneSameInstant(ZoneOffset.UTC));
-    // commentEntity.setMomentEntity(momentEntity);
-    //
-    // commentEntity = commentRepository.save(commentEntity);
-    //
-    // return commentMapper.toModel(commentEntity);
-    // }
-
     @Override
     public Comment updateComment(UUID commentId, Comment comment) {
 
-        ZonedDateTime formattedDate = ZonedDateTime.parse(ZonedDateTime.now().format(formatter));
+        UserEntity userEntity = userService.getCurrentUser();
 
         CommentEntity commentEntity = commentRepository.findById(commentId)
                 .orElseThrow(() -> new CommentNotFoundException(COMMENT_NOT_FOUND_EXCEPTION));
 
-        UserEntity userEntity = userService.getCurrentUser();
-        if (!userEntity.getId().toString().equals(commentEntity.getUserEntity().getId().toString())) {
+        if (!userEntity.getId().equals(commentEntity.getUserEntity().getId())) {
             throw new EntityDoesNotBelongToUserException(ENTITY_DOES_NOT_BELONG_TO_USER_EXCEPTION);
         }
 
+        ZonedDateTime formattedDate = ZonedDateTime.parse(ZonedDateTime.now().format(formatter));
         commentEntity = commentEntity.toBuilder()
                 .text(comment.getText())
                 .userEntity(userEntity)
@@ -117,26 +96,18 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public String deleteComment(UUID commentId) {
+    public void deleteComment(UUID commentId) {
 
-        Optional<CommentEntity> optionalCommentEntity = commentRepository.findById(commentId);
-        String json = """
-                {"message": "Comment Deleted"}
-                """;
+        UserEntity userEntity = userService.getCurrentUser();
 
-        if (optionalCommentEntity.isPresent()) {
-            CommentEntity commentEntity = optionalCommentEntity.get();
+        CommentEntity commentEntity = commentRepository.findById(commentId)
+                .orElseThrow(() -> new CommentNotFoundException(COMMENT_NOT_FOUND_EXCEPTION));
 
-            UserEntity userEntity = userService.getCurrentUser();
-            if (!userEntity.getId().toString().equals(commentEntity.getUserEntity().getId().toString())) {
-                throw new EntityDoesNotBelongToUserException(ENTITY_DOES_NOT_BELONG_TO_USER_EXCEPTION);
-            } else {
-                commentRepository.deleteById(commentId);
-                return json;
-            }
-        } else {
-            throw new CommentNotFoundException(COMMENT_NOT_FOUND_EXCEPTION);
+        if (!userEntity.getId().equals(commentEntity.getUserEntity().getId())) {
+            throw new EntityDoesNotBelongToUserException(ENTITY_DOES_NOT_BELONG_TO_USER_EXCEPTION);
         }
+
+        commentRepository.deleteById(commentId);
     }
 
 }

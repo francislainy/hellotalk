@@ -19,7 +19,7 @@ public interface MomentService {
 
     Moment updateMoment(UUID momentId, Moment moment);
 
-    String deleteMoment(UUID momentId);
+    void deleteMoment(UUID momentId);
 
     Map<String, Object> likeMoment(UUID momentId);
 

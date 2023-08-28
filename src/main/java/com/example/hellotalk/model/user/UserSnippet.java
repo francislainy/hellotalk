@@ -12,7 +12,7 @@ import java.util.UUID;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserSmall {
+public class UserSnippet {
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private UUID id;

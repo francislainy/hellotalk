@@ -2,7 +2,7 @@ package com.example.hellotalk.controller.comment;
 
 import com.example.hellotalk.config.BaseDocTestConfig;
 import com.example.hellotalk.model.comment.Comment;
-import com.example.hellotalk.model.user.UserSmall;
+import com.example.hellotalk.model.user.UserSnippet;
 import com.example.hellotalk.service.comment.CommentService;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -56,7 +56,7 @@ class CommentControllerTest extends BaseDocTestConfig {
         commentResponse = convertToNewObject(commentRequest, Comment.class);
         commentResponse.setId(commentId);
 
-        commentResponse.setUser(UserSmall.builder().id(userCreatorId).build());
+        commentResponse.setUser(UserSnippet.builder().id(userCreatorId).build());
 
         jsonResponse = jsonStringFromObject(commentResponse);
     }

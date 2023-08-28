@@ -1,6 +1,6 @@
 package com.example.hellotalk.model.comment;
 
-import com.example.hellotalk.model.user.UserSmall;
+import com.example.hellotalk.model.user.UserSnippet;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
@@ -30,5 +30,5 @@ public class Comment {
     private UUID momentId;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    private UserSmall user;
+    private UserSnippet user;
 }

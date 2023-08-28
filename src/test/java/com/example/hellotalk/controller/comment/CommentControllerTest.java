@@ -49,7 +49,7 @@ class CommentControllerTest extends BaseDocTestConfig {
         userCreatorId = randomUUID();
 
         commentRequest = Comment.builder()
-                .text("anyText")
+                .content("anyText")
                 .build();
 
         jsonRequest = jsonStringFromObject(commentRequest);

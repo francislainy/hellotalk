@@ -63,7 +63,7 @@ class MomentControllerTest extends BaseDocTestConfig {
         userCreatorId = UUID.fromString("2cfff94a-b70e-4b39-bd2a-be1c0f898541");
 
         momentRequest = Moment.builder()
-                .text("anyText")
+                .content("anyText")
                 .build();
 
         jsonRequest = jsonStringFromObject(momentRequest);

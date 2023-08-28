@@ -22,8 +22,8 @@ public class CommentEntity {
     @Column(name = "id")
     private UUID id;
 
-    @Column(name = "text")
-    private String text;
+    @Column(name = "content")
+    private String content;
 
     @Column(name = "creation_date")
     private ZonedDateTime creationDate;

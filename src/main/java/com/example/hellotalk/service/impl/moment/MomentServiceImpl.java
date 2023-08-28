@@ -93,7 +93,7 @@ public class MomentServiceImpl implements MomentService {
 
         ZonedDateTime formattedDate = ZonedDateTime.parse(ZonedDateTime.now().format(formatter));
         momentEntity = momentEntity.toBuilder()
-                .text(moment.getText())
+                .content(moment.getContent())
                 .tags(moment.getTags())
                 .userEntity(userEntity)
                 .lastUpdatedDate(formattedDate)

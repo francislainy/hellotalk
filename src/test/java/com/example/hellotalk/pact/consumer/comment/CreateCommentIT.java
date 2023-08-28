@@ -42,12 +42,12 @@ class CreateCommentIT {
         ZonedDateTime creationDate = ZonedDateTime.parse("2022-12-31T23:59:59Z", formatter);
 
         DslPart bodyReceived = new PactDslJsonBody()
-                .stringType("text", "anyText")
+                .stringType("content", "anyText")
                 .close();
 
         DslPart bodyReturned = new PactDslJsonBody()
                 .uuid("id", commentId)
-                .stringType("text", "anyText")
+                .stringType("content", "anyText")
                 .stringType("creationDate", creationDate.format(formatter))
                 .object("user")
                 .uuid("id", "caf6bea6-4684-403e-9c41-8704fb0600c0")
@@ -73,7 +73,7 @@ class CreateCommentIT {
     void runTest() {
 
         Moment moment = Moment.builder()
-                .text("anyText")
+                .content("anyText")
                 .build();
 
         Response response = getMockRequest(headers).body(moment).post(path + momentId + "/comments");

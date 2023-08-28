@@ -19,7 +19,7 @@ public class Moment {
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private UUID id;
-    private String text;
+    private String content;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private UUID userCreatorId;
     @JsonInclude(JsonInclude.Include.NON_NULL)

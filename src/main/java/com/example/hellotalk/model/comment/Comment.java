@@ -19,7 +19,7 @@ public class Comment {
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private UUID id;
-    private String text;
+    private String content;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private ZonedDateTime creationDate;
     @JsonInclude(JsonInclude.Include.NON_NULL)

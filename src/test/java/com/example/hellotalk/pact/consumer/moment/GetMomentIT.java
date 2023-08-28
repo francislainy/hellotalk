@@ -43,7 +43,7 @@ class GetMomentIT {
 
         DslPart bodyReturned = new PactDslJsonBody()
                 .uuid("id", momentId)
-                .stringType("text", "anyText")
+                .stringType("content", "anyText")
                 .stringType("creationDate", creationDate.format(formatter))
                 .stringType("lastUpdatedDate", lastUpdatedDate.format(formatter))
                 .uuid("userCreatorId", "caf6bea6-4684-403e-9c41-8704fb0600c0")

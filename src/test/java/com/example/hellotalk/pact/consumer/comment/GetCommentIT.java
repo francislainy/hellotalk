@@ -43,7 +43,7 @@ class GetCommentIT {
 
         DslPart bodyReturned = new PactDslJsonBody()
                 .uuid("id", commentId)
-                .stringType("text", "anyText")
+                .stringType("content", "anyText")
                 .stringType("creationDate", creationDate.format(formatter))
                 .stringType("lastUpdatedDate", lastUpdatedDate.format(formatter))
                 .uuid("momentId", momentId)

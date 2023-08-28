@@ -33,7 +33,7 @@ public class MomentStep {
 
     @And("the user creates a moment with some basic and simple content")
     public void theUserCreatesAMomentWithSomeBasicAndSimpleContent() {
-        Moment moment = Moment.builder().text("A great day testing").build();
+        Moment moment = Moment.builder().content("A great day testing").build();
 
         RequestSpecification rq = apiStep.getRqWithAuth();
         Response response = rq.body(moment).post("/api/v1/ht/moments/");
@@ -45,7 +45,7 @@ public class MomentStep {
 
     @And("the user creates a moment with content {string}")
     public void theUserCreatesAMomentWithSomeContent(String text) {
-        Moment moment = Moment.builder().text(text).build();
+        Moment moment = Moment.builder().content(text).build();
 
         RequestSpecification rq = apiStep.getRqWithAuth();
         Response response = rq.body(moment).post("/api/v1/ht/moments/");
@@ -84,7 +84,7 @@ public class MomentStep {
 
     @And("the user edits the text for the moment to {string}")
     public void theUserEditsAMomentWithSomeContent(String text) {
-        mc.getMoment().setText(text);
+        mc.getMoment().setContent(text);
 
         RequestSpecification rq = apiStep.getRqWithAuth();
         Response response = rq.body(mc.getMoment()).put("/api/v1/ht/moments/" + mc.getMoment().getId());
@@ -92,12 +92,12 @@ public class MomentStep {
 
         apiStep.setResponse(response);
         mc.setMoment(response.as(Moment.class));
-        assertEquals(text, mc.getMoment().getText());
+        assertEquals(text, mc.getMoment().getContent());
     }
 
     @And("the authenticated user attempts to edit the moment that belongs to user {string}")
     public void theUserAttemptsToEditAMomentWithSomeContent(String text) {
-        mc.getMoment().setText(text);
+        mc.getMoment().setContent(text);
 
         RequestSpecification rq = apiStep.getRqWithAuth();
         apiStep.setResponse(rq.body(mc.getMoment()).put("/api/v1/ht/moments/" + mc.getMoment().getId()));
@@ -112,7 +112,7 @@ public class MomentStep {
         apiStep.setResponse(response);
 
         Moment moment = response.as(Moment.class);
-        assertEquals(mc.getMoment().getText(), moment.getText());
+        assertEquals(mc.getMoment().getContent(), moment.getContent());
 
         mc.setMoment(moment);
     }
@@ -140,7 +140,7 @@ public class MomentStep {
 
     @And("the user adds a comment to the moment with grammar correction {string}")
     public void userAddsCommentToMoment(String text) {
-        Comment comment = Comment.builder().text(text).build();
+        Comment comment = Comment.builder().content(text).build();
 
         RequestSpecification rq = apiStep.getRqWithAuth();
         Response response = rq.body(comment).post("/api/v1/ht/moments/" + mc.getMoment().getId() + "/comments");

@@ -41,7 +41,7 @@ class GetCommentsIT {
 
         DslPart bodyReturned = PactDslJsonArray.arrayEachLike()
                 .uuid("id", "d3256c76-62d7-4481-9d1c-a0ccc4da380f")
-                .stringType("text", "anyText")
+                .stringType("content", "anyText")
                 .stringType("creationDate", creationDate.format(formatter))
                 .uuid("momentId", momentId)
                 .object("user")

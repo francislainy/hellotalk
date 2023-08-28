@@ -85,7 +85,7 @@ public class CommentServiceImpl implements CommentService {
 
         ZonedDateTime formattedDate = ZonedDateTime.parse(ZonedDateTime.now().format(formatter));
         commentEntity = commentEntity.toBuilder()
-                .text(comment.getText())
+                .content(comment.getContent())
                 .userEntity(userEntity)
                 .lastUpdatedDate(formattedDate)
                 .build();

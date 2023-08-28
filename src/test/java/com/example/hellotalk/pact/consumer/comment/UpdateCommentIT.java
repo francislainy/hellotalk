@@ -43,12 +43,12 @@ class UpdateCommentIT {
         ZonedDateTime lastUpdatedDate = ZonedDateTime.parse("2023-12-31T23:59:59Z", formatter);
 
         DslPart bodyReceived = new PactDslJsonBody()
-                .stringType("text", "anyUpdatedText")
+                .stringType("content", "anyUpdatedText")
                 .close();
 
         DslPart bodyReturned = new PactDslJsonBody()
                 .uuid("id", commentId)
-                .stringType("text", "anyText")
+                .stringType("content", "anyText")
                 .stringType("creationDate", creationDate.format(formatter))
                 .stringType("lastUpdatedDate", lastUpdatedDate.format(formatter))
                 .object("user")
@@ -75,7 +75,7 @@ class UpdateCommentIT {
     void runTest() {
 
         Moment moment = Moment.builder()
-                .text("anyUpdatedText")
+                .content("anyUpdatedText")
                 .build();
 
         Response response = getMockRequest(headers).body(moment).put(path + momentId + "/comments/" + commentId);

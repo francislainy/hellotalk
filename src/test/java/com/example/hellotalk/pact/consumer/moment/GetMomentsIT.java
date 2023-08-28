@@ -42,7 +42,7 @@ class GetMomentsIT { // todo: add test for getting moments for specific user - 1
                 .uuid("id", "d3256c76-62d7-4481-9d1c-a0ccc4da380f")
                 .stringType("content", "anyText")
                 .stringType("creationDate", creationDate.format(formatter))
-                .uuid("userCreatorId", "caf6bea6-4684-403e-9c41-8704fb0600c0")
+                .uuid("userId", "caf6bea6-4684-403e-9c41-8704fb0600c0")
                 .eachLike("tags")
                 .stringType("anyTag1")
                 .numberType("numLikes", 2)

@@ -10,10 +10,10 @@ import java.util.stream.Collectors;
 @Mapper(imports = Collectors.class)
 public interface MomentMapper {
 
-    @Mapping(source = "userCreatorId", target = "userEntity.id")
+    @Mapping(source = "userId", target = "userEntity.id")
     MomentEntity toEntity(Moment moment);
 
-    @Mapping(source = "userEntity.id", target = "userCreatorId")
+    @Mapping(source = "userEntity.id", target = "userId")
     @Mapping(expression = "java(momentEntity.getLikes().stream().map(like -> like.getUserEntity().getId()).collect(Collectors.toSet()))", target = "likedByIds")
     Moment toModel(MomentEntity momentEntity);
 }

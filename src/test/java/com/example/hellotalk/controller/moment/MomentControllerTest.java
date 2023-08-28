@@ -45,7 +45,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class MomentControllerTest extends BaseDocTestConfig {
 
     UUID momentId;
-    UUID userCreatorId;
+    UUID userId;
     Moment momentRequest;
     Moment momentResponse;
     String jsonRequest;
@@ -60,7 +60,7 @@ class MomentControllerTest extends BaseDocTestConfig {
     @BeforeAll
     void initData() {
         momentId = UUID.fromString("1bfff94a-b70e-4b39-bd2a-be1c0f898589");
-        userCreatorId = UUID.fromString("2cfff94a-b70e-4b39-bd2a-be1c0f898541");
+        userId = UUID.fromString("2cfff94a-b70e-4b39-bd2a-be1c0f898541");
 
         momentRequest = Moment.builder()
                 .content("anyText")
@@ -69,7 +69,7 @@ class MomentControllerTest extends BaseDocTestConfig {
         jsonRequest = jsonStringFromObject(momentRequest);
         momentResponse = convertToNewObject(momentRequest, Moment.class);
         momentResponse.setId(momentId);
-        momentResponse.setUserCreatorId(userCreatorId);
+        momentResponse.setUserId(userId);
 
         jsonResponse = jsonStringFromObject(momentResponse);
     }

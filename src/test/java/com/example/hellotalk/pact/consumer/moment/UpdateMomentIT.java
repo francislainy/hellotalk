@@ -51,7 +51,7 @@ class UpdateMomentIT {
                 .stringType("content", "anyText")
                 .stringType("creationDate", creationDate.format(formatter))
                 .stringType("lastUpdatedDate", lastUpdatedDate.format(formatter))
-                .uuid("userCreatorId", "caf6bea6-4684-403e-9c41-8704fb0600c0")
+                .uuid("userId", "caf6bea6-4684-403e-9c41-8704fb0600c0")
                 .numberType("numLikes", 1)
                 .array("likedByIds")
                 .uuid(String.valueOf(randomUUID()))

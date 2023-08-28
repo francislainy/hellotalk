@@ -77,7 +77,7 @@ class MomentServiceTest {
         assertAll(
                 () -> assertEquals(momentId, moment.getId()),
                 () -> assertEquals("anyText", moment.getContent()),
-                () -> assertEquals(userEntity.getId(), moment.getUserCreatorId()),
+                () -> assertEquals(userEntity.getId(), moment.getUserId()),
                 () -> assertEquals(1, moment.getNumLikes()),
                 () -> assertTrue(moment.getLikedByIds().contains(userId)),
                 () -> assertEquals(String.valueOf(creationDate), String.valueOf(moment.getCreationDate())),
@@ -121,7 +121,7 @@ class MomentServiceTest {
 
         Moment moment = allMoments.get(0);
         assertAll(
-                () -> assertEquals(userEntity.getId(), moment.getUserCreatorId()),
+                () -> assertEquals(userEntity.getId(), moment.getUserId()),
                 () -> assertEquals(momentId, moment.getId()),
                 () -> assertEquals("anyText", moment.getContent()),
                 () -> assertEquals(1, moment.getNumLikes()),
@@ -160,7 +160,7 @@ class MomentServiceTest {
 
         Moment moment = allMoments.get(0);
         assertAll(
-                () -> assertEquals(userId, moment.getUserCreatorId()),
+                () -> assertEquals(userId, moment.getUserId()),
                 () -> assertEquals(momentId, moment.getId()),
                 () -> assertEquals("anyText", moment.getContent()),
                 () -> assertEquals(1, moment.getNumLikes()),
@@ -201,7 +201,7 @@ class MomentServiceTest {
         assertAll(
                 () -> assertEquals(momentId, moment.getId()),
                 () -> assertEquals("anyText", moment.getContent()),
-                () -> assertEquals(userEntity.getId(), moment.getUserCreatorId()),
+                () -> assertEquals(userEntity.getId(), moment.getUserId()),
                 () -> assertEquals(0, moment.getNumLikes()),
                 () -> assertTrue(moment.getLikedByIds().isEmpty()),
                 () -> assertEquals(String.valueOf(creationDate), String.valueOf(moment.getCreationDate())),
@@ -248,7 +248,7 @@ class MomentServiceTest {
         assertAll(
                 () -> assertEquals(momentId, finalMoment.getId()),
                 () -> assertEquals("anyUpdatedText", finalMoment.getContent()),
-                () -> assertEquals(userEntity.getId().toString(), finalMoment.getUserCreatorId().toString()),
+                () -> assertEquals(userEntity.getId().toString(), finalMoment.getUserId().toString()),
                 () -> assertEquals(1, finalMoment.getNumLikes()),
                 () -> assertTrue(finalMoment.getLikedByIds().contains(userId)),
                 () -> assertEquals(String.valueOf(creationDate), String.valueOf(finalMoment.getCreationDate())),

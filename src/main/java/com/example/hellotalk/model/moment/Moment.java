@@ -21,7 +21,7 @@ public class Moment {
     private UUID id;
     private String content;
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    private UUID userCreatorId;
+    private UUID userId;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private ZonedDateTime creationDate;
     @JsonInclude(JsonInclude.Include.NON_NULL)

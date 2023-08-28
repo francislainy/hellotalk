@@ -34,7 +34,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class CommentControllerTest extends BaseDocTestConfig {
 
     UUID commentId;
-    UUID userCreatorId;
+    UUID userId;
     Comment commentRequest;
     Comment commentResponse;
     String jsonRequest;
@@ -46,7 +46,7 @@ class CommentControllerTest extends BaseDocTestConfig {
     @BeforeAll
     void initData() {
         commentId = randomUUID();
-        userCreatorId = randomUUID();
+        userId = randomUUID();
 
         commentRequest = Comment.builder()
                 .content("anyText")
@@ -56,7 +56,7 @@ class CommentControllerTest extends BaseDocTestConfig {
         commentResponse = convertToNewObject(commentRequest, Comment.class);
         commentResponse.setId(commentId);
 
-        commentResponse.setUser(UserSnippet.builder().id(userCreatorId).build());
+        commentResponse.setUser(UserSnippet.builder().id(userId).build());
 
         jsonResponse = jsonStringFromObject(commentResponse);
     }

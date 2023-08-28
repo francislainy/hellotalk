@@ -35,18 +35,17 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class UserControllerTest extends BaseDocTestConfig {
 
-    UUID userId;
-    User userRequest;
-    User userResponse;
-    String jsonRequest;
-    String jsonResponse;
+    private UUID userId;
+    private User userResponse;
+    private String jsonRequest;
+    private String jsonResponse;
 
     @MockBean
     UserService userService;
 
     @BeforeAll
     void initData() {
-        userId = UUID.fromString("1bfff94a-b70e-4b39-bd2a-be1c0f898589");
+        userId = randomUUID();
 
         Hometown hometownRequest = Hometown.builder().city("anyCity").country("anyCountry").build();
         Hometown hometownResponse = convertToNewObject(hometownRequest, Hometown.class);
@@ -60,7 +59,7 @@ class UserControllerTest extends BaseDocTestConfig {
         Set<HobbyAndInterest> hobbyAndInterestsResponse = new HashSet<>();
         hobbyAndInterestsResponse.add(hobbyAndInterestResponse);
 
-        userRequest = User.builder()
+        User userRequest = User.builder()
                 .name("anyName")
                 .dob("anyDob")
                 .gender("anyGender")

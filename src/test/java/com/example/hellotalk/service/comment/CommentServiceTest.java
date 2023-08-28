@@ -36,23 +36,23 @@ import static org.mockito.Mockito.*;
 class CommentServiceTest {
 
     @InjectMocks
-    CommentServiceImpl commentService;
+    private CommentServiceImpl commentService;
 
     @Mock
-    CommentRepository commentRepository;
+    private CommentRepository commentRepository;
 
     @Mock
-    MomentRepository momentRepository;
+    private MomentRepository momentRepository;
 
     @Spy
-    CommentMapper commentMapper = Mappers.getMapper(CommentMapper.class);
+    private CommentMapper commentMapper = Mappers.getMapper(CommentMapper.class);
 
     @Mock
-    UserService userService;
+    private UserService userService;
 
-    ZonedDateTime now = ZonedDateTime.parse(ZonedDateTime.now().format(ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")));
-    ZonedDateTime creationDate = now;
-    ZonedDateTime lastUpdatedDate = now;
+    private final ZonedDateTime now = ZonedDateTime.parse(ZonedDateTime.now().format(ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")));
+    private ZonedDateTime creationDate = now;
+    private ZonedDateTime lastUpdatedDate = now;
 
     @Test
     void testGetComment_ValidCommentId_ReturnsComment() {

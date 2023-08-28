@@ -11,7 +11,6 @@ import com.example.hellotalk.exception.UserNotFoundException;
 import com.example.hellotalk.model.ResultInfo;
 import com.example.hellotalk.model.moment.Moment;
 import com.example.hellotalk.service.moment.MomentService;
-import com.example.hellotalk.service.user.UserService;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -44,25 +43,20 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class MomentControllerTest extends BaseDocTestConfig {
 
-    UUID momentId;
-    UUID userId;
-    Moment momentRequest;
-    Moment momentResponse;
-    String jsonRequest;
-    String jsonResponse;
+    private UUID momentId;
+    private Moment momentResponse;
+    private String jsonRequest;
+    private String jsonResponse;
 
     @MockBean
-    MomentService momentService;
-
-    @MockBean
-    UserService userService;
+    private MomentService momentService;
 
     @BeforeAll
     void initData() {
-        momentId = UUID.fromString("1bfff94a-b70e-4b39-bd2a-be1c0f898589");
-        userId = UUID.fromString("2cfff94a-b70e-4b39-bd2a-be1c0f898541");
+        momentId = randomUUID();
+        UUID userId = randomUUID();
 
-        momentRequest = Moment.builder()
+        Moment momentRequest = Moment.builder()
                 .content("anyText")
                 .build();
 

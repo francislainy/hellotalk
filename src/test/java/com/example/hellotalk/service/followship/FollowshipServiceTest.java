@@ -36,20 +36,20 @@ import static org.mockito.Mockito.*;
 class FollowshipServiceTest {
 
     @Mock
-    UserRepository userRepository;
+    private UserRepository userRepository;
 
     @Mock
-    FollowshipRepository followshipRepository;
+    private FollowshipRepository followshipRepository;
 
     @Mock
-    UserService userService;
+    private UserService userService;
 
-    FollowshipMapper followshipMapper = Mappers.getMapper(FollowshipMapper.class);
+    private final FollowshipMapper followshipMapper = Mappers.getMapper(FollowshipMapper.class);
 
     @InjectMocks
-    FollowshipServiceImpl followshipService;
+    private FollowshipServiceImpl followshipService;
 
-    final UUID followshipId = randomUUID();
+    private final UUID followshipId = randomUUID();
 
     @BeforeEach
     void setUp() {

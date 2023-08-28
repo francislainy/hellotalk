@@ -35,23 +35,23 @@ import static org.mockito.Mockito.when;
 class MomentServiceTest {
 
     @InjectMocks
-    MomentServiceImpl momentService;
+    private MomentServiceImpl momentService;
 
     @Mock
-    MomentRepository momentRepository;
+    private MomentRepository momentRepository;
 
     @Mock
-    LikeRepository likeRepository;
+    private LikeRepository likeRepository;
 
     @Mock
-    UserService userService;
+    private UserService userService;
 
     @Spy
-    MomentMapper momentMapper = Mappers.getMapper(MomentMapper.class);
+    private MomentMapper momentMapper = Mappers.getMapper(MomentMapper.class);
 
-    ZonedDateTime now = ZonedDateTime.parse(ZonedDateTime.now().format(ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")));
-    ZonedDateTime creationDate = now;
-    ZonedDateTime lastUpdatedDate = now;
+    private final ZonedDateTime now = ZonedDateTime.parse(ZonedDateTime.now().format(ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")));
+    private ZonedDateTime creationDate = now;
+    private ZonedDateTime lastUpdatedDate = now;
 
     @Test
     void testGetMoment_ValidMomentId_ReturnsMoment() {

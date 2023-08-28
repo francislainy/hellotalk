@@ -4,9 +4,7 @@ import com.example.hellotalk.config.BaseDocTestConfig;
 import com.example.hellotalk.exception.FollowshipDeletedException;
 import com.example.hellotalk.exception.FollowshipNotCreatedUserCantFollowThemselfException;
 import com.example.hellotalk.model.followship.Followship;
-import com.example.hellotalk.repository.user.UserRepository;
 import com.example.hellotalk.service.followship.FollowshipService;
-import com.example.hellotalk.service.user.UserService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -24,13 +22,11 @@ import static com.epages.restdocs.apispec.ResourceDocumentation.resource;
 import static com.example.hellotalk.exception.AppExceptionHandler.FOLLOWSHIP_NOT_CREATED_USER_CANT_FOLLOW_THEMSELF;
 import static com.example.hellotalk.util.Utils.jsonStringFromObject;
 import static java.util.UUID.randomUUID;
+import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.hamcrest.Matchers.is;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(controllers = FollowshipController.class)
 @ExtendWith(MockitoExtension.class)
@@ -38,13 +34,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class FollowshipControllerTest extends BaseDocTestConfig {
 
     @MockBean
-    FollowshipService followshipService;
-
-    @MockBean
-    UserService userService;
-
-    @MockBean
-    UserRepository userRepository;
+    private FollowshipService followshipService;
 
     @Test
     void testGetFollowship() throws Exception {

@@ -33,22 +33,20 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class CommentControllerTest extends BaseDocTestConfig {
 
-    UUID commentId;
-    UUID userId;
-    Comment commentRequest;
-    Comment commentResponse;
-    String jsonRequest;
-    String jsonResponse;
+    private UUID commentId;
+    private Comment commentResponse;
+    private String jsonRequest;
+    private String jsonResponse;
 
     @MockBean
-    CommentService commentService;
+    private CommentService commentService;
 
     @BeforeAll
     void initData() {
         commentId = randomUUID();
-        userId = randomUUID();
+        UUID userId = randomUUID();
 
-        commentRequest = Comment.builder()
+        Comment commentRequest = Comment.builder()
                 .content("anyText")
                 .build();
 

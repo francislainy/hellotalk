@@ -140,10 +140,8 @@ public class MomentServiceImpl implements MomentService {
             resultMessage = "Moment liked successfully";
         }
 
-        ResultInfo resultInfo = buildResultInfo(likeEntity);
-
         Map<String, Object> map = new HashMap<>();
-        map.put("data", resultInfo);
+        map.put("data", buildResultInfo(likeEntity));
         map.put("message", resultMessage);
 
         return map;

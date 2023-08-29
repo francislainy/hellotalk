@@ -127,32 +127,22 @@ public class MomentServiceImpl implements MomentService {
         MomentEntity momentEntity = momentRepository.findById(momentId)
                 .orElseThrow(() -> new MomentNotFoundException(MOMENT_NOT_FOUND_EXCEPTION));
 
-        Map<String, Object> map = new HashMap<>();
         Optional<LikeEntity> likeEntityOptional = likeRepository.findByUserEntityIdAndMomentEntityId(userEntity.getId(), momentId);
         LikeEntity likeEntity;
         String resultMessage;
-
-        Set<LikeEntity> likes = momentEntity.getLikes();
         if (likeEntityOptional.isPresent()) {
             likeEntity = likeEntityOptional.get();
             likeRepository.delete(likeEntity);
-            likes.removeIf(like -> like.getUserEntity().getId().equals(userEntity.getId()));
             resultMessage = "Moment unliked successfully";
         } else {
             likeEntity = LikeEntity.builder().userEntity(userEntity).momentEntity(momentEntity).build();
             likeEntity = likeRepository.save(likeEntity);
-            likes.add(likeEntity);
             resultMessage = "Moment liked successfully";
         }
-        momentEntity.setLikes(likes);
-        momentRepository.save(momentEntity);
 
-        ResultInfo resultInfo = ResultInfo.builder()
-                .id(likeEntity.getId())
-                .userId(likeEntity.getUserEntity().getId())
-                .momentId(likeEntity.getMomentEntity().getId())
-                .build();
+        ResultInfo resultInfo = buildResultInfo(likeEntity);
 
+        Map<String, Object> map = new HashMap<>();
         map.put("data", resultInfo);
         map.put("message", resultMessage);
 
@@ -169,5 +159,13 @@ public class MomentServiceImpl implements MomentService {
         momentEntity.setNumLikes(numLikes);
         List<LikeEntity> likeEntityList = likeRepository.findAllByMomentEntityId(momentEntity.getId());
         momentEntity.setLikes(new HashSet<>(likeEntityList));
+    }
+
+    private static ResultInfo buildResultInfo(LikeEntity likeEntity) {
+        return ResultInfo.builder()
+                .id(likeEntity.getId())
+                .userId(likeEntity.getUserEntity().getId())
+                .momentId(likeEntity.getMomentEntity().getId())
+                .build();
     }
 }

@@ -48,7 +48,7 @@ class LikeMomentIT {
                 .given("A request to like a moment")
                 .uponReceiving("A request to like a moment")
                 .pathFromProviderState(path + "${momentId}" + "/like/", path + momentId + "/like/")
-                .method("POST")
+                .method("PUT")
                 .headers(headers)
                 .willRespondWith()
                 .status(201)
@@ -60,7 +60,7 @@ class LikeMomentIT {
     @PactTestFor(providerName = PACT_PROVIDER, port = MOCK_PACT_PORT, pactVersion = PactSpecVersion.V3)
     void runTest() {
 
-        Response response = getMockRequest(headers).post(path + momentId + "/like/");
+        Response response = getMockRequest(headers).put(path + momentId + "/like/");
         assertEquals(201, response.getStatusCode());
     }
 }

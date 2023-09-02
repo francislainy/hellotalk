@@ -17,22 +17,23 @@ Feature: Moment Posting and Commenting
     And the user adds a comment to the moment with grammar correction "I enjoy learning English"
     Then the comment should be added to the list of comments for that moment
 
-  Scenario: User likes and unlikes comment belonging to another user
+  Scenario: User likes and unlikes moment belonging to another user
     Given the user creates a moment with content "I enjoy learning English"
     Then an authenticated user with username "mary@email.com" and password "Password123!" logs into the system
-    When the user with username "john@email.com" likes the moment
-    Then the moment should indicate it has received a like from the user with username "john@email.com"
+    When the user with username "mary@email.com" likes the moment
+    Then the moment should indicate it has received a like from the user with username "mary@email.com"
     And the total number of likes for the moment should increase by 1
     When the user removes his like for the moment
-    And the total number of likes for the moment should decrease by 1
+    And the total number of likes for the moment should return to 0
 
+  @debug
   Scenario: User can like and unlike their own moment
     Given the user creates a moment with content "I enjoy learning English"
     When the user with username "john@email.com" likes the moment
     Then the moment should indicate it has received a like from the user with username "john@email.com"
     And the total number of likes for the moment should increase by 1
     When the user removes his like for the moment
-    And the total number of likes for the moment should decrease by 1
+    And the total number of likes for the moment should return to 0
 
   Scenario: User edits their own moment
     And the user creates a moment with content "I enjoy learn English"

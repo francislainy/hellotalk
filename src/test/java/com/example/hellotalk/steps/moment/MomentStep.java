@@ -6,6 +6,7 @@ import com.example.hellotalk.model.comment.Comment;
 import com.example.hellotalk.model.moment.Moment;
 import com.example.hellotalk.repository.user.UserRepository;
 import com.example.hellotalk.steps.ApiStep;
+import com.example.hellotalk.steps.user.UserContext;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -30,6 +31,7 @@ public class MomentStep {
     private final RestClient restClient;
 
     private final UserRepository userRepository;
+    private final UserContext uc;
 
     @And("the user creates a moment with some basic and simple content")
     public void theUserCreatesAMomentWithSomeBasicAndSimpleContent() {
@@ -166,7 +168,20 @@ public class MomentStep {
         Moment moment = apiStep.getResponse().as(Moment.class);
         UserEntity userEntity = userRepository.findByUsername(username);
         RequestSpecification rq = apiStep.getRqWithAuth(userEntity.getUsername(), userEntity.getPassword());
-        apiStep.setResponse(rq.post("/api/v1/ht/moments/" + moment.getId() + "/like"));
+        apiStep.setResponse(rq.put("/api/v1/ht/moments/" + moment.getId() + "/like"));
+    }
+
+    @When("the user removes his like for the moment")
+    public void removeLike() {
+        Moment moment = apiStep.getResponse().as(Moment.class);
+        mc.setUpdatedMoment(moment);
+
+        UserEntity userEntity = userRepository.findByUsername(uc.getUserDB().getUsername());
+        RequestSpecification rq = apiStep.getRqWithAuth(userEntity.getUsername(), userEntity.getPassword());
+        Response response = rq.delete("/api/v1/ht/moments/" + moment.getId() + "/unlike");
+        assertEquals(200, response.getStatusCode());
+
+        apiStep.setResponse(response);
     }
 
     @When("the moment should indicate it has received a like from the user with username {string}")
@@ -183,21 +198,22 @@ public class MomentStep {
 
     @When("the total number of likes for the moment should increase by 1")
     public void momentNumberIncreases() {
+        RequestSpecification rq = apiStep.getRqWithAuth();;
+        Response response = rq.get("/api/v1/ht/moments/" + mc.getMoment().getId());
+        apiStep.setResponse(response);
+
+        mc.setUpdatedMoment(response.as(Moment.class));
+
         assertTrue(mc.getUpdatedMoment().getNumLikes() == mc.getMoment().getNumLikes() + 1);
     }
 
-    @When("the user removes his like for the moment")
-    public void removeLike() {
-        mc.setMoment(mc.getUpdatedMoment());
-        RequestSpecification rq = apiStep.getRqWithAuth();
-        Response response = rq.get("/api/v1/ht/moments/" + mc.getMoment().getId() + "/like");
-
+    @When("the total number of likes for the moment should return to 0")
+    public void removingLikeUpdatesMoment() {
+        RequestSpecification rq = apiStep.getRqWithAuth();;
+        Response response = rq.get("/api/v1/ht/moments/" + mc.getMoment().getId());
         apiStep.setResponse(response);
         mc.setUpdatedMoment(response.as(Moment.class));
-    }
 
-    @When("the total number of likes for the moment should decrease by 1")
-    public void removingLikeUpdatesMoment() {
-        assertTrue(mc.getUpdatedMoment().getNumLikes() == mc.getMoment().getNumLikes() - 1);
+        assertTrue(mc.getUpdatedMoment().getNumLikes() == 0);
     }
 }

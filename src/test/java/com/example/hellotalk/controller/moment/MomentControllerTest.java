@@ -229,11 +229,43 @@ class MomentControllerTest extends BaseDocTestConfig {
 
         String jsonResponse = jsonStringFromObject(map);
 
-        mockMvc.perform(RestDocumentationRequestBuilders.post("/api/v1/ht/moments/{momentId}/like", momentEntity.getId()).content(jsonRequest).contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(RestDocumentationRequestBuilders.put("/api/v1/ht/moments/{momentId}/like", momentEntity.getId()).content(jsonRequest).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(content().string(jsonResponse))
                 .andDo(document("like-moment",
                         resource("Like a moment")))
+                .andReturn();
+    }
+
+    @Test
+    void testUnlikeMoment() throws Exception {
+
+        MomentEntity momentEntity = MomentEntity.builder().id(randomUUID()).build();
+        UserEntity userEntity = UserEntity.builder().id(randomUUID()).build();
+        LikeEntity likeEntity = LikeEntity.builder()
+                .id(randomUUID())
+                .userEntity(userEntity)
+                .momentEntity(momentEntity)
+                .build();
+
+        ResultInfo resultInfo = ResultInfo.builder()
+                .id(likeEntity.getId())
+                .userId(likeEntity.getUserEntity().getId())
+                .momentId(likeEntity.getMomentEntity().getId())
+                .build();
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("message", "Moment unliked successfully");
+        map.put("data", resultInfo);
+
+        when(momentService.unlikeMoment(any())).thenReturn(map);
+
+        String jsonResponse = jsonStringFromObject(map);
+
+        mockMvc.perform(RestDocumentationRequestBuilders.delete("/api/v1/ht/moments/{momentId}/unlike", momentEntity.getId()).content(jsonRequest).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().is2xxSuccessful())
+                .andExpect(content().string(jsonResponse))
+                .andDo(document("unlike-moment",
+                        resource("Unlike a moment")))
                 .andReturn();
     }
 
@@ -245,7 +277,7 @@ class MomentControllerTest extends BaseDocTestConfig {
 
         when(momentService.likeMoment(any())).thenThrow(MomentAlreadyLikedException.class);
 
-        mockMvc.perform(RestDocumentationRequestBuilders.post("/api/v1/ht/moments/{momentId}/like", userId, momentId).content(jsonRequest).contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(RestDocumentationRequestBuilders.put("/api/v1/ht/moments/{momentId}/like", userId, momentId).content(jsonRequest).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isConflict())
                 .andDo(document("like-moment-throws-409-exception-when-moment-already-liked",
                         resource("Liking a moment throws exception when a moment has already been liked before")))
@@ -260,7 +292,7 @@ class MomentControllerTest extends BaseDocTestConfig {
 
         when(momentService.likeMoment(any())).thenThrow(MomentNotFoundException.class);
 
-        mockMvc.perform(RestDocumentationRequestBuilders.post("/api/v1/ht/users/{userId}/like/{momentId}", userId, momentId).content(jsonRequest).contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(RestDocumentationRequestBuilders.put("/api/v1/ht/users/{userId}/like/{momentId}", userId, momentId).content(jsonRequest).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound())
                 .andDo(document("like-moment-throws-not-found-exception-when-moment-does-not-exist",
                         resource("Liking a moment throws exception when the moment does not exist")))
@@ -275,7 +307,7 @@ class MomentControllerTest extends BaseDocTestConfig {
 
         when(momentService.likeMoment(any())).thenThrow(UserNotFoundException.class);
 
-        mockMvc.perform(RestDocumentationRequestBuilders.post("/api/v1/ht/users/{userId}/like/{momentId}", userId, momentId).content(jsonRequest).contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(RestDocumentationRequestBuilders.put("/api/v1/ht/users/{userId}/like/{momentId}", userId, momentId).content(jsonRequest).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound())
                 .andDo(document("like-moment-throws-not-found-exception-when-user-does-not-exist",
                         resource("Liking a moment throws exception when the user does not exist")))
@@ -290,7 +322,7 @@ class MomentControllerTest extends BaseDocTestConfig {
 
         when(momentService.likeMoment(any())).thenThrow(EntityBelongsToUserException.class);
 
-        mockMvc.perform(RestDocumentationRequestBuilders.post("/api/v1/ht/moments/{momentId}/like", userId, momentId).content(jsonRequest).contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(RestDocumentationRequestBuilders.put("/api/v1/ht/moments/{momentId}/like", userId, momentId).content(jsonRequest).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isForbidden())
                 .andDo(document("like-moment-throws-exception-when-user-tries-to-like-their-own-moment",
                         resource("Liking a moment throws exception when it belongs to the same user who is doing the liking")))

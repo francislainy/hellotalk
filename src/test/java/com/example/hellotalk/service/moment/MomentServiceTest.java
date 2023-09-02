@@ -302,40 +302,6 @@ class MomentServiceTest {
     }
 
     @Test
-    void testLikeMoment_MomentAlreadyLiked_RemovesExistingLikeForMoment() {
-
-        UUID userId = randomUUID();
-        UserEntity userEntity = UserEntity.builder().id(userId).build();
-        when(userService.getCurrentUser()).thenReturn(userEntity);
-
-        UUID userIdMomentCreator = randomUUID();
-        UUID momentId = randomUUID();
-        UUID likeId = randomUUID();
-
-        UserEntity userEntityMomentCreator = UserEntity.builder().id(userIdMomentCreator).build();
-        LikeEntity likeEntity = LikeEntity.builder().id(likeId).userEntity(userEntity).build();
-        Set<LikeEntity> likeEntities = new HashSet<>();
-        likeEntities.add(LikeEntity.builder().userEntity(userEntity).build());
-        MomentEntity momentEntity = MomentEntity.builder().id(momentId).userEntity(userEntityMomentCreator).likes(likeEntities).build();
-
-        likeEntity.setMomentEntity(momentEntity);
-
-        when(momentRepository.findById(any())).thenReturn(Optional.ofNullable(momentEntity));
-        when(likeRepository.findByUserEntityIdAndMomentEntityId(any(), any())).thenReturn(Optional.of(likeEntity));
-
-        assertDoesNotThrow(() -> {
-            Map<String, Object> responseMap = momentService.likeMoment(momentId);
-            ResultInfo resultInfo = (ResultInfo) responseMap.get("data");
-            assertAll(
-                    () -> assertTrue(momentService.getLikesByMoment(momentId).isEmpty()),
-                    () -> assertEquals(likeId, resultInfo.getId()),
-                    () -> assertEquals(userId, resultInfo.getUserId()),
-                    () -> assertEquals(momentId, resultInfo.getMomentId()),
-                    () -> assertEquals("Moment unliked successfully", responseMap.get("message")));
-        });
-    }
-
-    @Test
     void testLikeMoment_MomentBelongsToTheSameActionUser_DoesNotThrowException() {
 
         UUID userId = randomUUID();

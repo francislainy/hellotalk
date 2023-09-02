@@ -47,11 +47,11 @@ class UnlikeMomentIT {
         return builder
                 .given("A request to remove a like for a moment")
                 .uponReceiving("A request to remove a like for a moment")
-                .pathFromProviderState(path + "${momentId}" + "/like/", path + momentId + "/like/")
-                .method("POST")
+                .pathFromProviderState(path + "${momentId}" + "/unlike/", path + momentId + "/unlike/")
+                .method("DELETE")
                 .headers(headers)
                 .willRespondWith()
-                .status(201)
+                .status(200)
                 .body(Objects.requireNonNull(bodyReturned))
                 .toPact();
     }
@@ -60,7 +60,7 @@ class UnlikeMomentIT {
     @PactTestFor(providerName = PACT_PROVIDER, port = MOCK_PACT_PORT, pactVersion = PactSpecVersion.V3)
     void runTest() {
 
-        Response response = getMockRequest(headers).post(path + momentId + "/like/");
-        assertEquals(201, response.getStatusCode());
+        Response response = getMockRequest(headers).delete(path + momentId + "/unlike/");
+        assertEquals(200, response.getStatusCode());
     }
 }

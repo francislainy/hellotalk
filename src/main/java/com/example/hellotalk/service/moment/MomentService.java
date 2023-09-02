@@ -23,5 +23,7 @@ public interface MomentService {
 
     Map<String, Object> likeMoment(UUID momentId);
 
+    Map<String, Object> unlikeMoment(UUID momentId);
+
     List<LikeEntity> getLikesByMoment(UUID momentId);
 }

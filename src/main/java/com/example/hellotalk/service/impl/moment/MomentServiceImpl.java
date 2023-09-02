@@ -75,8 +75,7 @@ public class MomentServiceImpl implements MomentService {
                 .creationDate(ZonedDateTime.now().withZoneSameInstant(ZoneOffset.UTC))
                 .build();
         momentEntity = momentRepository.save(momentEntity);
-
-        setLikesInfo(momentEntity); /// todo: check this: 25/08/2023
+        momentEntity.setLikes(new HashSet<>());
 
         return momentMapper.toModel(momentEntity);
     }

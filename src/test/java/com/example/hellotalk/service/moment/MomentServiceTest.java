@@ -5,6 +5,7 @@ import com.example.hellotalk.entity.user.LikeEntity;
 import com.example.hellotalk.entity.user.UserEntity;
 import com.example.hellotalk.exception.EntityDoesNotBelongToUserException;
 import com.example.hellotalk.exception.MomentNotFoundException;
+import com.example.hellotalk.exception.MomentNotYetLikedException;
 import com.example.hellotalk.mapper.MomentMapper;
 import com.example.hellotalk.model.ResultInfo;
 import com.example.hellotalk.model.moment.Moment;
@@ -354,6 +355,31 @@ class MomentServiceTest {
                 () -> assertEquals(userId, resultInfo.getUserId()),
                 () -> assertEquals(momentId, resultInfo.getMomentId()),
                 () -> assertEquals("Moment liked successfully", responseMap.get("message")));
+    }
+
+    @Test
+    void testUnlikeMoment_MomentNotFound_ThrowsMomentNotFoundException() {
+        UUID momentId = UUID.randomUUID();
+        UserEntity userEntity = new UserEntity();
+        userEntity.setId(UUID.randomUUID());
+
+        when(userService.getCurrentUser()).thenReturn(userEntity);
+        when(momentRepository.existsById(momentId)).thenReturn(false);
+
+        assertThrows(MomentNotFoundException.class, () -> momentService.unlikeMoment(momentId));
+    }
+
+    @Test
+    void testUnlikeMoment_MomentNotYetLiked_ThrowsMomentNotYetLikedException() {
+        UUID momentId = UUID.randomUUID();
+        UserEntity userEntity = new UserEntity();
+        userEntity.setId(UUID.randomUUID());
+
+        when(userService.getCurrentUser()).thenReturn(userEntity);
+        when(momentRepository.existsById(momentId)).thenReturn(true);
+        when(likeRepository.findByUserEntityIdAndMomentEntityId(userEntity.getId(), momentId)).thenReturn(Optional.empty());
+
+        assertThrows(MomentNotYetLikedException.class, () -> momentService.unlikeMoment(momentId));
     }
 
     @Test

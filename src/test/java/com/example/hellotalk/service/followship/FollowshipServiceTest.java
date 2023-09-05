@@ -2,10 +2,7 @@ package com.example.hellotalk.service.followship;
 
 import com.example.hellotalk.entity.followship.FollowshipEntity;
 import com.example.hellotalk.entity.user.UserEntity;
-import com.example.hellotalk.exception.FollowshipDeletedException;
-import com.example.hellotalk.exception.FollowshipDoesNotExistException;
-import com.example.hellotalk.exception.FollowshipNotCreatedUserCantFollowThemselfException;
-import com.example.hellotalk.exception.UserNotFoundException;
+import com.example.hellotalk.exception.*;
 import com.example.hellotalk.mapper.FollowshipMapper;
 import com.example.hellotalk.model.followship.Followship;
 import com.example.hellotalk.repository.followship.FollowshipRepository;
@@ -198,7 +195,7 @@ class FollowshipServiceTest {
         when(followshipRepository.findByUserFromIdAndUserToId(any(), any())).thenReturn(Optional.of(followshipEntity));
 
         assertThrows(FollowshipDeletedException.class, () -> followshipService.createFollowship(followship));
-        verify(followshipRepository, times(1)).delete(followshipEntity);
+        verify(followshipRepository, never()).delete(followshipEntity);
     }
 
     @Test
@@ -251,6 +248,24 @@ class FollowshipServiceTest {
                 assertThrows(FollowshipNotCreatedUserCantFollowThemselfException.class, () -> followshipService.createFollowship(followship));
 
         assertEquals(FOLLOWSHIP_NOT_CREATED_USER_CANT_FOLLOW_THEMSELF, exception.getMessage());
+    }
+
+    @Test
+    void testDeleteFollowship_ValidFollowship_FollowshipRemoved() {
+
+        UserEntity userFromEntity = UserEntity.builder().id(randomUUID()).build();
+        UserEntity userToEntity = UserEntity.builder().id(randomUUID()).build();
+
+        FollowshipEntity followship = FollowshipEntity.builder()
+                .userFromEntity(userFromEntity)
+                .userToEntity(userToEntity)
+                .build();
+        when(followshipRepository.findById(any())).thenReturn(Optional.of(followship));
+        when(userService.getCurrentUser()).thenReturn(userFromEntity);
+
+        assertDoesNotThrow(() -> followshipService.deleteFollowship(followshipId));
+
+        verify(followshipRepository,times(1)).delete(followship);
     }
 
     // Helpers

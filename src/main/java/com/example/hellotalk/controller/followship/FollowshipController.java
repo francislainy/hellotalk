@@ -41,4 +41,10 @@ public class FollowshipController {
     public ResponseEntity<Object> createFollowship(@RequestBody Followship followship) {
         return new ResponseEntity<>(followshipService.createFollowship(followship), HttpStatus.CREATED);
     }
+
+    @DeleteMapping({"/{followshipId}", "/{followshipId}/"})
+    public ResponseEntity<Object> deleteFollowship(@PathVariable UUID followshipId) {
+        followshipService.deleteFollowship(followshipId);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }

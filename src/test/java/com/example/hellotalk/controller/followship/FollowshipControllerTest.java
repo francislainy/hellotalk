@@ -102,7 +102,7 @@ class FollowshipControllerTest extends BaseDocTestConfig {
     }
 
     @Test
-    void testCreateFollowship_WhenFollowingRelationshipDoesNotYetExist_ReturnsSuccess() throws Exception {
+    void testCreateFollowship_WhenFollowshipDoesNotYetExist_ReturnsSuccess() throws Exception {
         UUID userToId = randomUUID();
         UUID userFromId = randomUUID();
 
@@ -122,7 +122,7 @@ class FollowshipControllerTest extends BaseDocTestConfig {
     }
 
     @Test
-    void testCreateFollowship_WhenFollowingRelationDeletedExceptionIsThrown_ReturnsSuccess() throws Exception {
+    void testCreateFollowship_WhenFollowshipExceptionIsThrown_ReturnsSuccess() throws Exception {
         UUID userToId = randomUUID();
         UUID userFromId = randomUUID();
         Followship followship = Followship.builder().userToId(userToId).userFromId(userFromId).build();
@@ -138,7 +138,7 @@ class FollowshipControllerTest extends BaseDocTestConfig {
     }
 
     @Test
-    void testCreateFollowship_FollowingRelationshipNotCreatedException_Returns400BadRequestError() throws Exception {
+    void testCreateFollowship_FollowshipNotCreatedException_Returns400BadRequestError() throws Exception {
 
         UUID userToId = randomUUID();
         UUID userFromId = randomUUID();
@@ -153,6 +153,19 @@ class FollowshipControllerTest extends BaseDocTestConfig {
                 .andExpect(jsonPath("$.message", is(FOLLOWSHIP_NOT_CREATED_USER_CANT_FOLLOW_THEMSELF)))
                 .andDo(document("create-followship-fails-when-sender-and-receiver-users-are-the-same",
                         resource("Create a followship for a user to follow themself fails")))
+                .andReturn();
+    }
+
+    @Test
+    void testDeleteFollowship_FollowshipAlreadyExists_ReturnsSuccess() throws Exception {
+        Followship followship = Followship.builder().userToId(randomUUID()).userFromId(randomUUID()).build();
+
+        String jsonRequest = jsonStringFromObject(followship); //todo: check if this should be returned - 05/09/2023
+        mockMvc.perform(RestDocumentationRequestBuilders.delete("/api/v1/ht/followship/{followshipId}", randomUUID())
+                        .content(jsonRequest).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().is2xxSuccessful())
+                .andDo(document("unfollow-user-by-deleting-existing-followship",
+                        resource("Unfollow a user by deleting existing followship")))
                 .andReturn();
     }
 

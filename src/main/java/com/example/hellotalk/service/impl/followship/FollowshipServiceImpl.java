@@ -2,9 +2,7 @@ package com.example.hellotalk.service.impl.followship;
 
 import com.example.hellotalk.entity.followship.FollowshipEntity;
 import com.example.hellotalk.entity.user.UserEntity;
-import com.example.hellotalk.exception.FollowshipDeletedException;
-import com.example.hellotalk.exception.FollowshipNotCreatedUserCantFollowThemselfException;
-import com.example.hellotalk.exception.UserNotFoundException;
+import com.example.hellotalk.exception.*;
 import com.example.hellotalk.mapper.FollowshipMapper;
 import com.example.hellotalk.model.followship.Followship;
 import com.example.hellotalk.repository.followship.FollowshipRepository;
@@ -77,12 +75,24 @@ public class FollowshipServiceImpl implements FollowshipService {
         UUID userFromId = userFromEntity.getId();
         followshipRepository.findByUserFromIdAndUserToId(userFromId, userToId)
                 .ifPresent(f -> {
-                    followshipRepository.delete(f);
                     throw new FollowshipDeletedException(FOLLOWSHIP_ALREADY_EXISTS_EXCEPTION);
                 });
 
         FollowshipEntity followshipEntity = followshipRepository.save(followshipMapper.fromUserEntities(userFromEntity, userToEntity));
 
         return followshipMapper.toModel(followshipEntity);
+    }
+
+    @Override
+    public void deleteFollowship(UUID followshipId) {
+
+        UserEntity userEntity = userService.getCurrentUser();
+
+        FollowshipEntity followshipEntity = followshipRepository.findById(followshipId).orElseThrow(() -> new FollowshipDoesNotExistException(FOLLOWSHIP_ALREADY_EXISTS_EXCEPTION));
+        if (!followshipEntity.getUserFromEntity().getId().equals(userEntity.getId())) {
+            throw new FollowshipDoesNotBelongToUserException(FOLLOWSHIP_DOES_NOT_BELONG_TO_USER_EXCEPTION);
+        }
+
+        followshipRepository.delete(followshipEntity);
     }
 }

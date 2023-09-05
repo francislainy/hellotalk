@@ -21,6 +21,7 @@ public class AppExceptionHandler extends ResponseEntityExceptionHandler {
     public static final String FOLLOWSHIP_ALREADY_EXISTS_EXCEPTION = "FOLLOWSHIP DELETED AS IT ALREADY EXISTED";
     public static final String FOLLOWSHIP_NOT_CREATED_USER_CANT_FOLLOW_THEMSELF = "USER TRYING TO FOLLOW THEMSELF. SENDER AND RECEIVER USERS CAN'T BE THE SAME";
     public static final String FOLLOWSHIP_DOES_NOT_EXIST_EXCEPTION = "FOLLOWING RELATIONSHIP DOES NOT EXIST";
+    public static final String FOLLOWSHIP_DOES_NOT_BELONG_TO_USER_EXCEPTION = "FOLLOWING DOES NOT BELONG TO USER EXCEPTION";
 
     @ExceptionHandler(UserNotFoundException.class)
     public ResponseEntity<Object> handleUserNotFoundException(UserNotFoundException ex) {
@@ -67,4 +68,8 @@ public class AppExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(new ApiError(ex.getMessage(), BAD_REQUEST, LocalDateTime.now()), BAD_REQUEST);
     }
 
+    @ExceptionHandler(FollowshipDoesNotBelongToUserException.class)
+    public ResponseEntity<Object> handleFollowshipDoesNotBelongToUserException(FollowshipDoesNotBelongToUserException ex) {
+        return new ResponseEntity<>(new ApiError(ex.getMessage(), FORBIDDEN, LocalDateTime.now()), FORBIDDEN);
+    }
 }

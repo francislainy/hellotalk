@@ -16,4 +16,6 @@ public interface FollowshipService {
     List<Followship> getAllFollowshipsToUser(UUID userToId);
 
     Followship createFollowship(Followship followship);
+
+    void deleteFollowship(UUID followshipId);
 }

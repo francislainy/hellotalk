@@ -26,7 +26,6 @@ Feature: Moment Posting and Commenting
     When the user removes his like for the moment
     And the total number of likes for the moment should return to 0
 
-  @debug
   Scenario: User can like and unlike their own moment
     Given the user creates a moment with content "I enjoy learning English"
     When the user with username "john@email.com" likes the moment

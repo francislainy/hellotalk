@@ -59,13 +59,10 @@ public class FollowshipStep {
 
     @And("the authenticated user triggers the request to stop following the other user")
     public void theUserTriggersTheFollowingRequestToStopFollowingOtherUser() {
-        UUID userFromId = uc.getUserDB().getId();
-        UUID userToId = uc.getSecondUserDB().getId();
-
-        Followship followship = Followship.builder().userFromId(userFromId).userToId(userToId).build();
+        Followship followship = apiStep.getResponse().as(Followship.class);
 
         RequestSpecification rq = apiStep.getRqWithAuth();
-        Response response = rq.body(followship).post("/api/v1/ht/followship/");
+        Response response = rq.body(followship).delete("/api/v1/ht/followship/" + followship.getId());
         assertEquals(200, response.getStatusCode());
 
         apiStep.setResponse(response);

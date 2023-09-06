@@ -265,7 +265,7 @@ class FollowshipServiceTest {
 
         assertDoesNotThrow(() -> followshipService.deleteFollowship(followshipId));
 
-        verify(followshipRepository,times(1)).delete(followship);
+        verify(followshipRepository, times(1)).delete(followship);
     }
 
     // Helpers

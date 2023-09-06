@@ -160,9 +160,9 @@ class FollowshipControllerTest extends BaseDocTestConfig {
     void testDeleteFollowship_FollowshipAlreadyExists_ReturnsSuccess() throws Exception {
         Followship followship = Followship.builder().userToId(randomUUID()).userFromId(randomUUID()).build();
 
-        String jsonRequest = jsonStringFromObject(followship); //todo: check if this should be returned - 05/09/2023
+        String jsonRequest = jsonStringFromObject(followship); // todo: check if this should be returned - 05/09/2023
         mockMvc.perform(RestDocumentationRequestBuilders.delete("/api/v1/ht/followship/{followshipId}", randomUUID())
-                        .content(jsonRequest).contentType(MediaType.APPLICATION_JSON))
+                .content(jsonRequest).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is2xxSuccessful())
                 .andDo(document("unfollow-user-by-deleting-existing-followship",
                         resource("Unfollow a user by deleting existing followship")))

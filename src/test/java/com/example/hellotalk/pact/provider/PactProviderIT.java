@@ -183,6 +183,14 @@ class PactProviderIT extends BasePostgresConfig {
         return map;
     }
 
+    @State("A request to create a reply to a comment")
+    Map<String, Object> createReplyToComment() {
+        Map<String, Object> map = new HashMap<>();
+        map.put("momentId", "b3f6bea6-4684-403e-9c41-8704fb0600c0");
+        map.put("commentId", "a2f6bea6-4684-403e-9c41-8704fb0600c0");
+        return map;
+    }
+
     // Helpers
     private Response createUserResponse(String username, String password) {
         Hometown hometownRequest = Hometown.builder().city("anyCity").country("anyCountry").build();

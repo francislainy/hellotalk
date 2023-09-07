@@ -33,7 +33,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class CommentControllerTest extends BaseDocTestConfig {
 
-    private UUID commentId;
     private Comment commentResponse;
     private String jsonRequest;
     private String jsonResponse;
@@ -42,20 +41,16 @@ class CommentControllerTest extends BaseDocTestConfig {
     private CommentService commentService;
 
     @BeforeAll
-    void initData() {
-        commentId = randomUUID();
-        UUID userId = randomUUID();
-
+    void setUp() {
         Comment commentRequest = Comment.builder()
                 .content("anyText")
                 .build();
 
-        jsonRequest = jsonStringFromObject(commentRequest);
         commentResponse = convertToNewObject(commentRequest, Comment.class);
-        commentResponse.setId(commentId);
+        commentResponse.setId(randomUUID());
+        commentResponse.setUser(UserSnippet.builder().id(randomUUID()).build());
 
-        commentResponse.setUser(UserSnippet.builder().id(userId).build());
-
+        jsonRequest = jsonStringFromObject(commentRequest);
         jsonResponse = jsonStringFromObject(commentResponse);
     }
 
@@ -66,7 +61,7 @@ class CommentControllerTest extends BaseDocTestConfig {
         Comment comment = this.commentResponse;
         when(commentService.getComment(any())).thenReturn(comment);
 
-        mockMvc.perform(RestDocumentationRequestBuilders.get("/api/v1/ht/moments/{momentId}/comments/{commentId}", momentId, commentId))
+        mockMvc.perform(RestDocumentationRequestBuilders.get("/api/v1/ht/moments/{momentId}/comments/{commentId}", momentId, comment.getId()))
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(content().json(jsonResponse))
                 .andDo(document("get-comment",
@@ -118,7 +113,7 @@ class CommentControllerTest extends BaseDocTestConfig {
         when(commentService.updateComment(any(), any())).thenReturn(comment);
         UUID momentId = randomUUID();
 
-        mockMvc.perform(RestDocumentationRequestBuilders.put("/api/v1/ht/moments/{momentId}/comments/{commentId}", momentId, commentId)
+        mockMvc.perform(RestDocumentationRequestBuilders.put("/api/v1/ht/moments/{momentId}/comments/{commentId}", momentId, comment.getId())
                 .content(jsonRequest)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is2xxSuccessful())
@@ -135,12 +130,29 @@ class CommentControllerTest extends BaseDocTestConfig {
         UUID momentId = randomUUID();
         when(commentService.getComment(any())).thenReturn(comment);
 
-        mockMvc.perform(RestDocumentationRequestBuilders.delete("/api/v1/ht/moments/{momentId}/comments/{commentId}", momentId, commentId)
+        mockMvc.perform(RestDocumentationRequestBuilders.delete("/api/v1/ht/moments/{momentId}/comments/{commentId}", momentId, comment.getId())
                 .contentType(MediaType.APPLICATION_JSON)
-                .param("commentId", String.valueOf(commentId)))
+                .param("commentId", String.valueOf(comment.getId())))
                 .andExpect(status().is2xxSuccessful())
                 .andDo(document("delete-comment",
                         resource("Delete a comment")))
+                .andReturn();
+    }
+
+    @Test
+    void testCreateReplyToComment() throws Exception {
+
+        Comment comment = commentResponse;
+        UUID momentId = randomUUID();
+        when(commentService.replyToComment(any(), any())).thenReturn(comment);
+
+        mockMvc.perform(RestDocumentationRequestBuilders.post("/api/v1/ht/moments/{momentId}/comments/{commentId}/replies", momentId, comment.getId())
+                .content(jsonRequest)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().is2xxSuccessful())
+                .andExpect(content().json(jsonResponse))
+                .andDo(document("create-reply-comment",
+                        resource("Create a reply for a comment")))
                 .andReturn();
     }
 }

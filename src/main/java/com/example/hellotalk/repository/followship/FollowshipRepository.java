@@ -26,5 +26,4 @@ public interface FollowshipRepository extends JpaRepository<FollowshipEntity, UU
     default Optional<FollowshipEntity> findByUserFromIdAndUserToId(UUID userFromId, UUID userToId) {
         return findByUserFromEntityIdAndUserToEntityId(userFromId, userToId);
     }
-
 }

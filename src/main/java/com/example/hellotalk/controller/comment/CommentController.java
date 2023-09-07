@@ -42,4 +42,9 @@ public class CommentController {
         commentService.deleteComment(commentId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
+
+    @PostMapping({"/{momentId}/comments/{commentId}/replies", "/{momentId}/comments/{commentId}/replies/"})
+    public ResponseEntity<Object> createReplyForComment(@PathVariable UUID momentId, @PathVariable UUID commentId, @RequestBody Comment comment) {
+        return new ResponseEntity<>(commentService.replyToComment(commentId, comment), HttpStatus.CREATED);
+    }
 }

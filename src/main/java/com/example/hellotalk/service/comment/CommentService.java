@@ -16,4 +16,6 @@ public interface CommentService {
     Comment updateComment(UUID commentId, Comment comment);
 
     void deleteComment(UUID commentId);
+
+    Comment replyToComment(UUID parentCommentId, Comment replyComment);
 }

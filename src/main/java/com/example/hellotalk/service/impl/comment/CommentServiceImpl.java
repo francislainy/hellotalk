@@ -110,4 +110,28 @@ public class CommentServiceImpl implements CommentService {
         commentRepository.deleteById(commentId);
     }
 
+    @Override
+    public Comment replyToComment(UUID parentCommentId, Comment replyComment) {
+
+        UserEntity userEntity = userService.getCurrentUser();
+
+        CommentEntity parentCommentEntity = commentRepository.findById(parentCommentId)
+                .orElseThrow(() -> new CommentNotFoundException(COMMENT_NOT_FOUND_EXCEPTION));
+
+        if (!userEntity.getId().equals(parentCommentEntity.getUserEntity().getId())) {
+            throw new EntityDoesNotBelongToUserException(ENTITY_DOES_NOT_BELONG_TO_USER_EXCEPTION);
+        }
+
+        replyComment.setCommentParentId(parentCommentId);
+
+        CommentEntity childCommentEntity = commentMapper.toEntity(replyComment).toBuilder()
+                .userEntity(userEntity)
+                .creationDate(ZonedDateTime.now().withZoneSameInstant(ZoneOffset.UTC))
+                .momentEntity(parentCommentEntity.getMomentEntity())
+                .build();
+        childCommentEntity = commentRepository.save(childCommentEntity);
+
+        return commentMapper.toModel(childCommentEntity);
+    }
+
 }

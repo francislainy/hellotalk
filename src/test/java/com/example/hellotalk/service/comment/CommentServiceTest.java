@@ -51,8 +51,8 @@ class CommentServiceTest {
     private UserService userService;
 
     private final ZonedDateTime now = ZonedDateTime.parse(ZonedDateTime.now().format(ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")));
-    private ZonedDateTime creationDate = now;
-    private ZonedDateTime lastUpdatedDate = now;
+    private final ZonedDateTime creationDate = now;
+    private final ZonedDateTime lastUpdatedDate = now;
 
     @Test
     void testGetComment_ValidCommentId_ReturnsComment() {
@@ -320,12 +320,95 @@ class CommentServiceTest {
         verify(commentRepository, never()).deleteById(commentId);
     }
 
+    @Test
+    void testCreateReply_ValidCommentIdAndComment_ReturnsCreatedReply() {
+
+        UUID childCommentId = randomUUID();
+        UUID parentCommentId = randomUUID();
+        UUID userId = randomUUID();
+        UserEntity userEntity = UserEntity.builder().id(userId).build();
+        CommentEntity parentCommentEntity = getCommentEntity(parentCommentId);
+        parentCommentEntity.setUserEntity(userEntity);
+
+        CommentEntity childReplyCommentEntity = getCommentEntity(childCommentId);
+        childReplyCommentEntity.setUserEntity(userEntity);
+        childReplyCommentEntity.setParentComment(parentCommentEntity);
+
+        when(userService.getCurrentUser()).thenReturn(userEntity);
+        when(commentRepository.findById(parentCommentId)).thenReturn(Optional.of(parentCommentEntity));
+        when(commentRepository.save(any())).thenReturn(childReplyCommentEntity);
+
+        Comment comment = commentService.replyToComment(parentCommentId, commentMapper.toModel(childReplyCommentEntity));
+        assertAll(
+                () -> assertEquals(childCommentId, comment.getId()),
+                () -> assertEquals("anyText", comment.getContent()),
+                () -> assertEquals(userId.toString(), comment.getUser().getId().toString()),
+                () -> assertEquals(String.valueOf(creationDate), String.valueOf(comment.getCreationDate())),
+                () -> assertEquals(String.valueOf(lastUpdatedDate), String.valueOf(comment.getLastUpdatedDate())));
+
+        verify(userService, times(1)).getCurrentUser();
+        verify(commentRepository, times(1)).save(any(CommentEntity.class));
+    }
+
+    @Test
+    void testCreateReply_ParentCommentNotFound_ThrowsException() {
+
+        UUID childCommentId = randomUUID();
+        UUID parentCommentId = randomUUID();
+        UUID userId = randomUUID();
+
+        UserEntity userEntity = UserEntity.builder().id(userId).build();
+        CommentEntity parentCommentEntity = getCommentEntity(parentCommentId);
+        parentCommentEntity.setUserEntity(userEntity);
+
+        CommentEntity childReplyCommentEntity = getCommentEntity(childCommentId);
+        childReplyCommentEntity.setUserEntity(userEntity);
+        childReplyCommentEntity.setParentComment(parentCommentEntity);
+
+        when(userService.getCurrentUser()).thenReturn(userEntity);
+        when(commentRepository.findById(parentCommentId)).thenThrow(new CommentNotFoundException(COMMENT_NOT_FOUND_EXCEPTION));
+
+        Comment childReplyComment = commentMapper.toModel(childReplyCommentEntity);
+
+        CommentNotFoundException exception =
+                assertThrows(CommentNotFoundException.class, () -> commentService.replyToComment(parentCommentId, childReplyComment));
+
+        assertEquals(COMMENT_NOT_FOUND_EXCEPTION, exception.getMessage());
+        verify(userService, times(1)).getCurrentUser();
+        verify(commentRepository, never()).save(any(CommentEntity.class));
+    }
+
+    @Test
+    void testCreateReply_ParentCommentDoesNotBelongToUser_ThrowsException() {
+
+        UUID childCommentId = randomUUID();
+        UUID parentCommentId = randomUUID();
+        UUID userId = randomUUID();
+
+        UserEntity userEntity = UserEntity.builder().id(userId).build();
+        UserEntity userEntityParent = UserEntity.builder().id(randomUUID()).build();
+        CommentEntity parentCommentEntity = getCommentEntity(parentCommentId);
+        parentCommentEntity.setUserEntity(userEntityParent);
+
+        CommentEntity childReplyCommentEntity = getCommentEntity(childCommentId);
+        childReplyCommentEntity.setUserEntity(userEntity);
+        childReplyCommentEntity.setParentComment(parentCommentEntity);
+
+        when(userService.getCurrentUser()).thenReturn(userEntity);
+        when(commentRepository.findById(parentCommentId)).thenReturn(Optional.of(parentCommentEntity));
+
+        Comment childReplyComment = commentMapper.toModel(childReplyCommentEntity);
+
+        EntityDoesNotBelongToUserException exception =
+                assertThrows(EntityDoesNotBelongToUserException.class, () -> commentService.replyToComment(parentCommentId, childReplyComment));
+
+        assertEquals(ENTITY_DOES_NOT_BELONG_TO_USER_EXCEPTION, exception.getMessage());
+        verify(userService, times(1)).getCurrentUser();
+        verify(commentRepository, never()).save(any(CommentEntity.class));
+    }
+
     // Helpers
     private CommentEntity getCommentEntity(UUID commentId) {
-
-        ZonedDateTime now = ZonedDateTime.now();
-        creationDate = ZonedDateTime.parse(now.format(ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")));
-
         return CommentEntity.builder()
                 .id(commentId)
                 .content("anyText")

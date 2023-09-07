@@ -25,7 +25,7 @@ import static com.example.hellotalk.utils.Utils.getMockRequest;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ExtendWith(PactConsumerTestExt.class)
-class CreateCommentIT {
+class CreateReplyCommentIT {
 
     Map<String, String> headers = new HashMap<>();
 
@@ -51,14 +51,12 @@ class CreateCommentIT {
                 .stringType("creationDate", creationDate.format(formatter))
                 .object("user")
                 .uuid("id", "caf6bea6-4684-403e-9c41-8704fb0600c0")
-                .stringType("name", "anyName")
-                .stringType("username", "anyUsername")
                 .close();
 
         return builder
-                .given("A request to create a comment for a moment")
-                .uponReceiving("A request to create a comment for a moment")
-                .pathFromProviderState(path + "${momentId}" + "/comments", path + momentId + "/comments")
+                .given("A request to create a reply to a comment")
+                .uponReceiving("A request to create a reply to a comment")
+                .pathFromProviderState(path + "${momentId}" + "/comments/" + "${commentId}" + "/replies", path + momentId + "/comments/" + commentId + "/replies")
                 .body(Objects.requireNonNull(bodyReceived))
                 .method("POST")
                 .headers(headers)
@@ -72,11 +70,11 @@ class CreateCommentIT {
     @PactTestFor(providerName = PACT_PROVIDER, port = MOCK_PACT_PORT, pactVersion = PactSpecVersion.V3)
     void runTest() {
 
-        Comment comment = Comment.builder()
+        Comment replyComment = Comment.builder()
                 .content("anyText")
                 .build();
 
-        Response response = getMockRequest(headers).body(comment).post(path + momentId + "/comments");
+        Response response = getMockRequest(headers).body(replyComment).post(path + momentId + "/comments/" + commentId + "/replies");
         assertEquals(201, response.getStatusCode());
     }
 

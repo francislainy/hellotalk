@@ -29,8 +29,7 @@ public class Comment {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private UUID momentId;
 
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    private UUID commentParentId;
+    private UUID parentId;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private UserSnippet user;

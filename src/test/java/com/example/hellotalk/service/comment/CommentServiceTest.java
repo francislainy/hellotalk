@@ -331,7 +331,7 @@ class CommentServiceTest {
 
         CommentEntity childReplyCommentEntity = getCommentEntity(childCommentId);
         childReplyCommentEntity.setUserEntity(userEntity);
-        childReplyCommentEntity.setParentComment(parentCommentEntity);
+        childReplyCommentEntity.setParentCommentEntity(parentCommentEntity);
 
         when(userService.getCurrentUser()).thenReturn(userEntity);
         when(commentRepository.findById(parentCommentId)).thenReturn(Optional.of(parentCommentEntity));
@@ -362,7 +362,7 @@ class CommentServiceTest {
 
         CommentEntity childReplyCommentEntity = getCommentEntity(childCommentId);
         childReplyCommentEntity.setUserEntity(userEntity);
-        childReplyCommentEntity.setParentComment(parentCommentEntity);
+        childReplyCommentEntity.setParentCommentEntity(parentCommentEntity);
 
         when(userService.getCurrentUser()).thenReturn(userEntity);
         when(commentRepository.findById(parentCommentId)).thenThrow(new CommentNotFoundException(COMMENT_NOT_FOUND_EXCEPTION));
@@ -391,7 +391,7 @@ class CommentServiceTest {
 
         CommentEntity childReplyCommentEntity = getCommentEntity(childCommentId);
         childReplyCommentEntity.setUserEntity(userEntity);
-        childReplyCommentEntity.setParentComment(parentCommentEntity);
+        childReplyCommentEntity.setParentCommentEntity(parentCommentEntity);
 
         when(userService.getCurrentUser()).thenReturn(userEntity);
         when(commentRepository.findById(parentCommentId)).thenReturn(Optional.of(parentCommentEntity));
@@ -420,7 +420,7 @@ class CommentServiceTest {
 
         CommentEntity childReplyCommentEntity = getCommentEntity(childCommentId);
         childReplyCommentEntity.setUserEntity(userEntity);
-        childReplyCommentEntity.setParentComment(parentCommentEntity);
+        childReplyCommentEntity.setParentCommentEntity(parentCommentEntity);
 
         when(userService.getCurrentUser()).thenReturn(userEntity);
         when(commentRepository.findById(parentCommentId)).thenReturn(Optional.of(parentCommentEntity));
@@ -448,7 +448,7 @@ class CommentServiceTest {
 
         when(userService.getCurrentUser()).thenReturn(userEntity);
         when(commentRepository.findById(commentId)).thenReturn(Optional.of(parentCommentEntity));
-        when(commentRepository.findAllByParentCommentId(commentId)).thenReturn(replyEntities);
+        when(commentRepository.findAllByParentCommentEntityId(commentId)).thenReturn(replyEntities);
 
         List<Comment> replies = commentService.getRepliesForComment(momentId, commentId);
         assertEquals(replyEntities.size(), replies.size());
@@ -464,7 +464,7 @@ class CommentServiceTest {
 
         when(userService.getCurrentUser()).thenReturn(userEntity);
         when(commentRepository.findById(commentId)).thenReturn(Optional.of(parentCommentEntity));
-        when(commentRepository.findAllByParentCommentId(commentId)).thenReturn(emptyList());
+        when(commentRepository.findAllByParentCommentEntityId(commentId)).thenReturn(emptyList());
 
         List<Comment> replies = commentService.getRepliesForComment(momentId, commentId);
         assertEquals(0, replies.size());

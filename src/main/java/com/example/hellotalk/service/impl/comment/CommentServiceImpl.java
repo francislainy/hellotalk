@@ -67,6 +67,7 @@ public class CommentServiceImpl implements CommentService {
                 .userEntity(userEntity)
                 .creationDate(ZonedDateTime.now().withZoneSameInstant(ZoneOffset.UTC))
                 .momentEntity(momentEntity)
+                .parentCommentEntity(null)
                 .build();
         commentEntity = commentRepository.save(commentEntity);
 
@@ -124,12 +125,13 @@ public class CommentServiceImpl implements CommentService {
             throw new EntityDoesNotBelongToUserException(ENTITY_DOES_NOT_BELONG_TO_USER_EXCEPTION);
         }
 
-        replyComment.setCommentParentId(parentCommentId);
+        replyComment.setParentId(parentCommentId);
 
         CommentEntity childCommentEntity = commentMapper.toEntity(replyComment).toBuilder()
                 .userEntity(userEntity)
                 .creationDate(ZonedDateTime.now().withZoneSameInstant(ZoneOffset.UTC))
                 .momentEntity(parentCommentEntity.getMomentEntity())
+                .parentCommentEntity(parentCommentEntity)
                 .build();
         childCommentEntity = commentRepository.save(childCommentEntity);
 
@@ -148,7 +150,7 @@ public class CommentServiceImpl implements CommentService {
             throw new EntityDoesNotBelongToUserException(ENTITY_DOES_NOT_BELONG_TO_USER_EXCEPTION);
         }
 
-        return commentRepository.findAllByParentCommentId(commentId)
+        return commentRepository.findAllByParentCommentEntityId(commentId)
                 .stream()
                 .map(commentMapper::toModel)
                 .toList();

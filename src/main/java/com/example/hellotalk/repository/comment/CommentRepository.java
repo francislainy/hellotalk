@@ -10,5 +10,5 @@ public interface CommentRepository extends JpaRepository<CommentEntity, UUID> {
 
     List<CommentEntity> findAllByMomentEntityId(UUID momentId);
 
-    List<CommentEntity> findAllByParentCommentId(UUID commentId);
+    List<CommentEntity> findAllByParentCommentEntityId(UUID commentId);
 }

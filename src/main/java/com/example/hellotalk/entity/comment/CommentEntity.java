@@ -42,9 +42,9 @@ public class CommentEntity {
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "parent_id", referencedColumnName = "id")
-    private CommentEntity parentComment;
+    private CommentEntity parentCommentEntity;
 
-    @OneToMany(mappedBy = "parentComment", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "parentCommentEntity", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<CommentEntity> replies;
 
 }

@@ -77,7 +77,7 @@ class CreateReplyCommentIT {
                 .content("anyText")
                 .build();
 
-        Response response = getMockRequest(headers).body(replyComment).post(path + momentId + "/comments/" + commentId);
+        Response response = getMockRequest(headers).body(replyComment).post(path + momentId + "/comments/" + commentId + "/replies");
         assertEquals(201, response.getStatusCode());
     }
 

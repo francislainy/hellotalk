@@ -21,9 +21,8 @@ import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.ZonedDateTime;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
+import static java.util.Collections.emptyList;
 
 import static com.example.hellotalk.exception.AppExceptionHandler.*;
 import static java.time.format.DateTimeFormatter.ofPattern;
@@ -379,6 +378,35 @@ class CommentServiceTest {
     }
 
     @Test
+    void testGetReply_ParentCommentExist_ReturnsValidReply() {
+
+        UUID childCommentId = randomUUID();
+        UUID parentCommentId = randomUUID();
+        UUID userId = randomUUID();
+
+        UserEntity userEntity = UserEntity.builder().id(userId).build();
+        UserEntity userEntityParent = UserEntity.builder().id(randomUUID()).build();
+        CommentEntity parentCommentEntity = getCommentEntity(parentCommentId);
+        parentCommentEntity.setUserEntity(userEntityParent);
+
+        CommentEntity childReplyCommentEntity = getCommentEntity(childCommentId);
+        childReplyCommentEntity.setUserEntity(userEntity);
+        childReplyCommentEntity.setParentComment(parentCommentEntity);
+
+        when(userService.getCurrentUser()).thenReturn(userEntity);
+        when(commentRepository.findById(parentCommentId)).thenReturn(Optional.of(parentCommentEntity));
+
+        Comment childReplyComment = commentMapper.toModel(childReplyCommentEntity);
+
+        EntityDoesNotBelongToUserException exception =
+                assertThrows(EntityDoesNotBelongToUserException.class, () -> commentService.replyToComment(parentCommentId, childReplyComment));
+
+        assertEquals(ENTITY_DOES_NOT_BELONG_TO_USER_EXCEPTION, exception.getMessage());
+        verify(userService, times(1)).getCurrentUser();
+        verify(commentRepository, never()).save(any(CommentEntity.class));
+    }
+
+    @Test
     void testCreateReply_ParentCommentDoesNotBelongToUser_ThrowsException() {
 
         UUID childCommentId = randomUUID();
@@ -405,6 +433,76 @@ class CommentServiceTest {
         assertEquals(ENTITY_DOES_NOT_BELONG_TO_USER_EXCEPTION, exception.getMessage());
         verify(userService, times(1)).getCurrentUser();
         verify(commentRepository, never()).save(any(CommentEntity.class));
+    }
+
+    @Test
+    void testGetRepliesForComment_ValidCommentAndExistingReplies_ReturnsListOfReplies() {
+        UUID momentId = randomUUID();
+        UUID commentId = randomUUID();
+
+        UserEntity userEntity = UserEntity.builder().id(randomUUID()).build();
+        CommentEntity parentCommentEntity = CommentEntity.builder().id(commentId).userEntity(userEntity).build();
+        CommentEntity commentEntityReply1 = CommentEntity.builder().id(commentId).userEntity(userEntity).build();
+        CommentEntity commentEntityReply2 = CommentEntity.builder().id(commentId).userEntity(userEntity).build();
+        List<CommentEntity> replyEntities = List.of(commentEntityReply1, commentEntityReply2);
+
+        when(userService.getCurrentUser()).thenReturn(userEntity);
+        when(commentRepository.findById(commentId)).thenReturn(Optional.of(parentCommentEntity));
+        when(commentRepository.findAllByParentCommentId(commentId)).thenReturn(replyEntities);
+
+        List<Comment> replies = commentService.getRepliesForComment(momentId, commentId);
+        assertEquals(replyEntities.size(), replies.size());
+    }
+
+    @Test
+    void testGetRepliesForComment_ValidCommentButNoReplies_ReturnsEmptyList() {
+        UUID momentId = randomUUID();
+        UUID commentId = randomUUID();
+
+        UserEntity userEntity = UserEntity.builder().id(randomUUID()).build();
+        CommentEntity parentCommentEntity = CommentEntity.builder().id(commentId).userEntity(userEntity).build();
+
+        when(userService.getCurrentUser()).thenReturn(userEntity);
+        when(commentRepository.findById(commentId)).thenReturn(Optional.of(parentCommentEntity));
+        when(commentRepository.findAllByParentCommentId(commentId)).thenReturn(emptyList());
+
+        List<Comment> replies = commentService.getRepliesForComment(momentId, commentId);
+        assertEquals(0, replies.size());
+    }
+
+    @Test
+    void testGetRepliesForComment_CommentNotFound_ThrowsException() {
+        UUID momentId = UUID.randomUUID();
+        UUID commentId = UUID.randomUUID();
+
+        UserEntity userEntity = UserEntity.builder().id(randomUUID()).build();
+
+        when(userService.getCurrentUser()).thenReturn(userEntity);
+        when(commentRepository.findById(commentId)).thenReturn(Optional.empty());
+
+        CommentNotFoundException exception = assertThrows(CommentNotFoundException.class,
+                () -> commentService.getRepliesForComment(momentId, commentId));
+
+        assertEquals(COMMENT_NOT_FOUND_EXCEPTION, exception.getMessage());
+    }
+
+    @Test
+    void testGetRepliesForComment_EntityDoesNotBelongToUser_ThrowsException() {
+        UUID momentId = UUID.randomUUID();
+        UUID commentId = UUID.randomUUID();
+
+        UserEntity userEntity = UserEntity.builder().id(randomUUID()).build();
+        UserEntity anotherUserEntity = UserEntity.builder().id(randomUUID()).build();
+
+        CommentEntity commentEntity = CommentEntity.builder().id(commentId).userEntity(anotherUserEntity).build();
+
+        when(userService.getCurrentUser()).thenReturn(userEntity);
+        when(commentRepository.findById(commentId)).thenReturn(Optional.of(commentEntity));
+
+        EntityDoesNotBelongToUserException exception = assertThrows(EntityDoesNotBelongToUserException.class,
+                () -> commentService.getRepliesForComment(momentId, commentId));
+
+        assertEquals(ENTITY_DOES_NOT_BELONG_TO_USER_EXCEPTION, exception.getMessage());
     }
 
     // Helpers

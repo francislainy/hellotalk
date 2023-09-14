@@ -22,6 +22,7 @@ import java.util.UUID;
 
 import static com.example.hellotalk.config.Constants.*;
 import static com.example.hellotalk.utils.Utils.getMockRequest;
+import static java.util.UUID.randomUUID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ExtendWith(PactConsumerTestExt.class)
@@ -30,8 +31,8 @@ class CreateCommentIT {
     Map<String, String> headers = new HashMap<>();
 
     String path = "/api/v1/ht/moments/";
-    UUID momentId = UUID.fromString("1bfff94a-b70e-4b39-bd2a-be1c0f898589");
-    UUID commentId = UUID.fromString("2dfff94a-b70e-4b39-bd2a-be1c0f898565");
+    UUID momentId = randomUUID();
+    UUID commentId = randomUUID();
 
     @Pact(provider = PACT_PROVIDER, consumer = PACT_CONSUMER)
     public RequestResponsePact createPact(PactDslWithProvider builder) {
@@ -47,6 +48,7 @@ class CreateCommentIT {
 
         DslPart bodyReturned = new PactDslJsonBody()
                 .uuid("id", commentId)
+                .nullValue("parentId")
                 .stringType("content", "anyText")
                 .stringType("creationDate", creationDate.format(formatter))
                 .object("user")

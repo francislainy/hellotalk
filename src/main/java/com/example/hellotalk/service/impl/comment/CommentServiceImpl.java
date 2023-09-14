@@ -14,6 +14,7 @@ import com.example.hellotalk.service.comment.CommentService;
 import com.example.hellotalk.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
@@ -25,6 +26,7 @@ import static com.example.hellotalk.exception.AppExceptionHandler.*;
 
 @RequiredArgsConstructor
 @Service
+@Transactional
 public class CommentServiceImpl implements CommentService {
 
     private final CommentRepository commentRepository;
@@ -132,6 +134,24 @@ public class CommentServiceImpl implements CommentService {
         childCommentEntity = commentRepository.save(childCommentEntity);
 
         return commentMapper.toModel(childCommentEntity);
+    }
+
+    @Override
+    public List<Comment> getRepliesForComment(UUID momentId, UUID commentId) {
+
+        UserEntity userEntity = userService.getCurrentUser();
+
+        CommentEntity commentEntity = commentRepository.findById(commentId)
+                .orElseThrow(() -> new CommentNotFoundException(COMMENT_NOT_FOUND_EXCEPTION));
+
+        if (!userEntity.getId().equals(commentEntity.getUserEntity().getId())) {
+            throw new EntityDoesNotBelongToUserException(ENTITY_DOES_NOT_BELONG_TO_USER_EXCEPTION);
+        }
+
+        return commentRepository.findAllByParentCommentId(commentId)
+                .stream()
+                .map(commentMapper::toModel)
+                .toList();
     }
 
 }

@@ -1,14 +1,13 @@
 package com.example.hellotalk.pact.consumer.comment;
 
 import au.com.dius.pact.consumer.dsl.DslPart;
-import au.com.dius.pact.consumer.dsl.PactDslJsonBody;
+import au.com.dius.pact.consumer.dsl.PactDslJsonArray;
 import au.com.dius.pact.consumer.dsl.PactDslWithProvider;
 import au.com.dius.pact.consumer.junit5.PactConsumerTestExt;
 import au.com.dius.pact.consumer.junit5.PactTestFor;
 import au.com.dius.pact.core.model.PactSpecVersion;
 import au.com.dius.pact.core.model.RequestResponsePact;
 import au.com.dius.pact.core.model.annotations.Pact;
-import com.example.hellotalk.model.comment.Comment;
 import io.restassured.response.Response;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -26,10 +25,9 @@ import static java.util.UUID.randomUUID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ExtendWith(PactConsumerTestExt.class)
-class CreateReplyCommentIT {
+class GetReplyCommentsIT {
 
     Map<String, String> headers = new HashMap<>();
-
     String path = "/api/v1/ht/moments/";
     UUID momentId = randomUUID();
     UUID parentId = randomUUID();
@@ -42,29 +40,30 @@ class CreateReplyCommentIT {
 
         DateTimeFormatter formatter = DateTimeFormatter.ISO_ZONED_DATE_TIME;
         ZonedDateTime creationDate = ZonedDateTime.parse("2022-12-31T23:59:59Z", formatter);
+        ZonedDateTime lastUpdatedDate = ZonedDateTime.parse("2023-12-31T23:59:59Z", formatter);
 
-        DslPart bodyReceived = new PactDslJsonBody()
-                .stringType("content", "anyText")
-                .close();
-
-        DslPart bodyReturned = new PactDslJsonBody()
+        DslPart bodyReturned = PactDslJsonArray.arrayEachLike()
                 .uuid("id", commentId)
-                .uuid("parentId", parentId)
                 .stringType("content", "anyText")
                 .stringType("creationDate", creationDate.format(formatter))
+                .stringType("lastUpdatedDate", lastUpdatedDate.format(formatter))
+                .uuid("momentId", momentId)
+                .uuid("parentId", parentId)
                 .object("user")
                 .uuid("id", "caf6bea6-4684-403e-9c41-8704fb0600c0")
+                .stringType("name", "anyName")
+                .stringType("username", "anyUsername")
+                .closeObject()
                 .close();
 
         return builder
-                .given("A request to create a reply to a comment")
-                .uponReceiving("A request to create a reply to a comment")
+                .given("A request to retrieve replies for a comment")
+                .uponReceiving("A request to retrieve replies for a comment")
                 .pathFromProviderState(path + "${momentId}" + "/comments/" + "${commentId}" + "/replies", path + momentId + "/comments/" + commentId + "/replies")
-                .body(Objects.requireNonNull(bodyReceived))
-                .method("POST")
+                .method("GET")
                 .headers(headers)
                 .willRespondWith()
-                .status(201)
+                .status(200)
                 .body(Objects.requireNonNull(bodyReturned))
                 .toPact();
     }
@@ -73,12 +72,8 @@ class CreateReplyCommentIT {
     @PactTestFor(providerName = PACT_PROVIDER, port = MOCK_PACT_PORT, pactVersion = PactSpecVersion.V3)
     void runTest() {
 
-        Comment replyComment = Comment.builder()
-                .content("anyText")
-                .build();
-
-        Response response = getMockRequest(headers).body(replyComment).post(path + momentId + "/comments/" + commentId);
-        assertEquals(201, response.getStatusCode());
+        Response response = getMockRequest(headers).get(path + momentId + "/comments/" + commentId + "/replies");
+        assertEquals(200, response.getStatusCode());
     }
 
 }

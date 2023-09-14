@@ -18,4 +18,6 @@ public interface CommentService {
     void deleteComment(UUID commentId);
 
     Comment replyToComment(UUID parentCommentId, Comment replyComment);
+
+    List<Comment> getRepliesForComment(UUID momentId, UUID commentId);
 }

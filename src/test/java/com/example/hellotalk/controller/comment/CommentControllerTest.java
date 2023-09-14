@@ -1,6 +1,8 @@
 package com.example.hellotalk.controller.comment;
 
 import com.example.hellotalk.config.BaseDocTestConfig;
+import com.example.hellotalk.exception.CommentNotFoundException;
+import com.example.hellotalk.exception.EntityDoesNotBelongToUserException;
 import com.example.hellotalk.model.comment.Comment;
 import com.example.hellotalk.model.user.UserSnippet;
 import com.example.hellotalk.service.comment.CommentService;
@@ -34,8 +36,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class CommentControllerTest extends BaseDocTestConfig {
 
     private Comment commentResponse;
-    private String jsonRequest;
-    private String jsonResponse;
+    private String commentRequestJson;
+    private String commentResponseJson;
 
     @MockBean
     private CommentService commentService;
@@ -50,8 +52,8 @@ class CommentControllerTest extends BaseDocTestConfig {
         commentResponse.setId(randomUUID());
         commentResponse.setUser(UserSnippet.builder().id(randomUUID()).build());
 
-        jsonRequest = jsonStringFromObject(commentRequest);
-        jsonResponse = jsonStringFromObject(commentResponse);
+        commentRequestJson = jsonStringFromObject(commentRequest);
+        commentResponseJson = jsonStringFromObject(commentResponse);
     }
 
     @Test
@@ -63,7 +65,7 @@ class CommentControllerTest extends BaseDocTestConfig {
 
         mockMvc.perform(RestDocumentationRequestBuilders.get("/api/v1/ht/moments/{momentId}/comments/{commentId}", momentId, comment.getId()))
                 .andExpect(status().is2xxSuccessful())
-                .andExpect(content().json(jsonResponse))
+                .andExpect(content().json(commentResponseJson))
                 .andDo(document("get-comment",
                         resource("Get a comment's details")))
                 .andReturn();
@@ -97,10 +99,10 @@ class CommentControllerTest extends BaseDocTestConfig {
         when(commentService.createComment(any(), any())).thenReturn(comment);
 
         mockMvc.perform(RestDocumentationRequestBuilders.post("/api/v1/ht/moments/{momentId}/comments", momentId)
-                .content(jsonRequest)
+                .content(commentRequestJson)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is2xxSuccessful())
-                .andExpect(content().json(jsonResponse))
+                .andExpect(content().json(commentResponseJson))
                 .andDo(document("create-comment",
                         resource("Create a comment for a moment")))
                 .andReturn();
@@ -114,10 +116,10 @@ class CommentControllerTest extends BaseDocTestConfig {
         UUID momentId = randomUUID();
 
         mockMvc.perform(RestDocumentationRequestBuilders.put("/api/v1/ht/moments/{momentId}/comments/{commentId}", momentId, comment.getId())
-                .content(jsonRequest)
+                .content(commentRequestJson)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is2xxSuccessful())
-                .andExpect(content().json(jsonResponse))
+                .andExpect(content().json(commentResponseJson))
                 .andDo(document("update-comment",
                         resource("Update a comment's details")))
                 .andReturn();
@@ -147,12 +149,95 @@ class CommentControllerTest extends BaseDocTestConfig {
         when(commentService.replyToComment(any(), any())).thenReturn(comment);
 
         mockMvc.perform(RestDocumentationRequestBuilders.post("/api/v1/ht/moments/{momentId}/comments/{commentId}/replies", momentId, comment.getId())
-                .content(jsonRequest)
+                .content(commentRequestJson)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is2xxSuccessful())
-                .andExpect(content().json(jsonResponse))
+                .andExpect(content().json(commentResponseJson))
                 .andDo(document("create-reply-comment",
                         resource("Create a reply for a comment")))
+                .andReturn();
+    }
+
+    @Test
+    void testCreateReplyToComment_ParentCommentDoesNotBelongToUser_ReturnsForbiddenStatusCode() throws Exception {
+
+        Comment comment = commentResponse;
+        UUID momentId = randomUUID();
+        when(commentService.replyToComment(any(), any())).thenThrow(EntityDoesNotBelongToUserException.class);
+
+        mockMvc.perform(RestDocumentationRequestBuilders.post("/api/v1/ht/moments/{momentId}/comments/{commentId}/replies", momentId, comment.getId())
+                .content(commentRequestJson)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isForbidden())
+                .andDo(document("create-reply-comment-error-when-user-not-found",
+                        resource("Create a reply for a comment returns error when user not found")))
+                .andReturn();
+    }
+
+    @Test
+    void testCreateReplyToComment_ParentCommentNotFound_ReturnsFoundStatusCode() throws Exception {
+
+        Comment comment = commentResponse;
+        UUID momentId = randomUUID();
+        when(commentService.replyToComment(any(), any())).thenThrow(CommentNotFoundException.class);
+
+        mockMvc.perform(RestDocumentationRequestBuilders.post("/api/v1/ht/moments/{momentId}/comments/{commentId}/replies", momentId, comment.getId())
+                .content(commentRequestJson)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound())
+                .andDo(document("create-reply-comment-error-when-user-not-found",
+                        resource("Create a reply for a comment returns error when user not found")))
+                .andReturn();
+    }
+
+    @Test
+    void testGetRepliesForComment() throws Exception {
+
+        Comment comment = commentResponse;
+        UUID momentId = randomUUID();
+        List<Comment> commentList = List.of(comment);
+        String commentListJson = jsonStringFromObject(commentList);
+
+        when(commentService.getRepliesForComment(any(), any())).thenReturn(commentList);
+
+        mockMvc.perform(RestDocumentationRequestBuilders.get("/api/v1/ht/moments/{momentId}/comments/{commentId}/replies", momentId, comment.getId())
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().is2xxSuccessful())
+                .andExpect(content().json(commentListJson))
+                .andDo(document("get-replies-comment",
+                        resource("Get the replies for a comment")))
+                .andReturn();
+    }
+
+    @Test
+    void testGetRepliesForComment_ParentCommentDoesNotBelongToUser_ReturnsForbiddenStatusCode() throws Exception {
+
+        Comment comment = commentResponse;
+        UUID momentId = randomUUID();
+
+        when(commentService.getRepliesForComment(any(), any())).thenThrow(EntityDoesNotBelongToUserException.class);
+
+        mockMvc.perform(RestDocumentationRequestBuilders.get("/api/v1/ht/moments/{momentId}/comments/{commentId}/replies", momentId, comment.getId())
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isForbidden())
+                .andDo(document("get-replies-comment-not-found-exception-when-user-does-not-exist",
+                        resource("Getting replies for a comment throws not found when the user does not exist")))
+                .andReturn();
+    }
+
+    @Test
+    void testGetRepliesForComment_ParentCommentDoesNotExist_Returns404NotFound() throws Exception {
+
+        Comment comment = commentResponse;
+        UUID momentId = randomUUID();
+
+        when(commentService.getRepliesForComment(any(), any())).thenThrow(CommentNotFoundException.class);
+
+        mockMvc.perform(RestDocumentationRequestBuilders.get("/api/v1/ht/moments/{momentId}/comments/{commentId}/replies", momentId, comment.getId())
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound())
+                .andDo(document("get-replies-comment-not-found-exception-when-user-does-not-exist",
+                        resource("Getting replies for a comment throws not found when the user does not exist")))
                 .andReturn();
     }
 }

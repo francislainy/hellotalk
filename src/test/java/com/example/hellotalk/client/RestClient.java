@@ -49,7 +49,6 @@ public class RestClient {
                 }));
 
         return given()
-                // .auth().basic(USERNAME, PASSWORD)
                 .config(config)
                 .port(port)
                 .contentType(ContentType.JSON)

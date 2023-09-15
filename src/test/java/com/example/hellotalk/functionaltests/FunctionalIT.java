@@ -4,6 +4,7 @@ import com.example.hellotalk.config.BasePostgresConfig;
 import com.example.hellotalk.model.HobbyAndInterest;
 import com.example.hellotalk.model.Hometown;
 import com.example.hellotalk.model.user.User;
+import com.example.hellotalk.service.impl.user.UserServiceImpl;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.restassured.http.ContentType;
@@ -12,6 +13,7 @@ import io.restassured.specification.RequestSpecification;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 
@@ -25,7 +27,6 @@ import static org.junit.jupiter.api.Assertions.*;
 /*
  * mvn -Dtest="functionaltests.*IT" integration-test
  */
-
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class FunctionalIT extends BasePostgresConfig {

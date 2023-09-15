@@ -20,9 +20,9 @@ public interface FollowshipMapper {
     FollowshipEntity toEntity(Followship followship);
 
     default FollowshipEntity fromUserEntities(UserEntity userFrom, UserEntity userTo) {
-        Followship followship = new Followship();
-        followship.setUserFromId(userFrom.getId());
-        followship.setUserToId(userTo.getId());
-        return toEntity(followship);
+        return toEntity(Followship.builder()
+                .userFromId(userFrom.getId())
+                .userToId(userTo.getId())
+                .build());
     }
 }

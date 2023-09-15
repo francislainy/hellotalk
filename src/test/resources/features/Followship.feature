@@ -13,7 +13,6 @@ Feature: Following/Follower relationships
     And the followed user should have their list of followers updated to include the new follower
     And I delete the followship
 
-    @debug
   Scenario: User can stop following another user
     When the authenticated user triggers the request to follow another user
     Then The creation request is successful

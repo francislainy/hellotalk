@@ -82,7 +82,6 @@ class UserIT extends BasePostgresConfig {
         // And I validate the response for the get users endpoint against the database
         assertThat(List.of(user1, user2)).usingRecursiveComparison()
                 .ignoringFields("followerOf", "hometown", "hobbyAndInterests", "followedBy")
-
                 .isEqualTo(dbClient.getUsers());
     }
 

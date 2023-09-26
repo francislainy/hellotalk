@@ -75,7 +75,7 @@ public class FollowshipServiceImpl implements FollowshipService {
         UUID userFromId = userFromEntity.getId();
         followshipRepository.findByUserFromIdAndUserToId(userFromId, userToId)
                 .ifPresent(f -> {
-                    throw new FollowshipDeletedException(FOLLOWSHIP_ALREADY_EXISTS_EXCEPTION);
+                    throw new FollowshipAlreadyExistsException(FOLLOWSHIP_ALREADY_EXISTS_EXCEPTION);
                 });
 
         FollowshipEntity followshipEntity = followshipRepository.save(followshipMapper.fromUserEntities(userFromEntity, userToEntity));

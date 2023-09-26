@@ -1,7 +1,7 @@
 package com.example.hellotalk.controller.followship;
 
 import com.example.hellotalk.config.BaseDocTestConfig;
-import com.example.hellotalk.exception.FollowshipDeletedException;
+import com.example.hellotalk.exception.FollowshipAlreadyExistsException;
 import com.example.hellotalk.exception.FollowshipNotCreatedUserCantFollowThemselfException;
 import com.example.hellotalk.model.followship.Followship;
 import com.example.hellotalk.service.followship.FollowshipService;
@@ -122,18 +122,18 @@ class FollowshipControllerTest extends BaseDocTestConfig {
     }
 
     @Test
-    void testCreateFollowship_WhenFollowshipExceptionIsThrown_ReturnsSuccess() throws Exception {
+    void testCreateFollowship_WhenFollowshipExceptionIsThrown_Returns409Conflict() throws Exception {
         UUID userToId = randomUUID();
         UUID userFromId = randomUUID();
         Followship followship = Followship.builder().userToId(userToId).userFromId(userFromId).build();
 
-        when(followshipService.createFollowship(any())).thenThrow(FollowshipDeletedException.class);
+        when(followshipService.createFollowship(any())).thenThrow(FollowshipAlreadyExistsException.class);
 
         String jsonRequest = jsonStringFromObject(followship);
         mockMvc.perform(RestDocumentationRequestBuilders.post("/api/v1/ht/followship/").content(jsonRequest).contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().is2xxSuccessful())
-                .andDo(document("unfollow-user-by-deleting-existing-followship",
-                        resource("Unfollow a user by deleting existing followship")))
+                .andExpect(status().isConflict())
+                .andDo(document("exception-when-followship-already-exists",
+                        resource("Can't create a followship that already exists")))
                 .andReturn();
     }
 

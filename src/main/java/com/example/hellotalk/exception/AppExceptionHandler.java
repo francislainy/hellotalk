@@ -18,7 +18,7 @@ public class AppExceptionHandler extends ResponseEntityExceptionHandler {
     public static final String COMMENT_NOT_FOUND_EXCEPTION = "NO COMMENT FOUND WITH THIS ID";
     public static final String MOMENT_ALREADY_LIKED_EXCEPTION = "MOMENT ALREADY LIKED";
     public static final String MOMENT_NOT_YET_LIKED_EXCEPTION = "MOMENT NOT YET LIKED";
-    public static final String FOLLOWSHIP_ALREADY_EXISTS_EXCEPTION = "FOLLOWSHIP DELETED AS IT ALREADY EXISTED";
+    public static final String FOLLOWSHIP_ALREADY_EXISTS_EXCEPTION = "FOLLOWSHIP ALREADY EXISTS";
     public static final String FOLLOWSHIP_NOT_CREATED_USER_CANT_FOLLOW_THEMSELF = "USER TRYING TO FOLLOW THEMSELF. SENDER AND RECEIVER USERS CAN'T BE THE SAME";
     public static final String FOLLOWSHIP_DOES_NOT_EXIST_EXCEPTION = "FOLLOWING RELATIONSHIP DOES NOT EXIST";
     public static final String FOLLOWSHIP_DOES_NOT_BELONG_TO_USER_EXCEPTION = "FOLLOWING DOES NOT BELONG TO USER EXCEPTION";
@@ -58,9 +58,9 @@ public class AppExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(new ApiError(ex.getMessage(), FORBIDDEN, LocalDateTime.now()), FORBIDDEN);
     }
 
-    @ExceptionHandler(FollowshipDeletedException.class)
-    public ResponseEntity<Object> handleFollowshipDeletedException(FollowshipDeletedException ex) {
-        return new ResponseEntity<>(new ApiError(ex.getMessage(), OK, LocalDateTime.now()), OK);
+    @ExceptionHandler(FollowshipAlreadyExistsException.class)
+    public ResponseEntity<Object> handleFollowshipDeletedException(FollowshipAlreadyExistsException ex) {
+        return new ResponseEntity<>(new ApiError(ex.getMessage(), CONFLICT, LocalDateTime.now()), CONFLICT);
     }
 
     @ExceptionHandler(FollowshipNotCreatedUserCantFollowThemselfException.class)

@@ -88,7 +88,7 @@ public class FollowshipServiceImpl implements FollowshipService {
 
         UserEntity userEntity = userService.getCurrentUser();
 
-        FollowshipEntity followshipEntity = followshipRepository.findById(followshipId).orElseThrow(() -> new FollowshipDoesNotExistException(FOLLOWSHIP_ALREADY_EXISTS_EXCEPTION));
+        FollowshipEntity followshipEntity = followshipRepository.findById(followshipId).orElseThrow(() -> new FollowshipDoesNotExistException(FOLLOWSHIP_DOES_NOT_EXIST_EXCEPTION));
         if (!followshipEntity.getUserFromEntity().getId().equals(userEntity.getId())) {
             throw new FollowshipDoesNotBelongToUserException(FOLLOWSHIP_DOES_NOT_BELONG_TO_USER_EXCEPTION);
         }

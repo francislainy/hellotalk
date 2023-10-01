@@ -194,7 +194,7 @@ class FollowshipServiceTest {
         when(userRepository.findById(userToEntity.getId())).thenReturn(Optional.of(userToEntity));
         when(followshipRepository.findByUserFromIdAndUserToId(any(), any())).thenReturn(Optional.of(followshipEntity));
 
-        assertThrows(FollowshipDeletedException.class, () -> followshipService.createFollowship(followship));
+        assertThrows(FollowshipAlreadyExistsException.class, () -> followshipService.createFollowship(followship));
         verify(followshipRepository, never()).delete(followshipEntity);
     }
 

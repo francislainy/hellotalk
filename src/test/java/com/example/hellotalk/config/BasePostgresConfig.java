@@ -1,17 +1,21 @@
 package com.example.hellotalk.config;
 
-import org.junit.jupiter.api.BeforeAll;
-import org.springframework.test.context.ActiveProfiles;
+import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
+import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
-@ActiveProfiles("test")
+@Testcontainers
 public class BasePostgresConfig {
 
     @Container
-    public static PostgresSqlContainer postgres = PostgresSqlContainer.getInstance();
+    @ServiceConnection
+    static PostgreSQLContainer<?> postgres;
 
-    @BeforeAll
-    public static void init() {
+    static {
+        postgres = new PostgreSQLContainer<>("postgres:13.5");
         postgres.start();
     }
+
 }
+

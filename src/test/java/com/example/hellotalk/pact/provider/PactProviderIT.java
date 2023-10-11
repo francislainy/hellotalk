@@ -199,8 +199,15 @@ class PactProviderIT extends BasePostgresConfig {
         return map;
     }
 
+    @State("A message exists")
+    Map<String, Object> mapMessage() {
+        Map<String, Object> map = new HashMap<>();
+        map.put("messageId", "a3f6bea6-4684-403e-9c41-8704fb0600c0");
+        return map;
+    }
+
     // Helpers
-    private Response createUserResponse(String username, String password) {
+    private void createUserResponse(String username, String password) {
         Hometown hometownRequest = Hometown.builder().city("anyCity").country("anyCountry").build();
         Hometown hometownResponse = convertToNewObject(hometownRequest, Hometown.class);
         hometownResponse.setId(randomUUID());
@@ -229,7 +236,5 @@ class PactProviderIT extends BasePostgresConfig {
 
         Response response = rq.body(user).post("/api/v1/ht/users");
         assertEquals(201, response.getStatusCode());
-
-        return response;
     }
 }

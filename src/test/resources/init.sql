@@ -49,3 +49,7 @@ VALUES ('b1f6bea6-4684-403e-9c41-8704fb0600c0', 'e1f6bea6-4684-403e-9c41-8704fb0
 INSERT INTO comment(id, creation_date, last_updated_date, content, user_id, moment_id)
 VALUES ('a2f6bea6-4684-403e-9c41-8704fb0600c0', to_timestamp('1834147200'), to_timestamp('1835033600'), 'anyText',
         'd3256c76-62d7-4481-9d1c-a0ccc4da380f', 'b3f6bea6-4684-403e-9c41-8704fb0600c0');
+
+INSERT INTO message(id, creation_date, content, user_to_id, user_from_id)
+VALUES ('a3f6bea6-4684-403e-9c41-8704fb0600c0', to_timestamp('1834147200'), 'anyText',
+        'ca3569ee-cb62-4f45-b1c2-199028ba5562', 'd3256c76-62d7-4481-9d1c-a0ccc4da380f');

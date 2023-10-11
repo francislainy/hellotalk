@@ -4,5 +4,6 @@ DELETE from comment;
 DELETE from moment_tags;
 DELETE from moment_like;
 DELETE from moment;
+delete from message;
 DELETE from users;
 DELETE from hometown;

@@ -16,6 +16,11 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
+import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
+import org.testcontainers.utility.DockerImageName;
 
 import java.util.*;
 
@@ -29,21 +34,27 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * mvn -Dtest="functionaltests.*IT" integration-test
  */
 
+@Testcontainers
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @RequiredArgsConstructor
 class MomentIT extends BasePostgresConfig {
 
     @LocalServerPort
-    private int port;
+    int port;
 
-    private RequestSpecification rq;
+    RequestSpecification rq;
 
-    private final static String USERNAME_1 = "john@email.com";
-    private final static String PASSWORD_1 = "1234";
+    final String USERNAME_1 = "john@email.com";
+    final String PASSWORD_1 = "1234";
 
-    private final static String USERNAME_2 = "mary@email.com";
-    private final static String PASSWORD_2 = "Password123!";
+    final String USERNAME_2 = "mary@email.com";
+    final String PASSWORD_2 = "Password123!";
+
+    static {
+        postgres = new PostgreSQLContainer<>(DockerImageName.parse("postgres").withTag("latest"));
+        postgres.start();
+    }
 
     @BeforeAll
     void setUp() {

@@ -14,6 +14,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.utility.DockerImageName;
 
 import java.util.*;
 
@@ -40,6 +42,11 @@ class FunctionalIT extends BasePostgresConfig {
     private User user;
 
     private Response response;
+
+    static {
+        postgres = new PostgreSQLContainer<>(DockerImageName.parse("postgres").withTag("latest"));
+        postgres.start();
+    }
 
     @BeforeAll
     void setUp() {

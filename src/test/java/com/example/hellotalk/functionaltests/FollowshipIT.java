@@ -16,6 +16,8 @@ import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.utility.DockerImageName;
 
 import java.util.*;
 
@@ -47,6 +49,11 @@ class FollowshipIT extends BasePostgresConfig {
 
     @Autowired
     FollowshipRepository followshipRepository;
+
+    static {
+        postgres = new PostgreSQLContainer<>(DockerImageName.parse("postgres").withTag("latest"));
+        postgres.start();
+    }
 
     @BeforeAll
     void setUp() {

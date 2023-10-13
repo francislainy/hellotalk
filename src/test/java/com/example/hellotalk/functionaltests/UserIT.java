@@ -14,6 +14,8 @@ import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.utility.DockerImageName;
 
 import java.util.*;
 
@@ -46,6 +48,11 @@ class UserIT extends BasePostgresConfig {
     private final static String PASSWORD_2 = "Password123!";
     private User user1;
     private User user2;
+
+    static {
+        postgres = new PostgreSQLContainer<>(DockerImageName.parse("postgres").withTag("latest"));
+        postgres.start();
+    }
 
     @BeforeAll
     void setUp() {

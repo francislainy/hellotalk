@@ -47,8 +47,7 @@ import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.BEFORE_TE
 // @PactBroker(host = BROKER_PACT_URL, consumers = {"MY_CONSUMER"})
 @VerificationReports(value = {"markdown"}, reportDir = "target/pacts")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@Sql(scripts = "classpath:clean-up.sql", executionPhase = BEFORE_TEST_METHOD)
-@Sql(scripts = "classpath:init.sql", executionPhase = BEFORE_TEST_METHOD)
+@Sql(scripts = {"classpath:clean-up.sql", "classpath:init.sql"}, executionPhase = BEFORE_TEST_METHOD)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class PactProviderIT extends BasePostgresConfig {
 

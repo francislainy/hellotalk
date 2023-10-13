@@ -18,10 +18,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class CommentRepositoryTest {
 
     @Autowired
-    private CommentRepository commentRepository;
+    CommentRepository commentRepository;
 
     @Autowired
-    private MomentRepository momentRepository;
+    MomentRepository momentRepository;
 
     @Test
     void testFindAllByMomentEntity_IdContains_ReturnsListForMoment() {

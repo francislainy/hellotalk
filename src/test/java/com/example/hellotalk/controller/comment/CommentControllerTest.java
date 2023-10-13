@@ -35,12 +35,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class CommentControllerTest extends BaseDocTestConfig {
 
-    private Comment commentResponse;
-    private String commentRequestJson;
-    private String commentResponseJson;
+    Comment commentResponse;
+    String commentRequestJson;
+    String commentResponseJson;
 
     @MockBean
-    private CommentService commentService;
+    CommentService commentService;
 
     @BeforeAll
     void setUp() {

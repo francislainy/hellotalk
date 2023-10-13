@@ -24,13 +24,13 @@ import static org.junit.jupiter.api.Assertions.*;
 class UserRepositoryTest {
 
     @Autowired
-    private UserRepository userRepository;
+    UserRepository userRepository;
     @Autowired
-    private FollowshipRepository followshipRepository;
+    FollowshipRepository followshipRepository;
     @Autowired
-    private HometownRepository hometownRepository;
+    HometownRepository hometownRepository;
     @Autowired
-    private HobbyAndInterestRepository hobbyAndInterestRepository;
+    HobbyAndInterestRepository hobbyAndInterestRepository;
 
     @Test
     void testGetUser() {

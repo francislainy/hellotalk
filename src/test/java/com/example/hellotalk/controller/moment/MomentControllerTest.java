@@ -43,13 +43,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class MomentControllerTest extends BaseDocTestConfig {
 
-    private UUID momentId;
-    private Moment momentResponse;
-    private String jsonRequest;
-    private String jsonResponse;
+    UUID momentId;
+    Moment momentResponse;
+    String jsonRequest;
+    String jsonResponse;
 
     @MockBean
-    private MomentService momentService;
+    MomentService momentService;
 
     @BeforeAll
     void initData() {

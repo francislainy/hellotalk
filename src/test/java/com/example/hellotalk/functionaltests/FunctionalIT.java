@@ -32,16 +32,16 @@ import static org.junit.jupiter.api.Assertions.*;
 class FunctionalIT extends BasePostgresConfig {
 
     @LocalServerPort
-    private int port;
+    int port;
 
-    private RequestSpecification rq;
+    RequestSpecification rq;
 
-    private final String username = "testUsername";
-    private final String password = "testPassword";
+    final String username = "testUsername";
+    final String password = "testPassword";
 
-    private User user;
+    User user;
 
-    private Response response;
+    Response response;
 
     static {
         postgres = new PostgreSQLContainer<>(DockerImageName.parse("postgres").withTag("latest"));

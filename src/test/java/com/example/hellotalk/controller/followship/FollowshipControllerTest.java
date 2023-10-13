@@ -34,7 +34,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class FollowshipControllerTest extends BaseDocTestConfig {
 
     @MockBean
-    private FollowshipService followshipService;
+    FollowshipService followshipService;
 
     @Test
     void testGetFollowship() throws Exception {

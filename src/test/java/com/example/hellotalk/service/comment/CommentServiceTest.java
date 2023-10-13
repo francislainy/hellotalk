@@ -22,6 +22,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.ZonedDateTime;
 import java.util.*;
+
 import static java.util.Collections.emptyList;
 
 import static com.example.hellotalk.exception.AppExceptionHandler.*;
@@ -35,23 +36,23 @@ import static org.mockito.Mockito.*;
 class CommentServiceTest {
 
     @InjectMocks
-    private CommentServiceImpl commentService;
+    CommentServiceImpl commentService;
 
     @Mock
-    private CommentRepository commentRepository;
+    CommentRepository commentRepository;
 
     @Mock
-    private MomentRepository momentRepository;
+    MomentRepository momentRepository;
 
     @Spy
-    private CommentMapper commentMapper = Mappers.getMapper(CommentMapper.class);
+    CommentMapper commentMapper = Mappers.getMapper(CommentMapper.class);
 
     @Mock
-    private UserService userService;
+    UserService userService;
 
-    private final ZonedDateTime now = ZonedDateTime.parse(ZonedDateTime.now().format(ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")));
-    private final ZonedDateTime creationDate = now;
-    private final ZonedDateTime lastUpdatedDate = now;
+    final ZonedDateTime now = ZonedDateTime.parse(ZonedDateTime.now().format(ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")));
+    final ZonedDateTime creationDate = now;
+    final ZonedDateTime lastUpdatedDate = now;
 
     @Test
     void testGetComment_ValidCommentId_ReturnsComment() {

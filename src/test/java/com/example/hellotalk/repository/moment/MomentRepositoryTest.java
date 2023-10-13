@@ -17,10 +17,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class MomentRepositoryTest {
 
     @Autowired
-    private MomentRepository momentRepository;
+    MomentRepository momentRepository;
 
     @Autowired
-    private UserRepository userRepository;
+    UserRepository userRepository;
 
     @Test
     void testFindAllByUserEntity_IdContains() {

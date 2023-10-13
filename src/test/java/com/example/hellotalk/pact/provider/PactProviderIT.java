@@ -54,10 +54,10 @@ class PactProviderIT extends BasePostgresConfig {
     @LocalServerPort
     int port;
 
-    private RequestSpecification rq;
+    RequestSpecification rq;
 
-    private final String username = "usernamed";
-    private final String password = "passwordd";
+    final String username = "usernamed";
+    final String password = "passwordd";
 
     @BeforeAll
     void setUp() {

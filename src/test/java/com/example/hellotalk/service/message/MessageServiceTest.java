@@ -36,27 +36,27 @@ import static org.mockito.Mockito.*;
 class MessageServiceTest {
 
     @InjectMocks
-    private MessageServiceImpl messageService;
+    MessageServiceImpl messageService;
 
     @Mock
-    private MessageRepository messageRepository;
+    MessageRepository messageRepository;
 
     @Spy
-    private MessageMapper messageMapper = Mappers.getMapper(MessageMapper.class);
+    MessageMapper messageMapper = Mappers.getMapper(MessageMapper.class);
 
     @Mock
-    private UserService userService;
+    UserService userService;
 
     // Test data
-    private UUID messageId;
-    private UUID userFromId;
-    private UUID userToId;
-    private UserEntity userFromEntity;
-    private UserEntity userToEntity;
-    private MessageEntity messageEntity;
+    UUID messageId;
+    UUID userFromId;
+    UUID userToId;
+    UserEntity userFromEntity;
+    UserEntity userToEntity;
+    MessageEntity messageEntity;
 
-    private final ZonedDateTime now = ZonedDateTime.parse(ZonedDateTime.now().format(ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")));
-    private final ZonedDateTime creationDate = now;
+    final ZonedDateTime now = ZonedDateTime.parse(ZonedDateTime.now().format(ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")));
+    final ZonedDateTime creationDate = now;
 
     @BeforeEach
     void setUp() {

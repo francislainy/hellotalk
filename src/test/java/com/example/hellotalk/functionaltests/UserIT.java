@@ -34,20 +34,20 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class UserIT extends BasePostgresConfig {
 
     @LocalServerPort
-    private int port;
+    int port;
 
-    private RequestSpecification rq;
+    RequestSpecification rq;
 
     @Autowired
-    private DBClient dbClient;
+    DBClient dbClient;
 
-    private final static String USERNAME_1 = "john@email.com";
-    private final static String PASSWORD_1 = "1234";
+    final static String USERNAME_1 = "john@email.com";
+    final static String PASSWORD_1 = "1234";
 
-    private final static String USERNAME_2 = "mary@email.com";
-    private final static String PASSWORD_2 = "Password123!";
-    private User user1;
-    private User user2;
+    final static String USERNAME_2 = "mary@email.com";
+    final static String PASSWORD_2 = "Password123!";
+    User user1;
+    User user2;
 
     static {
         postgres = new PostgreSQLContainer<>(DockerImageName.parse("postgres").withTag("latest"));

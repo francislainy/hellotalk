@@ -33,21 +33,21 @@ import static org.mockito.Mockito.*;
 class UserServiceTest {
 
     @InjectMocks
-    private UserServiceImpl userService;
+    UserServiceImpl userService;
 
     @Mock
-    private UserRepository userRepository;
+    UserRepository userRepository;
 
     @Mock
-    private HobbyAndInterestRepository hobbyAndInterestRepository;
+    HobbyAndInterestRepository hobbyAndInterestRepository;
 
     @Mock
-    private HometownRepository hometownRepository;
+    HometownRepository hometownRepository;
 
-    private final UserMapper userMapper = Mappers.getMapper(UserMapper.class);
-    private final HometownMapper hometownMapper = Mappers.getMapper(HometownMapper.class);
+    final UserMapper userMapper = Mappers.getMapper(UserMapper.class);
+    final HometownMapper hometownMapper = Mappers.getMapper(HometownMapper.class);
 
-    private final UUID userId = randomUUID();
+    final UUID userId = randomUUID();
 
     @BeforeEach
     void setUp() {

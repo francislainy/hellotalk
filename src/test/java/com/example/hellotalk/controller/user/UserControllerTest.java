@@ -35,10 +35,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class UserControllerTest extends BaseDocTestConfig {
 
-    private UUID userId;
-    private User userResponse;
-    private String jsonRequest;
-    private String jsonResponse;
+    UUID userId;
+    User userResponse;
+    String jsonRequest;
+    String jsonResponse;
 
     @MockBean
     UserService userService;

@@ -19,10 +19,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class FollowshipRepositoryTest {
 
     @Autowired
-    private FollowshipRepository followshipRepository;
+    FollowshipRepository followshipRepository;
 
     @Autowired
-    private UserRepository userRepository;
+    UserRepository userRepository;
 
     @Test
     void testFindFollowshipsSentByUser_UserFrom() {

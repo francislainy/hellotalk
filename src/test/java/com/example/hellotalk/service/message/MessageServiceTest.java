@@ -136,7 +136,7 @@ class MessageServiceTest {
     }
 
     @Test
-    void testGeCga_NoExistingMessages_ReturnsEmptyList() {
+    void testGetAllMessages_NoExistingMessages_ReturnsEmptyList() {
         List<Message> messageList = messageService.getAllMessages();
         assertTrue(messageList.isEmpty());
     }

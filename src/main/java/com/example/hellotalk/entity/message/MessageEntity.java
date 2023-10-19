@@ -42,4 +42,9 @@ public class MessageEntity {
 
     @OneToMany(mappedBy = "parentMessageEntity", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<MessageEntity> replies;
+
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
+    @JoinColumn(name = "chat_id", referencedColumnName = "id")
+    private ChatEntity chatEntity;
+
 }

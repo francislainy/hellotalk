@@ -1,5 +1,6 @@
 package com.example.hellotalk.service.message;
 
+import com.example.hellotalk.model.message.Chat;
 import com.example.hellotalk.model.message.Message;
 
 import java.util.List;
@@ -10,6 +11,8 @@ public interface MessageService {
     Message getMessage(UUID messageId);
 
     List<Message> getAllMessages();
+
+    Chat getChat(UUID chatId);
 
     Message createMessage(Message message);
 

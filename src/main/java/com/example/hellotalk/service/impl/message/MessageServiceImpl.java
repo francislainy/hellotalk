@@ -2,10 +2,13 @@ package com.example.hellotalk.service.impl.message;
 
 import com.example.hellotalk.entity.message.MessageEntity;
 import com.example.hellotalk.entity.user.UserEntity;
+import com.example.hellotalk.exception.ChatNotFoundException;
 import com.example.hellotalk.exception.EntityDoesNotBelongToUserException;
 import com.example.hellotalk.exception.MessageNotFoundException;
 import com.example.hellotalk.mapper.MessageMapper;
+import com.example.hellotalk.model.message.Chat;
 import com.example.hellotalk.model.message.Message;
+import com.example.hellotalk.repository.message.ChatRepository;
 import com.example.hellotalk.repository.message.MessageRepository;
 import com.example.hellotalk.service.message.MessageService;
 import com.example.hellotalk.service.user.UserService;
@@ -17,14 +20,14 @@ import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.UUID;
 
-import static com.example.hellotalk.exception.AppExceptionHandler.ENTITY_DOES_NOT_BELONG_TO_USER_EXCEPTION;
-import static com.example.hellotalk.exception.AppExceptionHandler.MESSAGE_NOT_FOUND_EXCEPTION;
+import static com.example.hellotalk.exception.AppExceptionHandler.*;
 
 @RequiredArgsConstructor
 @Service
 public class MessageServiceImpl implements MessageService {
 
     private final MessageRepository messageRepository;
+    private final ChatRepository chatRepository;
     private final MessageMapper messageMapper;
 
     private final UserService userService;
@@ -44,7 +47,23 @@ public class MessageServiceImpl implements MessageService {
                 .toList();
     }
 
-    // todo: add validations to model class and handle cases where model object is missing fields - 02/10/2023
+    @Override
+    public Chat getChat(UUID chatId) {
+        if (!chatRepository.existsById(chatId)) {
+            throw new ChatNotFoundException(CHAT_NOT_FOUND_EXCEPTION);
+        }
+
+        List<Message> messageList = messageRepository.findByChatEntity_Id(chatId)
+                .stream()
+                .map(messageMapper::toModel)
+                .toList();
+
+        return Chat.builder()
+                .id(chatId)
+                .messageList(messageList)
+                .build();
+    }
+
     @Override
     public Message createMessage(Message message) {
         UserEntity userFromEntity = userService.getCurrentUser();

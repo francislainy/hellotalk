@@ -19,6 +19,7 @@ public class AppExceptionHandler extends ResponseEntityExceptionHandler {
     public static final String MOMENT_NOT_YET_LIKED_EXCEPTION = "MOMENT NOT YET LIKED";
     public static final String COMMENT_NOT_FOUND_EXCEPTION = "NO COMMENT FOUND WITH THIS ID";
     public static final String MESSAGE_NOT_FOUND_EXCEPTION = "NO MESSAGE FOUND WITH THIS ID";
+    public static final String CHAT_NOT_FOUND_EXCEPTION = "NO CHAT FOUND WITH THIS ID";
     public static final String FOLLOWSHIP_ALREADY_EXISTS_EXCEPTION = "FOLLOWSHIP ALREADY EXISTS";
     public static final String FOLLOWSHIP_NOT_CREATED_USER_CANT_FOLLOW_THEMSELF = "USER TRYING TO FOLLOW THEMSELVES. SENDER AND RECEIVER USERS CAN'T BE THE SAME";
     public static final String FOLLOWSHIP_DOES_NOT_EXIST_EXCEPTION = "FOLLOWSHIP DOES NOT EXIST";
@@ -76,6 +77,11 @@ public class AppExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(MessageNotFoundException.class)
     public ResponseEntity<Object> handleMessageNotFoundException(MessageNotFoundException ex) {
+        return new ResponseEntity<>(new ApiError(ex.getMessage(), NOT_FOUND, LocalDateTime.now()), NOT_FOUND);
+    }
+
+    @ExceptionHandler(ChatNotFoundException.class)
+    public ResponseEntity<Object> handleChatNotFound(ChatNotFoundException ex) {
         return new ResponseEntity<>(new ApiError(ex.getMessage(), NOT_FOUND, LocalDateTime.now()), NOT_FOUND);
     }
 

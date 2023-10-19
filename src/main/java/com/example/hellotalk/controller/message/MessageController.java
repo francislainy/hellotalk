@@ -42,4 +42,10 @@ public class MessageController {
         messageService.deleteMessage(messageId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
+
+    @GetMapping({"/chats/{chatId}", "/chats/{chatId}/"})
+    public ResponseEntity<Object> getChat(@PathVariable UUID chatId) {
+        return new ResponseEntity<>(messageService.getChat(chatId), HttpStatus.OK);
+    }
+
 }

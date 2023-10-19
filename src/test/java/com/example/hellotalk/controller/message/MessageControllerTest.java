@@ -1,8 +1,10 @@
 package com.example.hellotalk.controller.message;
 
 import com.example.hellotalk.config.BaseDocTestConfig;
+import com.example.hellotalk.exception.ChatNotFoundException;
 import com.example.hellotalk.exception.EntityDoesNotBelongToUserException;
 import com.example.hellotalk.exception.MessageNotFoundException;
+import com.example.hellotalk.model.message.Chat;
 import com.example.hellotalk.model.message.Message;
 import com.example.hellotalk.service.message.MessageService;
 import org.junit.jupiter.api.Test;
@@ -27,8 +29,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(controllers = MessageController.class)
 @ExtendWith(MockitoExtension.class)
@@ -233,4 +234,45 @@ class MessageControllerTest extends BaseDocTestConfig {
                         resource("Delete message returns 403 when message does not belong to user")))
                 .andReturn();
     }
+
+    @Test
+    void testGetChat() throws Exception {
+        UUID chatId = randomUUID();
+        UUID messageId = randomUUID();
+
+        Message message = Message.builder()
+                .id(messageId)
+                .userFromId(randomUUID())
+                .userToId(randomUUID())
+                .build();
+
+        Chat chat = Chat.builder()
+                .id(chatId)
+                .messageList(List.of(message))
+                .build();
+
+        when(messageService.getChat(any())).thenReturn(chat);
+
+        mockMvc.perform(RestDocumentationRequestBuilders.get("/api/v1/ht/messages/chats/{chatId}", chatId))
+                .andExpect(status().is2xxSuccessful())
+                .andExpect(content().json(jsonStringFromObject(chat)))
+                .andExpect(jsonPath("$.id").exists())
+                .andExpect(jsonPath("$.messages").exists())
+                .andDo(document("get-chat",
+                        resource("Get a chat's details")))
+                .andReturn();
+
+    }
+
+    @Test
+    void testGetChat_ChatDoesNotExist_HandleChatNotFoundException() throws Exception {
+        when(messageService.getChat(any())).thenThrow(ChatNotFoundException.class);
+
+        mockMvc.perform(RestDocumentationRequestBuilders.get("/api/v1/ht/messages/chats/{chatId}", randomUUID()))
+                .andExpect(status().isNotFound())
+                .andDo(document("get-chat-exception-thrown_when-chat-not-found",
+                        resource("Get chat - Exception thrown when chat not found")))
+                .andReturn();
+    }
+
 }

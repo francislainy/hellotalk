@@ -10,6 +10,7 @@ SET SESSION vars.moment_like_id1 = 'a1f6bea6-4684-403e-9c41-8704fb0600c0';
 SET SESSION vars.moment_like_id2 = 'b1f6bea6-4684-403e-9c41-8704fb0600c0';
 SET SESSION vars.comment_id = 'a2f6bea6-4684-403e-9c41-8704fb0600c0';
 SET SESSION vars.message_id = 'a3f6bea6-4684-403e-9c41-8704fb0600c0';
+SET SESSION vars.chat_id = 'a2f6bea6-4684-403e-9c41-8704fb0600f4';
 
 INSERT INTO hometown(id, city, country)
 VALUES (current_setting('vars.hometown_id')::uuid, 'anyCity', 'anyCountry');
@@ -67,8 +68,14 @@ INSERT INTO comment(id, creation_date, last_updated_date, content, user_id, mome
 VALUES (current_setting('vars.comment_id')::uuid, to_timestamp('1834147200'), to_timestamp('1835033600'), 'anyText',
         current_setting('vars.user_id1')::uuid, 'b3f6bea6-4684-403e-9c41-8704fb0600c0');
 
-INSERT INTO message(id, creation_date, content, user_to_id, user_from_id)
+INSERT INTO chat(id)
+VALUES (current_setting('vars.chat_id')::uuid);
+
+INSERT INTO message(id, creation_date, content, user_to_id, user_from_id, chat_id)
 VALUES (current_setting('vars.message_id')::uuid,
         to_timestamp('1834147200'), 'anyText',
         current_setting('vars.user_id2')::uuid,
-        current_setting('vars.user_id1')::uuid);
+        current_setting('vars.user_id1')::uuid,
+        current_setting('vars.chat_id')::uuid);
+
+

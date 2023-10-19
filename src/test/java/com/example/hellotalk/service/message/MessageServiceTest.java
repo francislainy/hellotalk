@@ -1,11 +1,15 @@
 package com.example.hellotalk.service.message;
 
+import com.example.hellotalk.entity.message.ChatEntity;
 import com.example.hellotalk.entity.message.MessageEntity;
 import com.example.hellotalk.entity.user.UserEntity;
+import com.example.hellotalk.exception.ChatNotFoundException;
 import com.example.hellotalk.exception.EntityDoesNotBelongToUserException;
 import com.example.hellotalk.exception.MessageNotFoundException;
 import com.example.hellotalk.mapper.MessageMapper;
+import com.example.hellotalk.model.message.Chat;
 import com.example.hellotalk.model.message.Message;
+import com.example.hellotalk.repository.message.ChatRepository;
 import com.example.hellotalk.repository.message.MessageRepository;
 import com.example.hellotalk.service.impl.message.MessageServiceImpl;
 import com.example.hellotalk.service.user.UserService;
@@ -41,6 +45,9 @@ class MessageServiceTest {
     @Mock
     MessageRepository messageRepository;
 
+    @Mock
+    ChatRepository chatRepository;
+
     @Spy
     MessageMapper messageMapper = Mappers.getMapper(MessageMapper.class);
 
@@ -48,12 +55,14 @@ class MessageServiceTest {
     UserService userService;
 
     // Test data
+    UUID chatId;
     UUID messageId;
     UUID userFromId;
     UUID userToId;
     UserEntity userFromEntity;
     UserEntity userToEntity;
     MessageEntity messageEntity;
+    ChatEntity chatEntity;
 
     final ZonedDateTime now = ZonedDateTime.parse(ZonedDateTime.now().format(ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")));
     final ZonedDateTime creationDate = now;
@@ -61,12 +70,17 @@ class MessageServiceTest {
     @BeforeEach
     void setUp() {
         // Initialize test data
+        chatId = randomUUID();
         messageId = randomUUID();
         userFromId = randomUUID();
         userToId = randomUUID();
         userFromEntity = UserEntity.builder().id(userFromId).build();
         userToEntity = UserEntity.builder().id(userToId).build();
         messageEntity = getMessageEntity(messageId);
+        chatEntity = ChatEntity.builder()
+                .id(randomUUID())
+                .messageEntityList(List.of(messageEntity)) // todo: set - 16/10/2023
+                .build();
     }
 
     @Test
@@ -122,9 +136,42 @@ class MessageServiceTest {
     }
 
     @Test
-    void testGetAllMessages_NoExistingMessages_ReturnsEmptyList() {
+    void testGeCga_NoExistingMessages_ReturnsEmptyList() {
         List<Message> messageList = messageService.getAllMessages();
         assertTrue(messageList.isEmpty());
+    }
+
+    @Test
+    void testGetChat_MessagesExist_ReturnsListOfMessages() {
+        when(chatRepository.findById(any())).thenReturn(Optional.ofNullable(chatEntity));
+
+        when(messageRepository.findByChatEntity_Id(any())).thenReturn(List.of(messageEntity));
+
+        Chat chat = messageService.getChat(chatId);
+
+        Message message = chat.getMessageList().get(0);
+
+        // Verify the results
+        assertAll(
+                () -> assertEquals(chatId, chat.getId()),
+                () -> assertEquals(messageId, message.getId()),
+                () -> assertEquals("anyText", message.getContent()),
+                () -> assertEquals(userFromId, message.getUserFromId()),
+                () -> assertEquals(userToId, message.getUserToId()),
+                () -> assertEquals(String.valueOf(creationDate), String.valueOf(message.getCreationDate())));
+
+        verify(messageRepository, times(1)).findByChatEntity_Id(chatId);
+    }
+
+    @Test
+    void testGetChat_ChatDoesNotExist_ThrowsException() {
+        when(chatRepository.existsById(any())).thenReturn(false);
+
+        ChatNotFoundException exception = assertThrows(ChatNotFoundException.class, () -> messageService.getChat(chatId));
+
+        assertEquals(CHAT_NOT_FOUND_EXCEPTION, exception.getMessage());
+
+        verify(messageRepository, never()).findByChatEntity_Id(chatId);
     }
 
     @Test

@@ -78,8 +78,8 @@ class MessageServiceTest {
         userToEntity = UserEntity.builder().id(userToId).build();
         messageEntity = getMessageEntity(messageId);
         chatEntity = ChatEntity.builder()
-                .id(randomUUID())
-                .messageEntityList(List.of(messageEntity)) // todo: set - 16/10/2023
+                .id(chatId)
+                .messageEntityList(List.of(messageEntity)) // todo: convert to set - 16/10/2023
                 .build();
     }
 
@@ -143,7 +143,7 @@ class MessageServiceTest {
 
     @Test
     void testGetChat_MessagesExist_ReturnsListOfMessages() {
-        when(chatRepository.findById(any())).thenReturn(Optional.ofNullable(chatEntity));
+        when(chatRepository.existsById(any())).thenReturn(true);
 
         when(messageRepository.findByChatEntity_Id(any())).thenReturn(List.of(messageEntity));
 

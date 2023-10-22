@@ -12,6 +12,7 @@ import com.example.hellotalk.repository.comment.CommentRepository;
 import com.example.hellotalk.repository.moment.MomentRepository;
 import com.example.hellotalk.service.impl.comment.CommentServiceImpl;
 import com.example.hellotalk.service.user.UserService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mapstruct.factory.Mappers;
@@ -21,12 +22,13 @@ import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.ZonedDateTime;
-import java.util.*;
-
-import static java.util.Collections.emptyList;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 import static com.example.hellotalk.exception.AppExceptionHandler.*;
 import static java.time.format.DateTimeFormatter.ofPattern;
+import static java.util.Collections.emptyList;
 import static java.util.UUID.randomUUID;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -54,21 +56,32 @@ class CommentServiceTest {
     final ZonedDateTime creationDate = now;
     final ZonedDateTime lastUpdatedDate = now;
 
+    UUID momentId = randomUUID();
+    UUID commentId = randomUUID();
+    UUID userId = randomUUID();
+
+    UUID childCommentId = randomUUID();
+    UUID parentCommentId = randomUUID();
+
+    MomentEntity momentEntity;
+    CommentEntity commentEntity;
+    CommentEntity parentCommentEntity;
+
+    UserEntity userEntity;
+
+    String username = "anyUsername";
+    String name = "anyName";
+
+    @BeforeEach
+    void setUp() {
+        userEntity = UserEntity.builder().id(userId).username(username).name(name).build();
+        momentEntity = MomentEntity.builder().id(momentId).build();
+        commentEntity = getCommentEntity(commentId);
+        parentCommentEntity = getCommentEntity(parentCommentId);
+    }
+
     @Test
     void testGetComment_ValidCommentId_ReturnsComment() {
-
-        UUID commentId = randomUUID();
-        UUID userId = randomUUID();
-        String username = "anyUsername";
-        String name = "anyName";
-        UserEntity userEntity = UserEntity.builder().id(userId).username(username).name(name).build();
-
-        UUID momentId = randomUUID();
-        MomentEntity momentEntity = MomentEntity.builder().id(momentId).build();
-        CommentEntity commentEntity = getCommentEntity(commentId);
-        commentEntity.setUserEntity(userEntity);
-        commentEntity.setMomentEntity(momentEntity);
-
         when(commentRepository.findById(any())).thenReturn(Optional.of(commentEntity));
 
         Comment comment = commentService.getComment(commentId);
@@ -86,8 +99,6 @@ class CommentServiceTest {
 
     @Test
     void testGetComment_InvalidCommentId_ThrowsCommentNotFoundException() {
-
-        UUID commentId = randomUUID();
         when(commentRepository.findById(any())).thenReturn(Optional.empty());
 
         CommentNotFoundException exception =
@@ -100,18 +111,6 @@ class CommentServiceTest {
 
     @Test
     void testGetAllCommentsForMoment_ValidMomentId_ReturnsListOfComments() {
-
-        UUID commentId = randomUUID();
-        UUID userId = randomUUID();
-        String username = "anyUsername";
-        String name = "anyName";
-        UserEntity userEntity = UserEntity.builder().id(userId).username(username).name(name).build();
-        UUID momentId = randomUUID();
-        MomentEntity momentEntity = MomentEntity.builder().id(momentId).build();
-        CommentEntity commentEntity = getCommentEntity(commentId);
-        commentEntity.setUserEntity(userEntity);
-        commentEntity.setMomentEntity(momentEntity);
-
         Comment commentToReturn = commentMapper.toModel(commentEntity);
 
         when(commentRepository.findAllByMomentEntityId(any())).thenReturn(List.of(commentEntity));
@@ -136,22 +135,12 @@ class CommentServiceTest {
 
     @Test
     void testGetAllCommentsForMoment_MomentWithNoMoments_ReturnsEmptyList() {
-
         List<Comment> comments = commentService.getAllCommentsForMoment(randomUUID());
         assertTrue(comments.isEmpty());
     }
 
     @Test
     void testCreateComment_ValidMomentIdAndComment_ReturnsCreatedComment() {
-
-        UUID commentId = randomUUID();
-        UUID momentId = randomUUID();
-        UUID userId = randomUUID();
-        UserEntity userEntity = UserEntity.builder().id(userId).build();
-        CommentEntity commentEntity = getCommentEntity(commentId);
-        commentEntity.setUserEntity(userEntity);
-        MomentEntity momentEntity = MomentEntity.builder().id(momentId).userEntity(userEntity).build();
-
         when(userService.getCurrentUser()).thenReturn(userEntity);
         when(commentRepository.save(any())).thenReturn(commentEntity);
         when(momentRepository.findById(any())).thenReturn(Optional.ofNullable(momentEntity));
@@ -171,18 +160,12 @@ class CommentServiceTest {
 
     @Test
     void testCreateComment_MomentNotFound_ThrowsMomentNotFoundException() {
-
-        UUID momentId = randomUUID();
-        UserEntity userEntity = UserEntity.builder().id(randomUUID()).build();
-        CommentEntity commentEntity = getCommentEntity(randomUUID());
-        commentEntity.setUserEntity(userEntity);
-
         when(userService.getCurrentUser()).thenReturn(userEntity);
         when(momentRepository.findById(any())).thenReturn(Optional.empty());
 
-        Comment commentModel = commentMapper.toModel(commentEntity);
+        Comment comment = commentMapper.toModel(commentEntity);
         MomentNotFoundException exception =
-                assertThrows(MomentNotFoundException.class, () -> commentService.createComment(momentId, commentModel));
+                assertThrows(MomentNotFoundException.class, () -> commentService.createComment(momentId, comment));
 
         assertEquals(MOMENT_NOT_FOUND_EXCEPTION, exception.getMessage());
 
@@ -193,14 +176,7 @@ class CommentServiceTest {
 
     @Test
     void testUpdateComment_ValidCommentIdAndCommentBody_ReturnsUpdatedComment() {
-
-        UUID userId = randomUUID();
-        UserEntity userEntity = UserEntity.builder().id(userId).build();
         when(userService.getCurrentUser()).thenReturn(userEntity);
-
-        UUID commentId = randomUUID();
-        CommentEntity commentEntity = getCommentEntity(commentId);
-        commentEntity.setUserEntity(userEntity);
 
         CommentEntity commentEntityUpdated = CommentEntity.builder()
                 .id(commentId)
@@ -231,9 +207,7 @@ class CommentServiceTest {
 
     @Test
     void testUpdateComment_CommentNotFound_ThrowsCommentNotFoundException() {
-
-        UUID commentId = randomUUID();
-        Comment comment = commentMapper.toModel(getCommentEntity(commentId));
+        Comment comment = commentMapper.toModel(commentEntity);
         CommentNotFoundException exception =
                 assertThrows(CommentNotFoundException.class, () -> commentService.updateComment(commentId, comment));
 
@@ -246,15 +220,9 @@ class CommentServiceTest {
 
     @Test
     void testUpdateCommentDetails_UnauthorizedUser_ThrowsEntityDoesNotBelongToUserException() {
-
-        UUID userId = randomUUID();
-        UserEntity userEntity = UserEntity.builder().id(userId).build();
         UserEntity unauthorizedUserEntity = UserEntity.builder().id(randomUUID()).build();
         when(userService.getCurrentUser()).thenReturn(unauthorizedUserEntity);
 
-        UUID commentId = randomUUID();
-        CommentEntity commentEntity = getCommentEntity(commentId);
-        commentEntity.setUserEntity(userEntity);
         Comment comment = commentMapper.toModel(commentEntity);
 
         when(commentRepository.findById(any())).thenReturn(Optional.of(commentEntity));
@@ -270,14 +238,7 @@ class CommentServiceTest {
 
     @Test
     void testDeleteComment_ValidCommentId_DeletesTheCommentAndReturnsSuccessMessage() {
-
-        UUID userId = randomUUID();
-        UserEntity userEntity = UserEntity.builder().id(userId).build();
         when(userService.getCurrentUser()).thenReturn(userEntity);
-
-        UUID commentId = randomUUID();
-        CommentEntity commentEntity = getCommentEntity(commentId);
-        commentEntity.setUserEntity(userEntity);
 
         when(commentRepository.findById(any())).thenReturn(Optional.of(commentEntity));
         assertDoesNotThrow(() -> commentService.deleteComment(commentId));
@@ -286,12 +247,8 @@ class CommentServiceTest {
 
     @Test
     void testDeleteComment_InvalidCommentId_ThrowsCommentNotFoundException() {
-
-        UUID userId = randomUUID();
-        UserEntity userEntity = UserEntity.builder().id(userId).build();
         when(userService.getCurrentUser()).thenReturn(userEntity);
 
-        UUID commentId = randomUUID();
         CommentNotFoundException exception =
                 assertThrows(CommentNotFoundException.class, () -> commentService.deleteComment(commentId));
 
@@ -301,14 +258,7 @@ class CommentServiceTest {
 
     @Test
     void testDeleteComment_CommentDoesNotBelongToUser_ThrowsEntityDoesNotBelongToUserException() {
-
-        UUID userId = UUID.randomUUID();
-        UserEntity userEntity = UserEntity.builder().id(userId).build();
         UserEntity unauthorizedUserEntity = UserEntity.builder().id(randomUUID()).build();
-
-        UUID commentId = randomUUID();
-        CommentEntity commentEntity = getCommentEntity(commentId);
-        commentEntity.setUserEntity(userEntity);
 
         when(userService.getCurrentUser()).thenReturn(unauthorizedUserEntity);
         when(commentRepository.findById(any())).thenReturn(Optional.of(commentEntity));
@@ -322,11 +272,6 @@ class CommentServiceTest {
 
     @Test
     void testCreateReply_ValidCommentIdAndComment_ReturnsCreatedReply() {
-
-        UUID childCommentId = randomUUID();
-        UUID parentCommentId = randomUUID();
-        UUID userId = randomUUID();
-        UserEntity userEntity = UserEntity.builder().id(userId).build();
         CommentEntity parentCommentEntity = getCommentEntity(parentCommentId);
         parentCommentEntity.setUserEntity(userEntity);
 
@@ -352,15 +297,6 @@ class CommentServiceTest {
 
     @Test
     void testCreateReply_ParentCommentNotFound_ThrowsException() {
-
-        UUID childCommentId = randomUUID();
-        UUID parentCommentId = randomUUID();
-        UUID userId = randomUUID();
-
-        UserEntity userEntity = UserEntity.builder().id(userId).build();
-        CommentEntity parentCommentEntity = getCommentEntity(parentCommentId);
-        parentCommentEntity.setUserEntity(userEntity);
-
         CommentEntity childReplyCommentEntity = getCommentEntity(childCommentId);
         childReplyCommentEntity.setUserEntity(userEntity);
         childReplyCommentEntity.setParentCommentEntity(parentCommentEntity);
@@ -380,12 +316,6 @@ class CommentServiceTest {
 
     @Test
     void testGetReply_ParentCommentExist_ReturnsValidReply() {
-
-        UUID childCommentId = randomUUID();
-        UUID parentCommentId = randomUUID();
-        UUID userId = randomUUID();
-
-        UserEntity userEntity = UserEntity.builder().id(userId).build();
         UserEntity userEntityParent = UserEntity.builder().id(randomUUID()).build();
         CommentEntity parentCommentEntity = getCommentEntity(parentCommentId);
         parentCommentEntity.setUserEntity(userEntityParent);
@@ -409,12 +339,6 @@ class CommentServiceTest {
 
     @Test
     void testCreateReply_ParentCommentDoesNotBelongToUser_ThrowsException() {
-
-        UUID childCommentId = randomUUID();
-        UUID parentCommentId = randomUUID();
-        UUID userId = randomUUID();
-
-        UserEntity userEntity = UserEntity.builder().id(userId).build();
         UserEntity userEntityParent = UserEntity.builder().id(randomUUID()).build();
         CommentEntity parentCommentEntity = getCommentEntity(parentCommentId);
         parentCommentEntity.setUserEntity(userEntityParent);
@@ -438,11 +362,6 @@ class CommentServiceTest {
 
     @Test
     void testGetRepliesForComment_ValidCommentAndExistingReplies_ReturnsListOfReplies() {
-        UUID momentId = randomUUID();
-        UUID commentId = randomUUID();
-
-        UserEntity userEntity = UserEntity.builder().id(randomUUID()).build();
-        CommentEntity parentCommentEntity = CommentEntity.builder().id(commentId).userEntity(userEntity).build();
         CommentEntity commentEntityReply1 = CommentEntity.builder().id(commentId).userEntity(userEntity).build();
         CommentEntity commentEntityReply2 = CommentEntity.builder().id(commentId).userEntity(userEntity).build();
         List<CommentEntity> replyEntities = List.of(commentEntityReply1, commentEntityReply2);
@@ -457,27 +376,16 @@ class CommentServiceTest {
 
     @Test
     void testGetRepliesForComment_ValidCommentButNoReplies_ReturnsEmptyList() {
-        UUID momentId = randomUUID();
-        UUID commentId = randomUUID();
-
-        UserEntity userEntity = UserEntity.builder().id(randomUUID()).build();
-        CommentEntity parentCommentEntity = CommentEntity.builder().id(commentId).userEntity(userEntity).build();
-
         when(userService.getCurrentUser()).thenReturn(userEntity);
-        when(commentRepository.findById(commentId)).thenReturn(Optional.of(parentCommentEntity));
-        when(commentRepository.findAllByParentCommentEntityId(commentId)).thenReturn(emptyList());
+        when(commentRepository.findById(parentCommentId)).thenReturn(Optional.of(parentCommentEntity));
+        when(commentRepository.findAllByParentCommentEntityId(parentCommentId)).thenReturn(emptyList()); //todo: the test is passing with or without this line. Check this is needed. 22/10/2023
 
-        List<Comment> replies = commentService.getRepliesForComment(momentId, commentId);
-        assertEquals(0, replies.size());
+        List<Comment> replies = commentService.getRepliesForComment(momentId, parentCommentId);
+        assertTrue(replies.isEmpty());
     }
 
     @Test
     void testGetRepliesForComment_CommentNotFound_ThrowsException() {
-        UUID momentId = UUID.randomUUID();
-        UUID commentId = UUID.randomUUID();
-
-        UserEntity userEntity = UserEntity.builder().id(randomUUID()).build();
-
         when(userService.getCurrentUser()).thenReturn(userEntity);
         when(commentRepository.findById(commentId)).thenReturn(Optional.empty());
 
@@ -489,10 +397,6 @@ class CommentServiceTest {
 
     @Test
     void testGetRepliesForComment_EntityDoesNotBelongToUser_ThrowsException() {
-        UUID momentId = UUID.randomUUID();
-        UUID commentId = UUID.randomUUID();
-
-        UserEntity userEntity = UserEntity.builder().id(randomUUID()).build();
         UserEntity anotherUserEntity = UserEntity.builder().id(randomUUID()).build();
 
         CommentEntity commentEntity = CommentEntity.builder().id(commentId).userEntity(anotherUserEntity).build();
@@ -513,7 +417,8 @@ class CommentServiceTest {
                 .content("anyText")
                 .creationDate(creationDate)
                 .lastUpdatedDate(lastUpdatedDate)
+                .userEntity(userEntity)
+                .momentEntity(momentEntity)
                 .build();
     }
-
 }

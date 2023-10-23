@@ -28,7 +28,7 @@ import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.docu
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(controllers = UserController.class)
+@WebMvcTest(UserController.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class UserControllerTest extends BaseDocTestConfig {
 

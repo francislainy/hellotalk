@@ -30,7 +30,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest(controllers = MessageController.class)
+@WebMvcTest(MessageController.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class MessageControllerTest extends BaseDocTestConfig {
 

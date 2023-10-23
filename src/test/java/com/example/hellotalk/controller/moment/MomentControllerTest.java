@@ -36,7 +36,7 @@ import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.docu
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(controllers = MomentController.class)
+@WebMvcTest(MomentController.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class MomentControllerTest extends BaseDocTestConfig {
 

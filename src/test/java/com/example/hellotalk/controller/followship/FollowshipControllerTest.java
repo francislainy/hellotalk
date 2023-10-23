@@ -26,7 +26,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest(controllers = FollowshipController.class)
+@WebMvcTest(FollowshipController.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class FollowshipControllerTest extends BaseDocTestConfig {
 

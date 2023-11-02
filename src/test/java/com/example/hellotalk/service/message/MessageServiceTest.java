@@ -90,11 +90,9 @@ class MessageServiceTest {
 
     @Test
     void testGetMessage_ValidMessageId_ReturnsComment() {
-        // Execute the method under test
         when(messageRepository.findById(any())).thenReturn(Optional.of(messageEntity));
         Message message = messageService.getMessage(messageId);
 
-        // Verify the results
         assertAll(
                 () -> assertEquals(messageId, message.getId()),
                 () -> assertEquals("anyText", message.getContent()),
@@ -102,22 +100,18 @@ class MessageServiceTest {
                 () -> assertEquals(userToId, message.getUserToId()),
                 () -> assertEquals(String.valueOf(creationDate), String.valueOf(message.getCreationDate())));
 
-        // Verify interactions with mocks
         verify(messageRepository, times(1)).findById(messageId);
     }
 
     @Test
     void testGetMessage_InvalidMessageId_ThrowsCommentNotFoundException() {
-        // Mock behavior for this specific test case
         when(messageRepository.findById(any())).thenReturn(Optional.empty());
 
-        // Execute the method under test and verify the exception thrown
         MessageNotFoundException exception =
                 assertThrows(MessageNotFoundException.class, () -> messageService.getMessage(messageId));
 
         assertEquals(MESSAGE_NOT_FOUND_EXCEPTION, exception.getMessage());
 
-        // Verify interactions with mocks
         verify(messageRepository, times(1)).findById(messageId);
     }
 
@@ -129,7 +123,6 @@ class MessageServiceTest {
 
         Message message = messageList.get(0);
 
-        // Verify the results
         assertAll(
                 () -> assertEquals(messageId, message.getId()),
                 () -> assertEquals("anyText", message.getContent()),
@@ -182,13 +175,13 @@ class MessageServiceTest {
     void testGetChats_MessagesExist_ReturnsListOfChats() {
         when(chatRepository.findAll()).thenReturn(List.of(chatEntity));
 
-        //        Chat chat = chatMapper.toModel(chatEntity); //todo: check why this does not work
+        //        Chat chat = chatMapper.toModel(chatEntity); //todo: check why this does not work - 02/10/2023
         Chat chat = Chat.builder()
                 .id(chatId)
                 .messageList(List.of(messageMapper.toModel(messageEntity)))
                 .build();
 
-        //        when(chatMapper.toModel(any())).thenReturn(chat); //todo: check why this also works even though it's a spy- 02/10/2023
+        //        when(chatMapper.toModel(any())).thenReturn(chat); //todo: check why this also works even though it's a spy - 02/10/2023
         doReturn(chat).when(chatMapper).toModel(any());
 
         List<Chat> chatList = messageService.getChats();
@@ -208,14 +201,11 @@ class MessageServiceTest {
 
     @Test
     void testCreateMessage_ValidMessage_ReturnsCreatedMessage() {
-        // Mock behaviors
         when(userService.getCurrentUser()).thenReturn(userFromEntity);
         when(messageRepository.save(any())).thenReturn(messageEntity);
 
-        // Mock current time
         ZonedDateTime fixedZonedDateTime = ZonedDateTime.now().withZoneSameInstant(ZoneOffset.UTC);
 
-        // Execute the method under test
         Message message = messageService.createMessage(messageMapper.toModel(messageEntity));
 
         // Capture the argument
@@ -228,12 +218,10 @@ class MessageServiceTest {
         // Verify that setUserFromEntity and setUserToEntity have been called
         assertEquals(userFromEntity, capturedMessageEntity.getUserFromEntity());
 
-        // Verify that setCreationDate has been called with the correct date
         ZonedDateTime capturedCreationDate = capturedMessageEntity.getCreationDate();
         long diffInSeconds = Math.abs(capturedCreationDate.toEpochSecond() - fixedZonedDateTime.toEpochSecond());
         assertTrue(diffInSeconds < 5); // Allow for a small difference due to execution time
 
-        // Verify the results
         assertAll(
                 () -> assertEquals(messageId, message.getId()),
                 () -> assertEquals("anyText", message.getContent()),
@@ -241,7 +229,6 @@ class MessageServiceTest {
                 () -> assertEquals(userToId, message.getUserToId()),
                 () -> assertEquals(String.valueOf(creationDate), String.valueOf(message.getCreationDate())));
 
-        // Verify interactions with mocks
         verify(userService, times(1)).getCurrentUser();
         verify(messageRepository, times(1)).save(any(MessageEntity.class));
     }
@@ -359,5 +346,4 @@ class MessageServiceTest {
                 .userToEntity(userToEntity)
                 .build();
     }
-
 }

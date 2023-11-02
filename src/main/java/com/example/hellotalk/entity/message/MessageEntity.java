@@ -46,5 +46,4 @@ public class MessageEntity {
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
     @JoinColumn(name = "chat_id", referencedColumnName = "id")
     private ChatEntity chatEntity;
-
 }

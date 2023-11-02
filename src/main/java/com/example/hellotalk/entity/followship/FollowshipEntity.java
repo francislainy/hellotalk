@@ -18,7 +18,7 @@ import java.util.UUID;
 public class FollowshipEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue
     @Column(name = "id")
     private UUID id;
 

@@ -73,7 +73,7 @@ class MomentControllerTest extends BaseDocTestConfig {
 
         mockMvc.perform(RestDocumentationRequestBuilders.get("/api/v1/ht/moments/{momentId}/", momentId)
                 .header("authorization", "anyValidUUID"))
-                .andExpect(status().is2xxSuccessful())
+                .andExpect(status().isOk())
                 .andExpect(content().string(jsonResponse))
                 .andDo(document("get-moment",
                         resource("Get a moment's details")))

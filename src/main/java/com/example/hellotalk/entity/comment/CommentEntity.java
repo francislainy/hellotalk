@@ -19,7 +19,7 @@ import java.util.UUID;
 public class CommentEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue
     @Column(name = "id")
     private UUID id;
 

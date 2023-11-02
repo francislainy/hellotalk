@@ -16,7 +16,7 @@ import java.util.UUID;
 public class LikeEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue
     @Column(name = "id")
     private UUID id;
 

@@ -21,7 +21,7 @@ import java.util.UUID;
 public class MomentEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue
     @Column(name = "id")
     private UUID id;
 

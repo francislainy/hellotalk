@@ -47,5 +47,4 @@ public class MessageController {
     public ResponseEntity<Object> getChat(@PathVariable UUID chatId) {
         return new ResponseEntity<>(messageService.getChat(chatId), HttpStatus.OK);
     }
-
 }

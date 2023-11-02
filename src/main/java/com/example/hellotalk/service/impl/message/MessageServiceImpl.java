@@ -5,6 +5,7 @@ import com.example.hellotalk.entity.user.UserEntity;
 import com.example.hellotalk.exception.ChatNotFoundException;
 import com.example.hellotalk.exception.EntityDoesNotBelongToUserException;
 import com.example.hellotalk.exception.MessageNotFoundException;
+import com.example.hellotalk.mapper.ChatMapper;
 import com.example.hellotalk.mapper.MessageMapper;
 import com.example.hellotalk.model.message.Chat;
 import com.example.hellotalk.model.message.Message;
@@ -29,7 +30,7 @@ public class MessageServiceImpl implements MessageService {
     private final MessageRepository messageRepository;
     private final ChatRepository chatRepository;
     private final MessageMapper messageMapper;
-
+    private final ChatMapper chatMapper;
     private final UserService userService;
 
     @Override
@@ -62,6 +63,14 @@ public class MessageServiceImpl implements MessageService {
                 .id(chatId)
                 .messageList(messageList)
                 .build();
+    }
+
+    @Override
+    public List<Chat> getChats() {
+        return chatRepository.findAll()
+                .stream()
+                .map(chatMapper::toModel)
+                .toList();
     }
 
     @Override

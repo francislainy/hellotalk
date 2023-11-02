@@ -14,6 +14,8 @@ public interface MessageService {
 
     Chat getChat(UUID chatId);
 
+    List<Chat> getChats();
+
     Message createMessage(Message message);
 
     Message updateMessage(UUID messageId, Message message);

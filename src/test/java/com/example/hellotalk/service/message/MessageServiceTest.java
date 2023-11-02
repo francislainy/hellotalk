@@ -6,6 +6,7 @@ import com.example.hellotalk.entity.user.UserEntity;
 import com.example.hellotalk.exception.ChatNotFoundException;
 import com.example.hellotalk.exception.EntityDoesNotBelongToUserException;
 import com.example.hellotalk.exception.MessageNotFoundException;
+import com.example.hellotalk.mapper.ChatMapper;
 import com.example.hellotalk.mapper.MessageMapper;
 import com.example.hellotalk.model.message.Chat;
 import com.example.hellotalk.model.message.Message;
@@ -13,6 +14,7 @@ import com.example.hellotalk.repository.message.ChatRepository;
 import com.example.hellotalk.repository.message.MessageRepository;
 import com.example.hellotalk.service.impl.message.MessageServiceImpl;
 import com.example.hellotalk.service.user.UserService;
+import jakarta.inject.Inject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -50,6 +52,9 @@ class MessageServiceTest {
 
     @Spy
     MessageMapper messageMapper = Mappers.getMapper(MessageMapper.class);
+
+    @Spy
+    ChatMapper chatMapper = Mappers.getMapper(ChatMapper.class);
 
     @Mock
     UserService userService;
@@ -151,7 +156,6 @@ class MessageServiceTest {
 
         Message message = chat.getMessageList().get(0);
 
-        // Verify the results
         assertAll(
                 () -> assertEquals(chatId, chat.getId()),
                 () -> assertEquals(messageId, message.getId()),
@@ -172,6 +176,34 @@ class MessageServiceTest {
         assertEquals(CHAT_NOT_FOUND_EXCEPTION, exception.getMessage());
 
         verify(messageRepository, never()).findByChatEntity_Id(chatId);
+    }
+
+    @Test
+    void testGetChats_MessagesExist_ReturnsListOfChats() {
+        when(chatRepository.findAll()).thenReturn(List.of(chatEntity));
+
+        //        Chat chat = chatMapper.toModel(chatEntity); //todo: check why this does not work
+        Chat chat = Chat.builder()
+                .id(chatId)
+                .messageList(List.of(messageMapper.toModel(messageEntity)))
+                .build();
+
+        //        when(chatMapper.toModel(any())).thenReturn(chat); //todo: check why this also works even though it's a spy- 02/10/2023
+        doReturn(chat).when(chatMapper).toModel(any());
+
+        List<Chat> chatList = messageService.getChats();
+
+        Message message = chatList.get(0).getMessageList().get(0);
+
+        assertAll(
+                () -> assertEquals(chatId, chatList.get(0).getId()),
+                () -> assertEquals(messageId, message.getId()),
+                () -> assertEquals("anyText", message.getContent()),
+                () -> assertEquals(userFromId, message.getUserFromId()),
+                () -> assertEquals(userToId, message.getUserToId()),
+                () -> assertEquals(String.valueOf(creationDate), String.valueOf(message.getCreationDate())));
+
+        verify(chatRepository, times(1)).findAll();
     }
 
     @Test

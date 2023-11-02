@@ -16,12 +16,8 @@ public class Message {
 
     private UUID id;
     private String content;
-
     private ZonedDateTime creationDate;
-
     private UUID parentId;
-
     private UUID userFromId;
-
     private UUID userToId;
 }

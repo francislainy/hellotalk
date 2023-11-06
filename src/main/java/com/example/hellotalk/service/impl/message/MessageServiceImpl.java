@@ -1,5 +1,6 @@
 package com.example.hellotalk.service.impl.message;
 
+import com.example.hellotalk.entity.message.ChatEntity;
 import com.example.hellotalk.entity.message.MessageEntity;
 import com.example.hellotalk.entity.user.UserEntity;
 import com.example.hellotalk.exception.ChatNotFoundException;
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Service;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import static com.example.hellotalk.exception.AppExceptionHandler.*;
@@ -50,41 +52,14 @@ public class MessageServiceImpl implements MessageService {
 
     @Override
     public Chat getChat(UUID chatId) {
-        if (!chatRepository.existsById(chatId)) {
-            throw new ChatNotFoundException(CHAT_NOT_FOUND_EXCEPTION);
-        }
+        ChatEntity chatEntity = chatRepository.findById(chatId)
+                .orElseThrow(() -> new ChatNotFoundException(CHAT_NOT_FOUND_EXCEPTION));
 
-        List<Message> messageList = messageRepository.findByChatEntity_Id(chatId)
-                .stream()
-                .map(messageMapper::toModel)
-                .toList();
-
-        return Chat.builder()
-                .id(chatId)
-                .messageList(messageList)
-                .build();
+        return chatMapper.toModel(chatEntity);
     }
 
     @Override
     public List<Chat> getChats() {
-        // List<ChatEntity> chatEntityList = chatRepository.findAll();
-        //
-        // List<Chat> chatList = new ArrayList<>();
-        // for (ChatEntity chatEntity : chatEntityList) {
-        // List<Message> messageList = chatEntity.getMessageEntityList()
-        // .stream()
-        // .map(messageMapper::toModel)
-        // .toList();
-        //
-        // Chat chat = Chat.builder()
-        // .id(chatEntity.getId())
-        // .messageList(messageList)
-        // .build();
-        //
-        // chatList.add(chat);
-        // }
-        // return chatList;
-
         return chatRepository.findAll()
                 .stream()
                 .map(chatMapper::toModel)

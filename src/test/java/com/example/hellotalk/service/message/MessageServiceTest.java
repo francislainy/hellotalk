@@ -141,9 +141,7 @@ class MessageServiceTest {
 
     @Test
     void testGetChat_MessagesExist_ReturnsListOfMessages() {
-        when(chatRepository.existsById(any())).thenReturn(true);
-
-        when(messageRepository.findByChatEntity_Id(any())).thenReturn(List.of(messageEntity));
+        when(chatRepository.findById(any())).thenReturn(Optional.ofNullable(chatEntity));
 
         Chat chat = messageService.getChat(chatId);
 
@@ -157,18 +155,16 @@ class MessageServiceTest {
                 () -> assertEquals(userToId, message.getUserToId()),
                 () -> assertEquals(String.valueOf(creationDate), String.valueOf(message.getCreationDate())));
 
-        verify(messageRepository, times(1)).findByChatEntity_Id(chatId);
+        verify(chatRepository, times(1)).findById(chatId);
     }
 
     @Test
     void testGetChat_ChatDoesNotExist_ThrowsException() {
-        when(chatRepository.existsById(any())).thenReturn(false);
+        when(chatRepository.findById(any())).thenReturn(Optional.empty());
 
         ChatNotFoundException exception = assertThrows(ChatNotFoundException.class, () -> messageService.getChat(chatId));
 
         assertEquals(CHAT_NOT_FOUND_EXCEPTION, exception.getMessage());
-
-        verify(messageRepository, never()).findByChatEntity_Id(chatId);
     }
 
     @Test

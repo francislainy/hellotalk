@@ -67,24 +67,23 @@ public class MessageServiceImpl implements MessageService {
 
     @Override
     public List<Chat> getChats() {
-//        List<ChatEntity> chatEntityList = chatRepository.findAll();
-//
-//        List<Chat> chatList = new ArrayList<>();
-//        for (ChatEntity chatEntity : chatEntityList) {
-//            List<Message> messageList = chatEntity.getMessageEntityList()
-//                    .stream()
-//                    .map(messageMapper::toModel)
-//                    .toList();
-//
-//            Chat chat = Chat.builder()
-//                    .id(chatEntity.getId())
-//                    .messageList(messageList)
-//                    .build();
-//
-//            chatList.add(chat);
-//        }
-//        return chatList;
-
+        // List<ChatEntity> chatEntityList = chatRepository.findAll();
+        //
+        // List<Chat> chatList = new ArrayList<>();
+        // for (ChatEntity chatEntity : chatEntityList) {
+        // List<Message> messageList = chatEntity.getMessageEntityList()
+        // .stream()
+        // .map(messageMapper::toModel)
+        // .toList();
+        //
+        // Chat chat = Chat.builder()
+        // .id(chatEntity.getId())
+        // .messageList(messageList)
+        // .build();
+        //
+        // chatList.add(chat);
+        // }
+        // return chatList;
 
         return chatRepository.findAll()
                 .stream()

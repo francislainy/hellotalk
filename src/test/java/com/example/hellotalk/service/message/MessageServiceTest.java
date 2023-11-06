@@ -14,7 +14,6 @@ import com.example.hellotalk.repository.message.ChatRepository;
 import com.example.hellotalk.repository.message.MessageRepository;
 import com.example.hellotalk.service.impl.message.MessageServiceImpl;
 import com.example.hellotalk.service.user.UserService;
-import jakarta.inject.Inject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -54,6 +53,7 @@ class MessageServiceTest {
     MessageMapper messageMapper = Mappers.getMapper(MessageMapper.class);
 
     @Spy
+    @InjectMocks
     ChatMapper chatMapper = Mappers.getMapper(ChatMapper.class);
 
     @Mock
@@ -174,15 +174,6 @@ class MessageServiceTest {
     @Test
     void testGetChats_MessagesExist_ReturnsListOfChats() {
         when(chatRepository.findAll()).thenReturn(List.of(chatEntity));
-
-//                Chat chat = chatMapper.toModel(chatEntity); //todo: check why this does not work - 02/10/2023
-        Chat chat = Chat.builder()
-                .id(chatId)
-                .messageList(List.of(messageMapper.toModel(messageEntity)))
-                .build();
-
-        //        when(chatMapper.toModel(any())).thenReturn(chat); //todo: check why this also works even though it's a spy - 02/10/2023
-        doReturn(chat).when(chatMapper).toModel(any());
 
         List<Chat> chatList = messageService.getChats();
 
@@ -311,7 +302,6 @@ class MessageServiceTest {
     @Test
     void testDeleteMessage_InvalidMessageId_ThrowsMessageDoesNotExistException() {
         when(userService.getCurrentUser()).thenReturn(userFromEntity);
-
         when(messageRepository.findById(any())).thenReturn(Optional.empty());
 
         MessageNotFoundException exception =

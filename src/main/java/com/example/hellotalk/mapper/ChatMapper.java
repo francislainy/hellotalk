@@ -14,4 +14,3 @@ public interface ChatMapper {
     @Mapping(source = "messageEntityList", target = "messageList")
     Chat toModel(ChatEntity chatEntity);
 }
-

@@ -378,7 +378,7 @@ class CommentServiceTest {
     void testGetRepliesForComment_ValidCommentButNoReplies_ReturnsEmptyList() {
         when(userService.getCurrentUser()).thenReturn(userEntity);
         when(commentRepository.findById(parentCommentId)).thenReturn(Optional.of(parentCommentEntity));
-        when(commentRepository.findAllByParentCommentEntityId(parentCommentId)).thenReturn(emptyList()); //todo: the test is passing with or without this line. Check this is needed. 22/10/2023
+        when(commentRepository.findAllByParentCommentEntityId(parentCommentId)).thenReturn(emptyList()); // todo: the test is passing with or without this line. Check this is needed. 22/10/2023
 
         List<Comment> replies = commentService.getRepliesForComment(momentId, parentCommentId);
         assertTrue(replies.isEmpty());

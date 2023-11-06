@@ -273,4 +273,30 @@ class MessageControllerTest extends BaseDocTestConfig {
                 .andReturn();
     }
 
+    @Test
+    void testGetChats() throws Exception {
+        UUID chatId = randomUUID();
+        UUID messageId = randomUUID();
+
+        Message message = Message.builder()
+                .id(messageId)
+                .userFromId(randomUUID())
+                .userToId(randomUUID())
+                .build();
+
+        Chat chat = Chat.builder()
+                .id(chatId)
+                .messageList(List.of(message))
+                .build();
+
+        when(messageService.getChats()).thenReturn(List.of(chat));
+
+        mockMvc.perform(RestDocumentationRequestBuilders.get("/api/v1/ht/messages/chats"))
+                .andExpect(status().is2xxSuccessful())
+                .andExpect(content().json(jsonStringFromObject(List.of(chat))))
+                .andDo(document("get-chats",
+                        resource("Get chats")))
+                .andReturn();
+
+    }
 }

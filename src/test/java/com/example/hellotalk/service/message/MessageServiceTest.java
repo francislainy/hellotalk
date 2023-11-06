@@ -175,7 +175,7 @@ class MessageServiceTest {
     void testGetChats_MessagesExist_ReturnsListOfChats() {
         when(chatRepository.findAll()).thenReturn(List.of(chatEntity));
 
-        //        Chat chat = chatMapper.toModel(chatEntity); //todo: check why this does not work - 02/10/2023
+//                Chat chat = chatMapper.toModel(chatEntity); //todo: check why this does not work - 02/10/2023
         Chat chat = Chat.builder()
                 .id(chatId)
                 .messageList(List.of(messageMapper.toModel(messageEntity)))

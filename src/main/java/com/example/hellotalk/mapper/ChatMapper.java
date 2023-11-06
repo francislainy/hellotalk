@@ -5,7 +5,7 @@ import com.example.hellotalk.model.message.Chat;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
-@Mapper
+@Mapper(uses = MessageMapper.class)
 public interface ChatMapper {
 
     @Mapping(source = "messageList", target = "messageEntityList")

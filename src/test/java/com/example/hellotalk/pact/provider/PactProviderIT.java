@@ -212,6 +212,9 @@ class PactProviderIT extends BasePostgresConfig {
         return map;
     }
 
+    @State("A request to retrieve a list of chats")
+    void getChats() {}
+
     // Helpers
     private void createUserResponse(String username, String password) {
         Hometown hometownRequest = Hometown.builder().city("anyCity").country("anyCountry").build();

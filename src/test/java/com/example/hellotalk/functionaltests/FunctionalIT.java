@@ -160,7 +160,7 @@ class FunctionalIT extends BasePostgresConfig {
         UUID userId = response.as(User.class).getId();
 
         response = rq.delete("/api/v1/ht/users/" + userId);
-        assertEquals(200, response.getStatusCode());
+        assertEquals(204, response.getStatusCode());
 
         response = rq.get("/api/v1/ht/users/" + userId);
         // todo: This test is failing when the expectation is for 404 as the app is allowing a user to delete themself! :( Changing it temporarily to 401-

@@ -1,10 +1,13 @@
 package com.example.hellotalk.entity.user;
 
 import com.example.hellotalk.entity.followship.FollowshipEntity;
+import com.example.hellotalk.entity.message.ChatEntity;
 import com.example.hellotalk.entity.moment.MomentEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -83,4 +86,7 @@ public class UserEntity {
 
     @OneToMany(mappedBy = "userEntity", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = false)
     private Set<MomentEntity> momentEntitySet;
+
+    @ManyToMany(mappedBy = "participantEntityList")
+    private List<ChatEntity> chats;
 }

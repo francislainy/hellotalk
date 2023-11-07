@@ -20,7 +20,6 @@ import org.springframework.stereotype.Service;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 import static com.example.hellotalk.exception.AppExceptionHandler.*;
@@ -57,7 +56,6 @@ public class MessageServiceImpl implements MessageService {
 
         return chatMapper.toModel(chatEntity);
     }
-
     @Override
     public List<Chat> getChats() {
         return chatRepository.findAll()

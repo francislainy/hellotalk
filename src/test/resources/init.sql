@@ -78,4 +78,10 @@ VALUES (current_setting('vars.message_id')::uuid,
         current_setting('vars.user_id1')::uuid,
         current_setting('vars.chat_id')::uuid);
 
+INSERT INTO chat_user(chat_id, user_id)
+VALUES (current_setting('vars.chat_id')::uuid,
+        current_setting('vars.user_id1')::uuid);
 
+INSERT INTO chat_user(chat_id, user_id)
+VALUES (current_setting('vars.chat_id')::uuid,
+        current_setting('vars.user_id2')::uuid);

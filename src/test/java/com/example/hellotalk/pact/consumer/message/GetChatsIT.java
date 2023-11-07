@@ -40,16 +40,21 @@ class GetChatsIT {
         headers.put("Content-Type", "application/json");
         headers.put("Accept", "application/json");
 
-        DslPart bodyReturned = PactDslJsonArray.arrayEachLike()
+        DslPart bodyReturned = Objects.requireNonNull(PactDslJsonArray.arrayEachLike()
                 .uuid("id", chatId)
-                .eachLike("messages")
+                .eachLike("participants", 2)
+                .uuid("id", randomUUID())
+                .stringType("username", "anyName")
+                //                .stringType("avatar")
+                .closeArray()
+                .eachLike("messages", 1)
                 .uuid("id", randomUUID())
                 .stringType("content", "anyText")
                 .stringType("creationDate", creationDate.format(formatter))
                 .uuid("userFromId", randomUUID())
                 .uuid("userToId", randomUUID())
-                .close()
-                .close();
+                .closeArray()
+                .close());
 
         return builder
                 .given("A request to retrieve a list of chats")

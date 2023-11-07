@@ -1,5 +1,6 @@
 package com.example.hellotalk.model.message;
 
+import com.example.hellotalk.model.user.User;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,4 +20,7 @@ public class Chat {
 
     @JsonProperty("messages")
     private List<Message> messageList;
+
+    @JsonProperty("participants")
+    private List<User> participantList;
 }

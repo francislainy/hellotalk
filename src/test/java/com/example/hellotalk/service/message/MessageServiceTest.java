@@ -84,6 +84,7 @@ class MessageServiceTest {
         messageEntity = getMessageEntity(messageId);
         chatEntity = ChatEntity.builder()
                 .id(chatId)
+                .participantEntityList(List.of(userFromEntity, userToEntity))
                 .messageEntityList(List.of(messageEntity)) // todo: convert to set - 16/10/2023
                 .build();
     }
@@ -149,6 +150,7 @@ class MessageServiceTest {
 
         assertAll(
                 () -> assertEquals(chatId, chat.getId()),
+                () -> assertTrue(chat.getParticipantList().size() > 0),
                 () -> assertEquals(messageId, message.getId()),
                 () -> assertEquals("anyText", message.getContent()),
                 () -> assertEquals(userFromId, message.getUserFromId()),

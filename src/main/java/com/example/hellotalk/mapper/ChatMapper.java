@@ -9,8 +9,10 @@ import org.mapstruct.Mapping;
 public interface ChatMapper {
 
     @Mapping(source = "messageList", target = "messageEntityList")
+    @Mapping(source = "participantList", target = "participantEntityList")
     ChatEntity toEntity(Chat chat);
 
     @Mapping(source = "messageEntityList", target = "messageList")
+    @Mapping(source = "participantEntityList", target = "participantList")
     Chat toModel(ChatEntity chatEntity);
 }

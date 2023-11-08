@@ -217,6 +217,34 @@ class MessageServiceTest {
     }
 
     @Test
+    void testCreateChat_NullChatIdButUsersHaveAlreadyChattedBefore_CreatesMessageAndAddsItToExistingChat() {
+        when(userService.getCurrentUser()).thenReturn(userFromEntity);
+
+        when(chatRepository.findByParticipants(any())).thenReturn(Optional.of(chatEntity));
+
+        MessageEntity messageWithChat = getMessageEntity(messageId);
+        messageWithChat.setChatEntity(chatEntity);
+
+        when(messageRepository.save(any())).thenReturn(messageWithChat);
+
+        MessageEntity messageEntityWithoutChat = getMessageEntity(messageId);
+
+        Message messageWithoutChat = messageMapper.toModel(messageEntityWithoutChat);
+        Message message = messageService.createMessage(messageWithoutChat);
+
+        assertAll(
+                () -> assertEquals(messageId, message.getId()),
+                () -> assertEquals("anyText", message.getContent()),
+                () -> assertEquals(userFromId, message.getUserFromId()),
+                () -> assertEquals(userToId, message.getUserToId()),
+                () -> assertEquals(chatId, message.getChatId()),
+                () -> assertEquals(String.valueOf(creationDate), String.valueOf(message.getCreationDate())));
+
+        verify(userService, times(1)).getCurrentUser();
+        verify(messageRepository, times(1)).save(any(MessageEntity.class));
+    }
+
+    @Test
     void testCreateMessage_ChatAlreadyExists_CreatesMessageAndAddsItToExistingChat() {
         when(userService.getCurrentUser()).thenReturn(userFromEntity);
 

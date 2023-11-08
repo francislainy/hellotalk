@@ -18,6 +18,7 @@ public class Message {
     private String content;
     private ZonedDateTime creationDate;
     private UUID parentId;
+    private UUID chatId;
     private UUID userFromId;
     private UUID userToId;
 }

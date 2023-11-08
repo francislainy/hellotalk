@@ -15,6 +15,7 @@ import java.util.*;
 @NoArgsConstructor
 public class ChatEntity {
     @Id
+    @GeneratedValue
     @Column(name = "id")
     private UUID id;
 

@@ -189,6 +189,77 @@ class MessageServiceTest {
     }
 
     @Test
+    void testCreateChat_FirstMessage_CreatesMessageAndAddsItToNewChat() {
+        when(userService.getCurrentUser()).thenReturn(userFromEntity);
+
+        when(chatRepository.save(any())).thenReturn(chatEntity);
+
+        MessageEntity messageWithChat = getMessageEntity(messageId);
+        messageWithChat.setChatEntity(chatEntity);
+
+        when(messageRepository.save(any())).thenReturn(messageWithChat);
+
+        MessageEntity messageEntityWithoutChat = getMessageEntity(messageId);
+
+        Message messageWithoutChat = messageMapper.toModel(messageEntityWithoutChat);
+        Message message = messageService.createMessage(messageWithoutChat);
+
+        assertAll(
+                () -> assertEquals(messageId, message.getId()),
+                () -> assertEquals("anyText", message.getContent()),
+                () -> assertEquals(userFromId, message.getUserFromId()),
+                () -> assertEquals(userToId, message.getUserToId()),
+                () -> assertEquals(chatId, message.getChatId()),
+                () -> assertEquals(String.valueOf(creationDate), String.valueOf(message.getCreationDate())));
+
+        verify(userService, times(1)).getCurrentUser();
+        verify(messageRepository, times(1)).save(any(MessageEntity.class));
+    }
+
+    @Test
+    void testCreateMessage_ChatAlreadyExists_CreatesMessageAndAddsItToExistingChat() {
+        when(userService.getCurrentUser()).thenReturn(userFromEntity);
+
+        MessageEntity messageEntityChat = getMessageEntity(messageId);
+        messageEntityChat.setChatEntity(chatEntity);
+
+        when(chatRepository.findById(any())).thenReturn(Optional.of(chatEntity));
+        when(messageRepository.save(any())).thenReturn(messageEntityChat);
+
+        Message messageWithChat = messageMapper.toModel(messageEntityChat);
+        Message message = messageService.createMessage(messageWithChat);
+
+        assertAll(
+                () -> assertEquals(messageId, message.getId()),
+                () -> assertEquals("anyText", message.getContent()),
+                () -> assertEquals(userFromId, message.getUserFromId()),
+                () -> assertEquals(userToId, message.getUserToId()),
+                () -> assertEquals(chatId, message.getChatId()),
+                () -> assertEquals(String.valueOf(creationDate), String.valueOf(message.getCreationDate())));
+
+        verify(userService, times(1)).getCurrentUser();
+        verify(chatRepository, never()).save(any(ChatEntity.class));
+        verify(messageRepository, times(1)).save(any(MessageEntity.class));
+    }
+
+    @Test
+    void testCreateMessage_WrongChatId_ThrowsException() {
+        when(userService.getCurrentUser()).thenReturn(userFromEntity);
+
+        MessageEntity messageEntityChat = getMessageEntity(messageId);
+        messageEntityChat.setChatEntity(chatEntity);
+
+        Message messageWithChat = messageMapper.toModel(messageEntityChat);
+
+        ChatNotFoundException exception = assertThrows(ChatNotFoundException.class, () -> messageService.createMessage(messageWithChat));
+        assertEquals(CHAT_NOT_FOUND_EXCEPTION, exception.getMessage());
+
+        verify(userService, times(1)).getCurrentUser();
+        verify(chatRepository, never()).save(any(ChatEntity.class));
+        verify(messageRepository, never()).save(any(MessageEntity.class));
+    }
+
+    @Test
     void testCreateMessage_ValidMessage_ReturnsCreatedMessage() {
         when(userService.getCurrentUser()).thenReturn(userFromEntity);
         when(messageRepository.save(any())).thenReturn(messageEntity);
@@ -325,9 +396,9 @@ class MessageServiceTest {
     }
 
     // Helpers
-    private MessageEntity getMessageEntity(UUID commentId) {
+    private MessageEntity getMessageEntity(UUID messageId) {
         return MessageEntity.builder()
-                .id(commentId)
+                .id(messageId)
                 .content("anyText")
                 .creationDate(creationDate)
                 .userFromEntity(userFromEntity)

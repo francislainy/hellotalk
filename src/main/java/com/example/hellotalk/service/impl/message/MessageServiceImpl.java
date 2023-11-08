@@ -56,6 +56,7 @@ public class MessageServiceImpl implements MessageService {
 
         return chatMapper.toModel(chatEntity);
     }
+
     @Override
     public List<Chat> getChats() {
         return chatRepository.findAll()
@@ -67,10 +68,25 @@ public class MessageServiceImpl implements MessageService {
     @Override
     public Message createMessage(Message message) {
         UserEntity userFromEntity = userService.getCurrentUser();
+        UserEntity userToEntity = UserEntity.builder().id(message.getUserToId()).build();
+
+        ChatEntity chatEntity;
+        if (message.getChatId() == null) {
+            chatEntity = ChatEntity.builder()
+                    .participantEntityList(List.of(userFromEntity, userToEntity))
+                    .build();
+
+            chatEntity = chatRepository.save(chatEntity);
+        }
+        else {
+            chatEntity = chatRepository.findById(message.getChatId())
+                    .orElseThrow(() ->new ChatNotFoundException(CHAT_NOT_FOUND_EXCEPTION));
+        }
 
         MessageEntity messageEntity = messageMapper.toEntity(message);
         messageEntity.setUserFromEntity(userFromEntity);
         messageEntity.setCreationDate(ZonedDateTime.now().withZoneSameInstant(ZoneOffset.UTC));
+        messageEntity.setChatEntity(chatEntity);
 
         messageEntity = messageRepository.save(messageEntity);
 

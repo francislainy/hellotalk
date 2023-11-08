@@ -5,6 +5,7 @@ DELETE from moment_tags;
 DELETE from moment_like;
 DELETE from moment;
 delete from message;
+delete from chat_user;
 delete from chat;
 DELETE from users;
 DELETE from hometown;

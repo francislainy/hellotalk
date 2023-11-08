@@ -6,12 +6,14 @@ import com.example.hellotalk.entity.user.UserEntity;
 import com.example.hellotalk.exception.ChatNotFoundException;
 import com.example.hellotalk.exception.EntityDoesNotBelongToUserException;
 import com.example.hellotalk.exception.MessageNotFoundException;
+import com.example.hellotalk.exception.UserNotFoundException;
 import com.example.hellotalk.mapper.ChatMapper;
 import com.example.hellotalk.mapper.MessageMapper;
 import com.example.hellotalk.model.message.Chat;
 import com.example.hellotalk.model.message.Message;
 import com.example.hellotalk.repository.message.ChatRepository;
 import com.example.hellotalk.repository.message.MessageRepository;
+import com.example.hellotalk.repository.user.UserRepository;
 import com.example.hellotalk.service.impl.message.MessageServiceImpl;
 import com.example.hellotalk.service.user.UserService;
 import org.junit.jupiter.api.BeforeEach;
@@ -48,6 +50,9 @@ class MessageServiceTest {
 
     @Mock
     ChatRepository chatRepository;
+
+    @Mock
+    UserRepository userRepository;
 
     @Spy
     MessageMapper messageMapper = Mappers.getMapper(MessageMapper.class);
@@ -142,7 +147,7 @@ class MessageServiceTest {
 
     @Test
     void testGetChat_MessagesExist_ReturnsListOfMessages() {
-        when(chatRepository.findById(any())).thenReturn(Optional.ofNullable(chatEntity));
+        when(chatRepository.findById(any())).thenReturn(Optional.of(chatEntity));
 
         Chat chat = messageService.getChat(chatId);
 
@@ -191,6 +196,7 @@ class MessageServiceTest {
     @Test
     void testCreateChat_FirstMessage_CreatesMessageAndAddsItToNewChat() {
         when(userService.getCurrentUser()).thenReturn(userFromEntity);
+        when(userRepository.findById(any())).thenReturn(Optional.of(userToEntity));
 
         when(chatRepository.save(any())).thenReturn(chatEntity);
 
@@ -219,6 +225,7 @@ class MessageServiceTest {
     @Test
     void testCreateChat_NullChatIdButUsersHaveAlreadyChattedBefore_CreatesMessageAndAddsItToExistingChat() {
         when(userService.getCurrentUser()).thenReturn(userFromEntity);
+        when(userRepository.findById(any())).thenReturn(Optional.of(userToEntity));
 
         when(chatRepository.findByParticipants(any())).thenReturn(Optional.of(chatEntity));
 
@@ -247,6 +254,7 @@ class MessageServiceTest {
     @Test
     void testCreateMessage_ChatAlreadyExists_CreatesMessageAndAddsItToExistingChat() {
         when(userService.getCurrentUser()).thenReturn(userFromEntity);
+        when(userRepository.findById(any())).thenReturn(Optional.of(userToEntity));
 
         MessageEntity messageEntityChat = getMessageEntity(messageId);
         messageEntityChat.setChatEntity(chatEntity);
@@ -273,6 +281,7 @@ class MessageServiceTest {
     @Test
     void testCreateMessage_WrongChatId_ThrowsException() {
         when(userService.getCurrentUser()).thenReturn(userFromEntity);
+        when(userRepository.findById(any())).thenReturn(Optional.of(userToEntity));
 
         MessageEntity messageEntityChat = getMessageEntity(messageId);
         messageEntityChat.setChatEntity(chatEntity);
@@ -288,8 +297,28 @@ class MessageServiceTest {
     }
 
     @Test
+    void testCreateMessage_WrongUserToId_ThrowsException() {
+        when(userService.getCurrentUser()).thenReturn(userFromEntity);
+
+        MessageEntity messageEntityChat = getMessageEntity(messageId);
+        when(userRepository.findById(any())).thenReturn(Optional.empty());
+        messageEntityChat.setChatEntity(chatEntity);
+
+        Message messageWithChat = messageMapper.toModel(messageEntityChat);
+
+        UserNotFoundException exception = assertThrows(UserNotFoundException.class, () -> messageService.createMessage(messageWithChat));
+        assertEquals(USER_NOT_FOUND_EXCEPTION, exception.getMessage());
+
+        verify(userService, times(1)).getCurrentUser();
+        verify(chatRepository, never()).save(any(ChatEntity.class));
+        verify(messageRepository, never()).save(any(MessageEntity.class));
+    }
+
+    @Test
     void testCreateMessage_ValidMessage_ReturnsCreatedMessage() {
         when(userService.getCurrentUser()).thenReturn(userFromEntity);
+        when(userRepository.findById(any())).thenReturn(Optional.of(userToEntity));
+
         when(messageRepository.save(any())).thenReturn(messageEntity);
 
         ZonedDateTime fixedZonedDateTime = ZonedDateTime.now().withZoneSameInstant(ZoneOffset.UTC);

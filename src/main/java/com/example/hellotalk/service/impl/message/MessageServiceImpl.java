@@ -6,12 +6,14 @@ import com.example.hellotalk.entity.user.UserEntity;
 import com.example.hellotalk.exception.ChatNotFoundException;
 import com.example.hellotalk.exception.EntityDoesNotBelongToUserException;
 import com.example.hellotalk.exception.MessageNotFoundException;
+import com.example.hellotalk.exception.UserNotFoundException;
 import com.example.hellotalk.mapper.ChatMapper;
 import com.example.hellotalk.mapper.MessageMapper;
 import com.example.hellotalk.model.message.Chat;
 import com.example.hellotalk.model.message.Message;
 import com.example.hellotalk.repository.message.ChatRepository;
 import com.example.hellotalk.repository.message.MessageRepository;
+import com.example.hellotalk.repository.user.UserRepository;
 import com.example.hellotalk.service.message.MessageService;
 import com.example.hellotalk.service.user.UserService;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +32,7 @@ public class MessageServiceImpl implements MessageService {
 
     private final MessageRepository messageRepository;
     private final ChatRepository chatRepository;
+    private final UserRepository userRepository;
     private final MessageMapper messageMapper;
     private final ChatMapper chatMapper;
     private final UserService userService;
@@ -68,7 +71,9 @@ public class MessageServiceImpl implements MessageService {
     @Override
     public Message createMessage(Message message) {
         UserEntity userFromEntity = userService.getCurrentUser();
-        UserEntity userToEntity = UserEntity.builder().id(message.getUserToId()).build();
+
+        UserEntity userToEntity = userRepository.findById(message.getUserToId())
+                .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND_EXCEPTION));
 
         ChatEntity chatEntity;
         if (message.getChatId() == null) {

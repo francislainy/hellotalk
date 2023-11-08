@@ -12,6 +12,6 @@ import java.util.UUID;
 
 public interface ChatRepository extends JpaRepository<ChatEntity, UUID> {
 
-    @Query("SELECT c FROM ChatEntity c WHERE :participants MEMBER OF c.participantEntityList")
+    @Query("SELECT c FROM ChatEntity c JOIN c.participantEntityList p WHERE p IN :participants")
     Optional<ChatEntity> findByParticipants(@Param("participants") List<UserEntity> participants);
 }

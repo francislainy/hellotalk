@@ -12,7 +12,6 @@ import java.util.UUID;
 
 public interface ChatRepository extends JpaRepository<ChatEntity, UUID> {
 
-    //todo: unit test - 20/11/2023
     @Query("SELECT c FROM ChatEntity c WHERE :participantCount = (SELECT COUNT(DISTINCT p) FROM c.participantEntityList p WHERE p IN :participants)")
     Optional<ChatEntity> findByParticipants(@Param("participants") List<UserEntity> participants, @Param("participantCount") int participantCount);
 }

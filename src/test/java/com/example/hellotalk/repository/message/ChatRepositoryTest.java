@@ -13,8 +13,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
@@ -75,6 +74,36 @@ class ChatRepositoryTest {
 
         Optional<ChatEntity> actualChat = chatRepository.findByParticipants(expectedUsers, expectedUsers.size() + 1);
 
+        assertTrue(actualChat.isEmpty());
+    }
+
+    @Test
+    void testFindByParticipants_ReturnsEmptyOptionalForPartialMatch() {
+        // Create and save a user that will be a participant in the chat
+        UserEntity existingUser = UserEntity.builder().username("existingUser").build();
+        existingUser = userRepository.save(existingUser);
+
+        UserEntity existingUser2 = UserEntity.builder().username("existingUser2").build();
+        existingUser2 = userRepository.save(existingUser2);
+
+        UserEntity existingUser3 = UserEntity.builder().username("existingUser3").build();
+        existingUser3 = userRepository.save(existingUser3);
+
+        // Create a chat with the existing user as a participant
+        List<UserEntity> participants = new ArrayList<>();
+        participants.add(existingUser);
+        participants.add(existingUser2);
+        ChatEntity chatEntity = ChatEntity.builder().participantEntityList(participants).build();
+        chatRepository.save(chatEntity);
+
+        // Create a chat with different user as a participant
+        List<UserEntity> participantsToCheck = new ArrayList<>();
+        participantsToCheck.add(existingUser);
+        participantsToCheck.add(existingUser3);
+
+        Optional<ChatEntity> actualChat = chatRepository.findByParticipants(participantsToCheck, participantsToCheck.size());
+
+        // Assert that no chat is found
         assertTrue(actualChat.isEmpty());
     }
 }

@@ -20,6 +20,7 @@ public class ChatEntity {
     private UUID id;
 
     @OneToMany(mappedBy = "chatEntity", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OrderBy("creationDate")
     private List<MessageEntity> messageEntityList;
 
     @ManyToMany

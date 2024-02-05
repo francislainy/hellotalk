@@ -6,7 +6,6 @@ import com.example.hellotalk.model.HobbyAndInterest;
 import com.example.hellotalk.model.Hometown;
 import com.example.hellotalk.model.message.Message;
 import com.example.hellotalk.model.user.User;
-import com.example.hellotalk.repository.followship.FollowshipRepository;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
@@ -14,7 +13,6 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.testcontainers.containers.PostgreSQLContainer;
@@ -47,9 +45,6 @@ class MessageIT extends BasePostgresConfig {
     final String PASSWORD_2 = "Password123!";
     User user1;
     User user2;
-
-    @Autowired
-    FollowshipRepository followshipRepository;
 
     static {
         postgres = new PostgreSQLContainer<>(DockerImageName.parse("postgres").withTag("latest"));

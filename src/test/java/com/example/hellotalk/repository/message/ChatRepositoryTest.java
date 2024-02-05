@@ -1,13 +1,18 @@
 package com.example.hellotalk.repository.message;
 
 import com.example.hellotalk.entity.message.ChatEntity;
+import com.example.hellotalk.entity.message.MessageEntity;
 import com.example.hellotalk.entity.user.UserEntity;
 import com.example.hellotalk.repository.user.UserRepository;
+import jakarta.persistence.EntityManager;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -105,6 +110,118 @@ class ChatRepositoryTest {
 
         // Assert that no chat is found
         assertTrue(actualChat.isEmpty());
+    }
+
+
+    @Autowired
+    TestEntityManager entityManager;
+
+    ChatEntity chatEntity;
+    MessageEntity messageEntity1;
+    MessageEntity messageEntity2;
+    MessageEntity messageEntity3;
+
+    @BeforeEach
+    void setup() {
+        messageEntity1 = MessageEntity.builder().creationDate(ZonedDateTime.now().minusDays(1)).build();
+        messageEntity2 = MessageEntity.builder().creationDate(ZonedDateTime.now().minusDays(2)).build();
+        messageEntity3 = MessageEntity.builder().creationDate(ZonedDateTime.now().minusDays(3)).build();
+
+        List<MessageEntity> messageEntityList = new ArrayList<>();
+        messageEntityList.add(messageEntity2);
+        messageEntityList.add(messageEntity1);
+        messageEntityList.add(messageEntity3);
+
+        chatEntity = ChatEntity.builder()
+                .messageEntityList(messageEntityList)
+                .build();
+
+        chatEntity = chatRepository.save(chatEntity);
+    }
+
+    @Test
+    void testMessageOrder() {
+        MessageEntity messageEntity1 = MessageEntity.builder().creationDate(ZonedDateTime.now().minusDays(1)).build();
+        MessageEntity messageEntity2 = MessageEntity.builder().creationDate(ZonedDateTime.now().minusDays(2)).build();
+        MessageEntity messageEntity3 = MessageEntity.builder().creationDate(ZonedDateTime.now().minusDays(3)).build();
+
+        List<MessageEntity> messageEntityList = new ArrayList<>();
+        messageEntityList.add(messageEntity2);
+        messageEntityList.add(messageEntity1);
+        messageEntityList.add(messageEntity3);
+
+        ChatEntity chatEntity = ChatEntity.builder()
+                .messageEntityList(messageEntityList)
+                .build();
+
+        chatEntity = chatRepository.save(chatEntity);
+
+        ChatEntity chatEntityList = chatRepository.findById(chatEntity.getId()).orElseThrow();
+
+        List<MessageEntity> messages = chatEntityList.getMessageEntityList();
+        for (int i = 0; i < messages.size() - 1; i++) {
+            assertTrue(messages.get(i).getCreationDate().isBefore(messages.get(i + 1).getCreationDate()));
+        }
+    }
+
+    @Test
+    void testMessageOrder2() {
+
+//        entityManager.flush();
+//        entityManager.refresh(chatEntity);
+
+        // Add a new message
+        MessageEntity messageEntity4 = MessageEntity.builder().creationDate(ZonedDateTime.now()).build();
+        chatEntity.getMessageEntityList().add(messageEntity4);
+        chatRepository.saveAndFlush(chatEntity);
+
+        ChatEntity chatEntityList = chatRepository.findById(chatEntity.getId()).orElseThrow();
+
+        List<MessageEntity> messages = chatEntityList.getMessageEntityList();
+        for (int i = 0; i < messages.size() - 1; i++) {
+            assertTrue(messages.get(i).getCreationDate().isBefore(messages.get(i + 1).getCreationDate()));
+        }
+    }
+
+
+    @Test
+    void testMessageOrder3() {
+        // Create messages with different creation dates
+        MessageEntity messageEntity1 = MessageEntity.builder().creationDate(ZonedDateTime.now().minusDays(1)).build();
+        MessageEntity messageEntity2 = MessageEntity.builder().creationDate(ZonedDateTime.now().minusDays(2)).build();
+        MessageEntity messageEntity3 = MessageEntity.builder().creationDate(ZonedDateTime.now().minusDays(3)).build();
+
+        // Add messages to list in an unordered manner
+        List<MessageEntity> messageEntityList = new ArrayList<>();
+        messageEntityList.add(messageEntity1);
+        messageEntityList.add(messageEntity3);
+        messageEntityList.add(messageEntity2);
+
+        // Create chat entity with the list of messages
+        ChatEntity chatEntity = ChatEntity.builder()
+                .messageEntityList(messageEntityList)
+                .build();
+
+        // Save chat entity
+        chatEntity = chatRepository.saveAndFlush(chatEntity);
+        entityManager.flush();
+        entityManager.refresh(chatEntity);
+
+        // Add a new message
+        MessageEntity messageEntity4 = MessageEntity.builder().creationDate(ZonedDateTime.now()).build();
+        chatEntity.getMessageEntityList().add(messageEntity4);
+        chatRepository.save(chatEntity);
+
+        // Retrieve the chat entity
+        ChatEntity chatEntityList = chatRepository.findById(chatEntity.getId()).orElseThrow();
+
+        // Retrieve the list of messages
+        List<MessageEntity> messages = chatEntityList.getMessageEntityList();
+
+        // Check the order of messages
+        for (int i = 0; i < messages.size() - 1; i++) {
+            assertTrue(messages.get(i).getCreationDate().isBefore(messages.get(i + 1).getCreationDate()));
+        }
     }
 }
 

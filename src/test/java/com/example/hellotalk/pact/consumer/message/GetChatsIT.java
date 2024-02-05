@@ -45,7 +45,7 @@ class GetChatsIT {
                 .eachLike("participants", 2)
                 .uuid("id", randomUUID())
                 .stringType("username", "anyName")
-                //                .stringType("avatar")
+                // .stringType("avatar")
                 .closeArray()
                 .eachLike("messages", 1)
                 .uuid("id", randomUUID())

@@ -28,6 +28,5 @@ public class ChatEntity {
             name = "chat_user",
             joinColumns = @JoinColumn(name = "chat_id"),
             inverseJoinColumns = @JoinColumn(name = "user_id"))
-    private List<UserEntity> participantEntityList; //todo: replace by set - 07/11/2023
+    private List<UserEntity> participantEntityList; // todo: replace by set - 07/11/2023
 }
-

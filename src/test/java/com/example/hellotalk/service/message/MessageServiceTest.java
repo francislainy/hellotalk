@@ -227,7 +227,7 @@ class MessageServiceTest {
         when(userService.getCurrentUser()).thenReturn(userFromEntity);
         when(userRepository.findById(any())).thenReturn(Optional.of(userToEntity));
 
-        when(chatRepository.findByParticipants(any(), anyInt())).thenReturn(Optional.of(chatEntity)); //todo: unit test for when wrong size given as parameter and other more recent conditions - 20/11/2023
+        when(chatRepository.findByParticipants(any(), anyInt())).thenReturn(Optional.of(chatEntity)); // todo: unit test for when wrong size given as parameter and other more recent conditions - 20/11/2023
 
         MessageEntity messageWithChat = getMessageEntity(messageId);
         messageWithChat.setChatEntity(chatEntity);

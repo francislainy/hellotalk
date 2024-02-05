@@ -78,11 +78,9 @@ public class MessageServiceImpl implements MessageService {
         ChatEntity chatEntity;
         if (message.getChatId() == null) {
             List<UserEntity> participantEntityList = List.of(userFromEntity, userToEntity);
-            chatEntity = chatRepository.findByParticipants(participantEntityList, participantEntityList.size()).orElseGet(() ->
-                    chatRepository.save(ChatEntity.builder()
-                            .participantEntityList(participantEntityList)
-                            .build())
-            );
+            chatEntity = chatRepository.findByParticipants(participantEntityList, participantEntityList.size()).orElseGet(() -> chatRepository.save(ChatEntity.builder()
+                    .participantEntityList(participantEntityList)
+                    .build()));
         } else {
             chatEntity = chatRepository.findById(message.getChatId())
                     .orElseThrow(() -> new ChatNotFoundException(CHAT_NOT_FOUND_EXCEPTION));

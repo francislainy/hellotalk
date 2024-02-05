@@ -74,7 +74,6 @@ class MessageIT extends BasePostgresConfig {
         rq.auth().basic(USERNAME_1, PASSWORD_1);
     }
 
-
     @Test
     void testMessagesAreOrderedByCreationDate() {
         // Given the user sends a message to another user
@@ -94,7 +93,8 @@ class MessageIT extends BasePostgresConfig {
     }
 
     @Test
-    void testMessagesAreOrderedByCreationDateAfterUpdate() { //todo: fix test as per https://stackoverflow.com/questions/77939714/issue-with-message-ordering-in-jpa-entity-list-after-update-operation - 05/01/2024
+    void testMessagesAreOrderedByCreationDateAfterUpdate() { // todo: fix test as per https://stackoverflow.com/questions/77939714/issue-with-message-ordering-in-jpa-entity-list-after-update-operation -
+                                                             // 05/01/2024
         // Given the user sends a message to another user
         Message message1 = Message.builder().content("firstMessage").userToId(user2.getId()).build();
         rq.body(message1).post("/api/v1/ht/messages");
@@ -110,20 +110,18 @@ class MessageIT extends BasePostgresConfig {
         List<Message> messages = Arrays.asList(getMessageResponse.as(Message[].class));
         assertTrue(messages.get(0).getCreationDate().isBefore(messages.get(1).getCreationDate()));
 
-//        // When the user updates the first message -> This makes the tests fail
-//        message1.setContent("firstMessageUpdated");
-//        rq.body(message1).put("/api/v1/ht/messages/" + messages.get(0).getId());
-//
-//        // Clear the persistence context here -> This makes no difference
-//        entityManager.clear();
+        // // When the user updates the first message -> This makes the tests fail
+        // message1.setContent("firstMessageUpdated");
+        // rq.body(message1).put("/api/v1/ht/messages/" + messages.get(0).getId());
+        //
+        // // Clear the persistence context here -> This makes no difference
+        // entityManager.clear();
 
         // Then the messages should be ordered by creation date
         Response updatedMessageResponse = rq.get("/api/v1/ht/messages");
         List<Message> updatedMessages = Arrays.asList(updatedMessageResponse.as(Message[].class));
         assertTrue(updatedMessages.get(0).getCreationDate().isBefore(updatedMessages.get(1).getCreationDate()));
     }
-
-
 
     @Test
     void testUserCanSendMessageToAnotherUser() {

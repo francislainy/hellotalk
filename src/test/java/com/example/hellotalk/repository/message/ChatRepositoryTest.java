@@ -29,7 +29,6 @@ class ChatRepositoryTest {
     @Autowired
     UserRepository userRepository;
 
-
     @Autowired
     TestEntityManager entityManager;
 
@@ -155,4 +154,3 @@ class ChatRepositoryTest {
         assertTrue(actualChat.isEmpty());
     }
 }
-

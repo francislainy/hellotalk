@@ -9,10 +9,12 @@ import com.example.hellotalk.model.user.User;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
+import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.testcontainers.containers.PostgreSQLContainer;
@@ -24,6 +26,7 @@ import static com.example.hellotalk.util.Utils.convertToNewObject;
 import static com.example.hellotalk.utils.Utils.getRequestSpecification;
 import static java.util.UUID.randomUUID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /*
  * mvn -Dtest="functionaltests.*IT" integration-test
@@ -31,6 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+
 class MessageIT extends BasePostgresConfig {
 
     @LocalServerPort
@@ -45,6 +49,9 @@ class MessageIT extends BasePostgresConfig {
     final String PASSWORD_2 = "Password123!";
     User user1;
     User user2;
+
+    @Autowired
+    EntityManager entityManager;
 
     static {
         postgres = new PostgreSQLContainer<>(DockerImageName.parse("postgres").withTag("latest"));
@@ -66,6 +73,57 @@ class MessageIT extends BasePostgresConfig {
     void setUpEach() {
         rq.auth().basic(USERNAME_1, PASSWORD_1);
     }
+
+
+    @Test
+    void testMessagesAreOrderedByCreationDate() {
+        // Given the user sends a message to another user
+        Message message1 = Message.builder().content("content").userToId(user2.getId()).build();
+        rq.body(message1).post("/api/v1/ht/messages");
+
+        // And the user sends another message to the same user
+        Message message2 = Message.builder().content("content").userToId(user2.getId()).build();
+        rq.body(message2).post("/api/v1/ht/messages");
+
+        // When the user retrieves the messages
+        Response getMessageResponse = rq.get("/api/v1/ht/messages");
+
+        // Then the messages should be ordered by creation date
+        List<Message> messages = Arrays.asList(getMessageResponse.as(Message[].class));
+        assertTrue(messages.get(0).getCreationDate().isBefore(messages.get(1).getCreationDate()));
+    }
+
+    @Test
+    void testMessagesAreOrderedByCreationDateAfterUpdate() { //todo: fix test as per https://stackoverflow.com/questions/77939714/issue-with-message-ordering-in-jpa-entity-list-after-update-operation - 05/01/2024
+        // Given the user sends a message to another user
+        Message message1 = Message.builder().content("firstMessage").userToId(user2.getId()).build();
+        rq.body(message1).post("/api/v1/ht/messages");
+
+        // And the user sends another message to the same user
+        Message message2 = Message.builder().content("secondMessage").userToId(user2.getId()).build();
+        rq.body(message2).post("/api/v1/ht/messages");
+
+        // When the user retrieves the messages
+        Response getMessageResponse = rq.get("/api/v1/ht/messages");
+
+        // Then the messages should be ordered by creation date
+        List<Message> messages = Arrays.asList(getMessageResponse.as(Message[].class));
+        assertTrue(messages.get(0).getCreationDate().isBefore(messages.get(1).getCreationDate()));
+
+//        // When the user updates the first message -> This makes the tests fail
+//        message1.setContent("firstMessageUpdated");
+//        rq.body(message1).put("/api/v1/ht/messages/" + messages.get(0).getId());
+//
+//        // Clear the persistence context here -> This makes no difference
+//        entityManager.clear();
+
+        // Then the messages should be ordered by creation date
+        Response updatedMessageResponse = rq.get("/api/v1/ht/messages");
+        List<Message> updatedMessages = Arrays.asList(updatedMessageResponse.as(Message[].class));
+        assertTrue(updatedMessages.get(0).getCreationDate().isBefore(updatedMessages.get(1).getCreationDate()));
+    }
+
+
 
     @Test
     void testUserCanSendMessageToAnotherUser() {

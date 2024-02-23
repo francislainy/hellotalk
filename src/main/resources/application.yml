@@ -1,6 +1,6 @@
 spring:
   profiles:
-    active: local
+    active: prod
   doc:
     swagger-ui:
       url: /openapi-3.0.yml

@@ -1,8 +1,6 @@
 spring:
-  datasource:
-    url: jdbc:postgresql://localhost:5432/hellotalk
-    username:
-    password:
+  profiles:
+    active: local
   doc:
     swagger-ui:
       url: /openapi-3.0.yml
